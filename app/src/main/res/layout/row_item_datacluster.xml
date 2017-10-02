@@ -1,0 +1,43 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/cluster_maintext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:text="Jakarta"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@android:color/black"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/cluster_subtext1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/cluster_maintext"
+        android:layout_marginTop="2dp"
+        android:textColor="@android:color/black" />
+
+
+    <TextView
+        android:id="@+id/cluster_subtext2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/cluster_subtext1"
+        android:layout_marginTop="2dp"
+        android:textColor="@android:color/black" />
+
+
+    <TextView
+        android:id="@+id/cluster_subtext3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/cluster_subtext2"
+        android:layout_marginTop="2dp"
+        android:textColor="@android:color/black" />
+
+</RelativeLayout>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--<TextView-->
+        <!--android:id="@+id/login_txt_username"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:gravity="center"-->
+        <!--android:layout_marginTop="10dp"-->
+        <!--android:text="@string/activity_login_username" />-->
+
+    <!--<EditText-->
+        <!--android:id="@+id/login_edittxt_username"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:ems="10"-->
+        <!--android:inputType="textPersonName"-->
+        <!--android:text="" />-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/login_txt_password"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:gravity="center"-->
+        <!--android:layout_marginTop="10dp"-->
+        <!--android:text="@string/activity_login_password" />-->
+
+    <!--<EditText-->
+        <!--android:id="@+id/login_edittxt_password"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:ems="10"-->
+        <!--android:inputType="textPassword" />-->
+
+    <!--<Button-->
+        <!--android:id="@+id/login_btn_signin"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="@color/colorLogo"-->
+        <!--android:textColor="@color/white"-->
+        <!--android:layout_marginTop="10dp"-->
+        <!--android:text="@string/activity_login_signin" />-->
+
+    <ProgressBar
+        android:id="@+id/login_progressbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:progressDrawable="@drawable/progressbar_states"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:background="@android:color/transparent"
+        android:progress="20"
+        />
+
+    <WebView
+        android:id="@+id/login_webview_login"
+        android:layout_width="match_parent"
+        android:layout_below="@id/login_progressbar"
+        android:layout_height="match_parent" />
+</RelativeLayout>

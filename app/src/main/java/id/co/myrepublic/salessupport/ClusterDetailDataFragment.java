@@ -1,0 +1,255 @@
+package id.co.myrepublic.salessupport;
+
+import android.app.Dialog;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import id.co.myrepublic.salessupport.adapter.ClusterDetailAdapter;
+import id.co.myrepublic.salessupport.constant.AppConstant;
+import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
+import id.co.myrepublic.salessupport.model.ClusterDetailItem;
+import id.co.myrepublic.salessupport.model.ClusterDetailModel;
+import id.co.myrepublic.salessupport.model.ClusterDetailResponse;
+import id.co.myrepublic.salessupport.model.UrlParam;
+import id.co.myrepublic.salessupport.util.AsyncOperation;
+
+
+/**
+ * Created by myrepublicid on 26/9/17.
+ */
+
+public class ClusterDetailDataFragment extends Fragment implements AsyncTaskListener {
+
+    private ListView listViewClusterDetail;
+    private ClusterDetailAdapter clusterDetailAdapter;
+    private FloatingActionButton fab;
+
+
+    private SharedPreferences sp;
+    private LinkedHashMap<Object, Object> mapResponse;
+    private List<ClusterDetailItem> dataModels = new ArrayList<ClusterDetailItem>();
+    private List<String> competitorList = new ArrayList<String>();
+    private Dialog dialog;
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        //returning our layout file
+        return inflater.inflate(R.layout.fragment_cluster_detail, container, false);
+    }
+
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        //you can set the title for your toolbar here for different fragments different titles
+        getActivity().setTitle(getActivity().getString(R.string.fragment_view_cluster_detail));
+
+        // Get Bundle data from previous fragment
+        Bundle bundle = this.getArguments();
+        final String clusterName = bundle.getString("clusterName", null);
+
+
+        // get citylist from API
+        sp = getActivity().getSharedPreferences(AppConstant.SESSION_KEY, Context.MODE_PRIVATE);
+        String sessionId = sp.getString(AppConstant.COOKIE_SESSION_KEY,null);
+
+        Map<Object,Object> paramMap = new HashMap<Object,Object>();
+        paramMap.put("session_id",sessionId);
+        paramMap.put("cluster_name",clusterName);
+
+        UrlParam urlParam = new UrlParam();
+        urlParam.setUrl(AppConstant.GET_CLUSTERDETAIL_API_URL);
+        urlParam.setParamMap(paramMap);
+
+        AsyncOperation asop = new AsyncOperation();
+        asop.setListener(this);
+        asop.execute(urlParam);
+
+        listViewClusterDetail =(ListView)getActivity().findViewById(R.id.listClusterDetail);
+
+        // Floating Button
+        fab = (FloatingActionButton) getActivity().findViewById(R.id.fab_addcompetitor);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialog(clusterName);
+            }
+        });
+    }
+
+    @Override
+    public void onDestroyView ()
+    {
+        super.onDestroyView();
+        try{
+            fab.setVisibility(View.GONE);
+            String backStateName = this.getClass().getName();
+            FragmentManager manager = getActivity().getSupportFragmentManager();
+            FragmentTransaction trans = manager.beginTransaction();
+            ClusterDetailDataFragment fragment = ((ClusterDetailDataFragment) getFragmentManager().findFragmentByTag(backStateName));
+            if(fragment != null) {
+                trans.remove(fragment);
+                trans.commit();
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void onAsyncTaskComplete(Object result) {
+        // Convert to Object
+        try {
+            fab.setVisibility(View.VISIBLE);
+            ObjectMapper mapper = new ObjectMapper();
+            ClusterDetailModel model = mapper.readValue((String)result,ClusterDetailModel.class);
+            ClusterDetailResponse cdr =  model.getResponse();
+
+            List<LinkedHashMap<Object,Object>> listMapResponse = cdr.getCluster();
+            competitorList = cdr.getCompetitorList();
+
+            if(listMapResponse != null && !listMapResponse.isEmpty()) {
+                mapResponse = listMapResponse.get(0);
+                for (Map.Entry<Object, Object> entry : mapResponse.entrySet()) {
+                    String key = entry.getKey() == null ? "-" : ""+ entry.getKey();
+                    String value = entry.getValue() == null ? "-" : ""+ entry.getValue();
+
+                    ClusterDetailItem clusterDetail = new ClusterDetailItem();
+                    clusterDetail.setKey(key);
+                    clusterDetail.setValue(value);
+                    dataModels.add(clusterDetail);
+                }
+
+                clusterDetailAdapter = new ClusterDetailAdapter(dataModels, getActivity().getApplicationContext());
+                listViewClusterDetail.setAdapter(clusterDetailAdapter);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void showDialog(final String clusterName) {
+        final String clusterId = "" + mapResponse.get("clusterid");
+
+        // custom dialog
+        dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.dialog_addcompetitor);
+        dialog.setTitle(getString(R.string.dialog_addcompetitor));
+
+        // set the custom dialog components - text, spinner
+        final Spinner spinnerCompetitor = (Spinner) dialog.findViewById(R.id.dialogitem_spinner_competitor);
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, competitorList);
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerCompetitor.setAdapter(spinnerArrayAdapter);
+
+        final TextView txtClusterId = (TextView) dialog.findViewById(R.id.dialogitem_txt_clusterid_value);
+        if(mapResponse != null) {
+            txtClusterId.setText(clusterId);
+        }
+
+        TextView txtClusterName = (TextView) dialog.findViewById(R.id.dialogitem_txt_clustername_value);
+        txtClusterName.setText(clusterName);
+
+        TextView txtUserId = (TextView) dialog.findViewById(R.id.dialogitem_txt_userid_value);
+        txtUserId.setText(sp.getString(AppConstant.COOKIE_USERID_KEY,""));
+
+
+        Button cancelButton = (Button) dialog.findViewById(R.id.dialogitem_btn_cancel);
+        // if button is clicked, close the custom dialog
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        Button okButton = (Button) dialog.findViewById(R.id.dialogitem_btn_send);
+        // if button is clicked, call API insert cluster
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String itemSelected = ""+spinnerCompetitor.getSelectedItem();
+                insertCluster(itemSelected,clusterId,clusterName);
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void insertCluster(String competitorName, String clusterId, String clusterName) {
+        String sessionId = sp.getString(AppConstant.COOKIE_SESSION_KEY,null);
+        String userId = sp.getString(AppConstant.COOKIE_USERID_KEY,null);
+
+        Map<Object,Object> paramMap = new HashMap<Object,Object>();
+        paramMap.put("session_id",sessionId);
+        paramMap.put("cluster_name",clusterName);
+        paramMap.put("cluster_id",clusterId);
+        paramMap.put("competitor_name",competitorName);
+        paramMap.put("created_by",userId);
+
+
+        UrlParam urlParam = new UrlParam();
+        urlParam.setUrl(AppConstant.INSERT_CLUSTERINFO_API_URL);
+        urlParam.setParamMap(paramMap);
+
+        Toast.makeText(getActivity(), "Insert Cluster Information...",
+                Toast.LENGTH_LONG).show();
+
+        AsyncOperation asop = new AsyncOperation();
+        asop.setListener(new AsyncTaskListener<Object>(){
+            @Override
+            public void onAsyncTaskComplete(Object result) {
+                try {
+                    dialog.dismiss();
+                    ObjectMapper mapper = new ObjectMapper();
+                    Object model = mapper.readValue((String) result, Object.class);
+                    if(model != null) {
+                        LinkedHashMap<Object, Object> mapResponse = (LinkedHashMap<Object, Object>) model;
+                        Boolean success = (Boolean) mapResponse.get("success");
+                        if(success) {
+                            Toast.makeText(getActivity(), "Insert Success",
+                                    Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(getActivity(), "Insert Failed",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+        asop.execute(urlParam);
+
+    }
+
+}
