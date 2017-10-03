@@ -1,7 +1,7 @@
 package id.co.myrepublic.salessupport.constant;
 
 /**
- * Created by myrepublicid on 27/9/17.
+ * Application Constant
  */
 
 public interface AppConstant {
