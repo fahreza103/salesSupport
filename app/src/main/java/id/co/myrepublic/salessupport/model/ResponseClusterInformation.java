@@ -4,19 +4,23 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by myrepublicid on 29/9/17.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ClusterDetailResponse<T>  {
+public class ResponseClusterInformation<T> implements Serializable {
+
+    private static final long serialVersionUID = 7657663563933224754L;
 
     @JsonProperty("competitor_list")
     private List<String> competitorList;
     @JsonProperty("cluster")
-    private List<T> cluster;
+    private Map cluster;
 
     public List<String> getCompetitorList() {
         return competitorList;
@@ -26,11 +30,11 @@ public class ClusterDetailResponse<T>  {
         this.competitorList = competitorList;
     }
 
-    public List<T> getCluster() {
+    public Map getCluster() {
         return cluster;
     }
 
-    public void setCluster(List<T> cluster) {
+    public void setCluster(Map cluster) {
         this.cluster = cluster;
     }
 }

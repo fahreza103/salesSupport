@@ -1,6 +1,5 @@
 package id.co.myrepublic.salessupport;
 
-import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,21 +12,26 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import java.util.List;
 
 import id.co.myrepublic.salessupport.constant.AppConstant;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private TextView txtUser;
+    public static TextView txtUser;
     public static TextView txtLoading;
     public static ProgressBar progressBar;
+    private LinearLayout layoutLogo;
 
 
     @Override
@@ -36,19 +40,12 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setTitle("Main");
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
 
         // Get Session and set Userid
         SharedPreferences sp = getSharedPreferences(AppConstant.SESSION_KEY, Context.MODE_PRIVATE);
-        String userId = sp.getString(AppConstant.COOKIE_USERID_KEY,null);
+        String userName = sp.getString(AppConstant.COOKIE_USERNAME_KEY,null);
 
 
 
@@ -63,30 +60,42 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         txtUser = (TextView) headerView.findViewById(R.id.nav_header_txt_status_value);
-        txtUser.setText(userId);
+        txtUser.setText(userName);
 
         this.txtLoading = (TextView) findViewById(R.id.content_main_progressbar_text);
         this.progressBar = (ProgressBar) findViewById(R.id.content_main_progressbar);
 
+        this.layoutLogo = (LinearLayout) findViewById(R.id.content_main_layout_logo);
 
+        Animation animation = AnimationUtils.loadAnimation(this,R.anim.fade_in);
+        layoutLogo.startAnimation(animation);
     }
 
 
 
     @Override
     public void onBackPressed() {
-        FragmentManager fm = getFragmentManager();
+        android.support.v4.app.FragmentManager fm = this.getSupportFragmentManager();
+        List<Fragment> fragments = fm.getFragments();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if (fm.getBackStackEntryCount() > 0) {
-            Log.i("MainActivity", "popping backstack");
+        } else if (fm.getBackStackEntryCount() > 1) {
+            fm.popBackStack();
+        } else if (fm.getBackStackEntryCount() == 1) {
+            Animation animation = AnimationUtils.loadAnimation(this,R.anim.fade_in);
+            layoutLogo.startAnimation(animation);
+            layoutLogo.setVisibility(View.VISIBLE);
+            setTitle("Main");
             fm.popBackStack();
         } else {
-            setTitle(getString(R.string.app_name));
             super.onBackPressed();
         }
+
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -103,8 +112,8 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_logout) {
+            doLogout();
         }
 
         return super.onOptionsItemSelected(item);
@@ -128,21 +137,10 @@ public class MainActivity extends AppCompatActivity
         //initializing the fragment object which is selected
         switch (itemId) {
             case R.id.data:
-                fragment = new MenuDataFragment();
-                break;
-            case R.id.best_sales:
-                fragment = new MenuSalesFragment();
+                fragment = new AreasFragment();
                 break;
             case R.id.logout:
-                // Clear session
-                SharedPreferences sp = getSharedPreferences(AppConstant.SESSION_KEY, Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sp.edit();
-                editor.clear();
-                editor.commit();
-
-                Intent intent = new Intent(this, LoginActivity.class);
-                startActivity(intent);
-                finish();
+                doLogout();
                 return;
         }
 
@@ -160,6 +158,21 @@ public class MainActivity extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+
+        layoutLogo.setVisibility(View.GONE);
+    }
+
+    private void doLogout() {
+        // Clear session
+        SharedPreferences sp = getSharedPreferences(AppConstant.SESSION_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.clear();
+        editor.commit();
+
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish();
+        return;
     }
 
 }

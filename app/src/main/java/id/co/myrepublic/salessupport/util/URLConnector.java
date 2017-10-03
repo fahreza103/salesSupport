@@ -1,8 +1,5 @@
 package id.co.myrepublic.salessupport.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.TypeFactory;
-
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
@@ -12,14 +9,21 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
-import id.co.myrepublic.salessupport.constant.AppConstant;
+import id.co.myrepublic.salessupport.model.MainModel;
+import id.co.myrepublic.salessupport.model.ResponseUserSelect;
 
 /**
- * Created by myrepublicid on 27/9/17.
+ * Utility to connect this app to specified URL location, and return the response
  */
 
 public class URLConnector {
 
+    /**
+     * Connect to specified URL
+     * @param request
+     * @param paramMap
+     * @return
+     */
     public static String doConnect(String request, Map<Object,Object> paramMap) {
         String urlParameters = "";
         int i = 0;
@@ -41,6 +45,8 @@ public class URLConnector {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
             conn.setInstanceFollowRedirects(false);
+            conn.setConnectTimeout(5000);
+            conn.setReadTimeout(5000);
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             conn.setRequestProperty("charset", "utf-8");
@@ -70,21 +76,17 @@ public class URLConnector {
     }
 
     public static void main (String[] args) {
-        String URL = AppConstant.GET_CLUSTERDETAIL_API_URL;
+        //String URL = "https://boss-st.myrepublic.co.id/api/auth/check_session";
+        String URL = "https://boss-st.myrepublic.co.id/api/user/select";
         Map<Object,Object> paramMap = new HashMap<>();
 
-        paramMap.put("session_id","59d93d13-c91b-4f57-82eb-7b5a9482bf9d");
-        paramMap.put("cluster_name","AMERICA");
+        paramMap.put("session_id","3614ca48-794a-4ddc-9aa2-3052f18cf76b");
+        //paramMap.put("cluster_name","AMERICA");
+        paramMap.put("user_id","168489");
 
         String json = URLConnector.doConnect(URL, paramMap);
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            TypeFactory t = TypeFactory.defaultInstance();
-            Object model = mapper.readValue(json,Object.class);
-            System.out.print(model);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        MainModel<ResponseUserSelect> model = StringUtil.convertStringToObject(json,ResponseUserSelect.class);
+        ResponseUserSelect sr =  model.getObject();
 
     }
 

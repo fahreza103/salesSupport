@@ -5,7 +5,6 @@ import android.view.View;
 
 import id.co.myrepublic.salessupport.MainActivity;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
-import id.co.myrepublic.salessupport.model.UrlParam;
 
 /**
  * Created by myrepublicid on 28/9/17.
@@ -13,12 +12,16 @@ import id.co.myrepublic.salessupport.model.UrlParam;
 
 public class AsyncOperation extends AsyncTask<UrlParam, Integer, String> {
 
+    private String taskName;
     private String jsonResult;
     // -1 = failed , 0 = not yet run, 1 = success
     private int asyncStatus = 0;
     private AsyncTaskListener listener;
 
 
+    public AsyncOperation(String taskName) {
+        this.taskName = taskName;
+    }
 
     public String getJsonResult() {
         return jsonResult;
@@ -35,6 +38,14 @@ public class AsyncOperation extends AsyncTask<UrlParam, Integer, String> {
 
     public void setListener(AsyncTaskListener listener) {
         this.listener = listener;
+    }
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
     }
 
     protected void onPreExecute() {
@@ -80,7 +91,7 @@ public class AsyncOperation extends AsyncTask<UrlParam, Integer, String> {
 
         // if listener defined , do callback
         if(listener != null) {
-            listener.onAsyncTaskComplete(result);
+            listener.onAsyncTaskComplete(result, this.taskName);
         }
     }
 }

@@ -1,7 +1,9 @@
 package id.co.myrepublic.salessupport;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -17,20 +19,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.co.myrepublic.salessupport.adapter.AreaAdapter;
+import id.co.myrepublic.salessupport.listener.DialogListener;
 import id.co.myrepublic.salessupport.model.Area;
-import id.co.myrepublic.salessupport.model.City;
+import id.co.myrepublic.salessupport.support.DialogBuilder;
 
 
 /**
  * Created by myrepublicid on 26/9/17.
  */
 
-public class MenuDataFragment extends Fragment  {
+public class AreasFragment extends Fragment implements View.OnClickListener, DialogListener {
 
     private static View view;
     private ListView listViewCity;
     private AreaAdapter areaAdapter;
-    private List<City> dataModels = new ArrayList<City>();
+    private List<Area> dataModels = new ArrayList<Area>();
+    private List<Area> dataSearchResult = new ArrayList<Area>();
+
+
+    private FloatingActionButton fabSearch;
+    private FloatingActionButton fabRefresh;
 
     @Nullable
     @Override
@@ -50,7 +58,7 @@ public class MenuDataFragment extends Fragment  {
             String backStateName = this.getClass().getName();
             FragmentManager manager = getActivity().getSupportFragmentManager();
             FragmentTransaction trans = manager.beginTransaction();
-            MenuDataFragment fragment = ((MenuDataFragment) getFragmentManager().findFragmentByTag(backStateName));
+            AreasFragment fragment = ((AreasFragment) getFragmentManager().findFragmentByTag(backStateName));
             if(fragment != null) {
                 trans.remove(fragment);
                 trans.commit();
@@ -69,33 +77,26 @@ public class MenuDataFragment extends Fragment  {
         getActivity().setTitle(getActivity().getString(R.string.fragment_view_city));
 
         listViewCity=(ListView)getActivity().findViewById(R.id.listData);
+        fabRefresh = (FloatingActionButton)getActivity().findViewById(R.id.fab_areaRefresh);
+        fabSearch = (FloatingActionButton)getActivity().findViewById(R.id.fab_areaSearch);
 
+        fabRefresh.setOnClickListener(this);
+        fabSearch.setOnClickListener(this);
 
-        // get citylist from API
-//        SharedPreferences sp = getActivity().getSharedPreferences(AppConstant.SESSION_KEY, Context.MODE_PRIVATE);
-//        String sessionId = sp.getString(AppConstant.COOKIE_SESSION_KEY,null);
-//
-//        Map<Object,Object> paramMap = new HashMap<Object,Object>();
-//        paramMap.put("session_id",sessionId);
-//        paramMap.put("province_id","STA0001");
-//
-//        UrlParam urlParam = new UrlParam();
-//        urlParam.setUrl(AppConstant.GET_CITY_API_URL);
-//        urlParam.setParamMap(paramMap);
-//
-//        AsyncOperation asop = new AsyncOperation();
-//        asop.setListener(this);
-//        asop.execute(urlParam);
-
-        final List<Area> dataModels = Area.createDataDummy();
-        areaAdapter = new AreaAdapter(dataModels,getActivity().getApplicationContext());
-        listViewCity.setAdapter(areaAdapter);
+        dataModels = Area.createDataDummy();
+        createAreas(dataModels);
+        dataSearchResult.clear();
 
         listViewCity.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Area dataModel= dataModels.get(position);
+                Area dataModel= null;
+                if(dataSearchResult.size()>0) {
+                    dataModel = dataSearchResult.get(position);
+                } else {
+                    dataModel = dataModels.get(position);
+                }
 
 //                Snackbar.make(view, dataModel.getCityName()+"\n"+dataModel.getArpu()+"\n"+dataModel.getActiveSubs(), Snackbar.LENGTH_LONG)
 //                        .setAction("No action", null).show();
@@ -119,19 +120,37 @@ public class MenuDataFragment extends Fragment  {
         });
     }
 
-//    @Override
-//    public void onAsyncTaskComplete(Object result) {
-//        // Convert to Object
-//        try {
-//            ObjectMapper mapper = new ObjectMapper();
-//            MainModel<City> model = mapper.readValue((String)result,
-//                    mapper.getTypeFactory().constructParametricType(MainModel.class, City.class));
-//            dataModels = model.getResponse();
-//
-//            areaAdapter = new AreaAdapter(dataModels,getActivity().getApplicationContext());
-//            listViewCity.setAdapter(areaAdapter);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.fab_areaRefresh :
+                dataSearchResult.clear();
+                createAreas(dataModels);
+                break;
+            case R.id.fab_areaSearch :
+                DialogBuilder db = DialogBuilder.getInstance();
+                db.setDialogListener(this);
+                db.createInputDialog(getContext(),getString(android.R.string.search_go),
+                        getString(R.string.dialog_areas_searchname));
+                break;
+        }
+    }
+
+    private void createAreas(List<Area> data) {
+        areaAdapter = new AreaAdapter(data,getActivity().getApplicationContext());
+        listViewCity.setAdapter(areaAdapter);
+    }
+
+    @Override
+    public void onDialogOkPressed(DialogInterface dialog, Object... result) {
+        String searchKey = ""+result[0];
+        dataSearchResult = new ArrayList<Area>();
+        for(Area area : dataModels) {
+            if(area.getAreaName() != null && area.getAreaName().toLowerCase().contains(searchKey.toLowerCase())) {
+                dataSearchResult.add(area);
+            }
+        }
+        createAreas(dataSearchResult);
+
+    }
 }

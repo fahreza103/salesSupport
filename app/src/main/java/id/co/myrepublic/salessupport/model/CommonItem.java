@@ -6,7 +6,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * Created by myrepublicid on 27/9/17.
  */
 
-public class ClusterDetailItem {
+public class CommonItem {
 
     private String key;
     private String value;

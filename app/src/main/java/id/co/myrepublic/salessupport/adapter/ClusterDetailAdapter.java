@@ -12,15 +12,15 @@ import android.widget.TextView;
 import java.util.List;
 
 import id.co.myrepublic.salessupport.R;
-import id.co.myrepublic.salessupport.model.ClusterDetailItem;
+import id.co.myrepublic.salessupport.model.CommonItem;
 
 /**
  * Created by myrepublicid on 28/9/17.
  */
 
-public class ClusterDetailAdapter extends ArrayAdapter<ClusterDetailItem> {
+public class ClusterDetailAdapter extends ArrayAdapter<CommonItem> {
 
-    private List<ClusterDetailItem> dataSet;
+    private List<CommonItem> dataSet;
     Context mContext;
 
     // View lookup cache
@@ -29,7 +29,7 @@ public class ClusterDetailAdapter extends ArrayAdapter<ClusterDetailItem> {
         TextView subText1;
     }
 
-    public ClusterDetailAdapter(List<ClusterDetailItem> data, Context context) {
+    public ClusterDetailAdapter(List<CommonItem> data, Context context) {
         super(context, R.layout.row_item_clusterdetail, data);
         this.dataSet = data;
         this.mContext=context;
@@ -43,7 +43,7 @@ public class ClusterDetailAdapter extends ArrayAdapter<ClusterDetailItem> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
-        ClusterDetailItem dataModel = getItem(position);
+        CommonItem dataModel = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
         ViewHolder viewHolder; // view lookup cache stored in tag
 

@@ -1,47 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
+    android:background="@color/white"
     android:layout_height="match_parent">
 
-    <!--<TextView-->
-        <!--android:id="@+id/login_txt_username"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:gravity="center"-->
-        <!--android:layout_marginTop="10dp"-->
-        <!--android:text="@string/activity_login_username" />-->
 
-    <!--<EditText-->
-        <!--android:id="@+id/login_edittxt_username"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:ems="10"-->
-        <!--android:inputType="textPersonName"-->
-        <!--android:text="" />-->
-
-    <!--<TextView-->
-        <!--android:id="@+id/login_txt_password"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:gravity="center"-->
-        <!--android:layout_marginTop="10dp"-->
-        <!--android:text="@string/activity_login_password" />-->
-
-    <!--<EditText-->
-        <!--android:id="@+id/login_edittxt_password"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:ems="10"-->
-        <!--android:inputType="textPassword" />-->
-
-    <!--<Button-->
-        <!--android:id="@+id/login_btn_signin"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:background="@color/colorLogo"-->
-        <!--android:textColor="@color/white"-->
-        <!--android:layout_marginTop="10dp"-->
-        <!--android:text="@string/activity_login_signin" />-->
 
     <ProgressBar
         android:id="@+id/login_progressbar"
@@ -57,5 +21,103 @@
         android:id="@+id/login_webview_login"
         android:layout_width="match_parent"
         android:layout_below="@id/login_progressbar"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent" >
+    </WebView>
+
+    <ProgressBar
+        android:id="@+id/login_center_progressbar"
+        style="?android:attr/progressBarStyle"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:visibility="gone"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/login_center_progressbar_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="40dp"
+        android:textColor="@color/colorLogo"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="gone"
+        android:layout_below="@id/login_center_progressbar"
+        android:text="@string/activity_loading" />
+
+    <Button
+        android:id="@+id/login_btn_retry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="gone"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/btnColor"
+        android:text="@string/activity_login_retry" />
+
+
+    <LinearLayout
+        android:id="@+id/login_layout_weberror"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:background="@color/colorLogo">
+
+
+        <ImageView
+            android:id="@+id/login_image_logo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            app:srcCompat="@mipmap/mr_logo_white" />
+
+        <TextView
+            android:id="@+id/login_txt_error_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/activity_login_failed_connect" />
+
+        <TextView
+            android:id="@+id/login_txt_error_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/activity_login_failed_code" />
+
+        <TextView
+            android:id="@+id/login_txt_error_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/activity_login_failed_desc" />
+
+        <Button
+            android:id="@+id/login_btn_error_retry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:backgroundTint="@color/btnColor"
+            android:textColor="@color/white"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:text="@string/activity_login_retry" />
+    </LinearLayout>
 </RelativeLayout>

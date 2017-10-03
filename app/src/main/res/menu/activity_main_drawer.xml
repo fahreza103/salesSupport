@@ -4,19 +4,13 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/data"
-            android:title="Data" />
+            android:title="Areas" />
         <item
-            android:id="@+id/best_sales"
-            android:title="Best Sales" />
+            android:id="@+id/logout"
+            android:title="Logout" />
 
     </group>
 
-    <item android:title="User">
-        <menu>
-            <item
-                android:id="@+id/logout"
-                android:title="Logout" />
-        </menu>
-    </item>
+
 
 </menu>

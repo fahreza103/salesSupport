@@ -1,14 +1,26 @@
 package id.co.myrepublic.salessupport.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by myrepublicid on 28/9/17.
- */
+import id.co.myrepublic.salessupport.model.MainModel;
 
+/**
+ * Util class for String operations
+ */
 public class StringUtil {
 
+    /**
+     * get cookies value from string, currently the format is
+     * value=xxx;value2=xxx
+     * @param cookieStr
+     * @return Map based on cookie string
+     */
     public static Map<String,String> extractCookie(String cookieStr) {
         Map<String,String> cookieMap = new HashMap<String,String>();
         try {
@@ -22,5 +34,35 @@ public class StringUtil {
         }
 
         return cookieMap;
+    }
+
+    /**
+     * using jackson, convert json string into java object
+     * @param jsonString, must be json format string
+     * @param clazz, if response is array, please defined the class with array type, example Cluster[].class
+     * @return java object
+     */
+    public static MainModel convertStringToObject (String jsonString, Class<?> clazz) {
+        if (jsonString == null) return null;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            TypeFactory t = TypeFactory.defaultInstance();
+            MainModel model = mapper.readValue(jsonString,MainModel.class);
+            if(model != null && clazz != null) {
+                if(model.getResponse() instanceof ArrayNode) {
+                    Object[] response = (Object[])mapper.convertValue(model.getResponse(), clazz);
+                    model.setListObject(Arrays.asList(response));
+                } else {
+                    Object response = mapper.convertValue(model.getResponse(), clazz);
+                    model.setObject(response);
+                }
+            }
+
+            System.out.print(model);
+            return model;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

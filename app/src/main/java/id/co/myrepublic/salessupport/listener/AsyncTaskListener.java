@@ -1,10 +1,15 @@
 package id.co.myrepublic.salessupport.listener;
 
 /**
- * Created by myrepublicid on 28/9/17.
+ * Callback operation when asynctask is performed
  */
 
 public interface AsyncTaskListener<T> {
 
-    public void onAsyncTaskComplete(T result);
+    /**
+     * Invoked when asynctask is complete
+     * @param result
+     * @param taskName
+     */
+    public void onAsyncTaskComplete(T result, String taskName);
 }

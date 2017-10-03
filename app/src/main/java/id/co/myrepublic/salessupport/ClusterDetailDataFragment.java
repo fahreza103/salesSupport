@@ -19,22 +19,21 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import id.co.myrepublic.salessupport.adapter.ClusterDetailAdapter;
 import id.co.myrepublic.salessupport.constant.AppConstant;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
-import id.co.myrepublic.salessupport.model.ClusterDetailItem;
-import id.co.myrepublic.salessupport.model.ClusterDetailModel;
-import id.co.myrepublic.salessupport.model.ClusterDetailResponse;
-import id.co.myrepublic.salessupport.model.UrlParam;
+import id.co.myrepublic.salessupport.model.CommonItem;
+import id.co.myrepublic.salessupport.model.MainModel;
+import id.co.myrepublic.salessupport.model.ResponseClusterInformation;
+import id.co.myrepublic.salessupport.support.DialogBuilder;
 import id.co.myrepublic.salessupport.util.AsyncOperation;
+import id.co.myrepublic.salessupport.util.StringUtil;
+import id.co.myrepublic.salessupport.util.UrlParam;
 
 
 /**
@@ -49,8 +48,8 @@ public class ClusterDetailDataFragment extends Fragment implements AsyncTaskList
 
 
     private SharedPreferences sp;
-    private LinkedHashMap<Object, Object> mapResponse;
-    private List<ClusterDetailItem> dataModels = new ArrayList<ClusterDetailItem>();
+    private Map<Object, Object> mapResponse;
+    private List<CommonItem> dataModels = new ArrayList<CommonItem>();
     private List<String> competitorList = new ArrayList<String>();
     private Dialog dialog;
 
@@ -85,7 +84,7 @@ public class ClusterDetailDataFragment extends Fragment implements AsyncTaskList
         urlParam.setUrl(AppConstant.GET_CLUSTERDETAIL_API_URL);
         urlParam.setParamMap(paramMap);
 
-        AsyncOperation asop = new AsyncOperation();
+        AsyncOperation asop = new AsyncOperation("getClusterDetail");
         asop.setListener(this);
         asop.execute(urlParam);
 
@@ -93,7 +92,7 @@ public class ClusterDetailDataFragment extends Fragment implements AsyncTaskList
 
         // Floating Button
         fab = (FloatingActionButton) getActivity().findViewById(R.id.fab_addcompetitor);
-
+        fab.setVisibility(View.GONE);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -123,36 +122,53 @@ public class ClusterDetailDataFragment extends Fragment implements AsyncTaskList
     }
 
     @Override
-    public void onAsyncTaskComplete(Object result) {
-        // Convert to Object
-        try {
+    public void onAsyncTaskComplete(Object result, String taskName) {
+        if("getClusterDetail".equals(taskName)) {
             fab.setVisibility(View.VISIBLE);
-            ObjectMapper mapper = new ObjectMapper();
-            ClusterDetailModel model = mapper.readValue((String)result,ClusterDetailModel.class);
-            ClusterDetailResponse cdr =  model.getResponse();
+            if(result != null) {
+                MainModel<ResponseClusterInformation> model = StringUtil.convertStringToObject("" + result, ResponseClusterInformation.class);
+                ResponseClusterInformation rci = model.getObject();
+                mapResponse = rci.getCluster();
 
-            List<LinkedHashMap<Object,Object>> listMapResponse = cdr.getCluster();
-            competitorList = cdr.getCompetitorList();
+                competitorList = rci.getCompetitorList();
+                if(mapResponse != null && !mapResponse.isEmpty()) {
+                    for (Map.Entry<Object, Object> entry : mapResponse.entrySet()) {
+                        String key = entry.getKey() == null ? "-" : ""+ entry.getKey();
+                        String value = entry.getValue() == null ? "-" : ""+ entry.getValue();
 
-            if(listMapResponse != null && !listMapResponse.isEmpty()) {
-                mapResponse = listMapResponse.get(0);
-                for (Map.Entry<Object, Object> entry : mapResponse.entrySet()) {
-                    String key = entry.getKey() == null ? "-" : ""+ entry.getKey();
-                    String value = entry.getValue() == null ? "-" : ""+ entry.getValue();
-
-                    ClusterDetailItem clusterDetail = new ClusterDetailItem();
-                    clusterDetail.setKey(key);
-                    clusterDetail.setValue(value);
-                    dataModels.add(clusterDetail);
+                        CommonItem clusterDetail = new CommonItem();
+                        clusterDetail.setKey(key);
+                        clusterDetail.setValue(value);
+                        dataModels.add(clusterDetail);
+                    }
+                    clusterDetailAdapter = new ClusterDetailAdapter(dataModels, getActivity().getApplicationContext());
+                    listViewClusterDetail.setAdapter(clusterDetailAdapter);
+                } else {
+                    DialogBuilder db = DialogBuilder.getInstance();
+                    db.createAlertDialog(getContext(), getString(R.string.dialog_title_error),
+                            getString(R.string.dialog_content_failedconnect));
                 }
 
-                clusterDetailAdapter = new ClusterDetailAdapter(dataModels, getActivity().getApplicationContext());
-                listViewClusterDetail.setAdapter(clusterDetailAdapter);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } else if ("insertCompetitor".equals(taskName)) {
+            dialog.dismiss();
+            if(result != null) {
+                MainModel model = StringUtil.convertStringToObject("" + result, null);
+                Boolean success = model.getSuccess();
+                if(success) {
+                    Toast.makeText(getActivity(), "Insert Success",
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getActivity(), "Insert Failed "+model.getError(),
+                            Toast.LENGTH_LONG).show();
+                }
+            } else {
+                DialogBuilder db = DialogBuilder.getInstance();
+                db.createAlertDialog(getContext(), getString(R.string.dialog_title_error),
+                        getString(R.string.dialog_content_failedconnect));
+            }
 
+        }
     }
 
     private void showDialog(final String clusterName) {
@@ -171,7 +187,7 @@ public class ClusterDetailDataFragment extends Fragment implements AsyncTaskList
 
         final TextView txtClusterId = (TextView) dialog.findViewById(R.id.dialogitem_txt_clusterid_value);
         if(mapResponse != null) {
-            txtClusterId.setText(clusterId);
+            txtClusterId.setText(clusterId==null || "null".equals(clusterId)? "-" : clusterId);
         }
 
         TextView txtClusterName = (TextView) dialog.findViewById(R.id.dialogitem_txt_clustername_value);
@@ -222,32 +238,8 @@ public class ClusterDetailDataFragment extends Fragment implements AsyncTaskList
         Toast.makeText(getActivity(), "Insert Cluster Information...",
                 Toast.LENGTH_LONG).show();
 
-        AsyncOperation asop = new AsyncOperation();
-        asop.setListener(new AsyncTaskListener<Object>(){
-            @Override
-            public void onAsyncTaskComplete(Object result) {
-                try {
-                    dialog.dismiss();
-                    ObjectMapper mapper = new ObjectMapper();
-                    Object model = mapper.readValue((String) result, Object.class);
-                    if(model != null) {
-                        LinkedHashMap<Object, Object> mapResponse = (LinkedHashMap<Object, Object>) model;
-                        Boolean success = (Boolean) mapResponse.get("success");
-                        if(success) {
-                            Toast.makeText(getActivity(), "Insert Success",
-                                    Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(getActivity(), "Insert Failed",
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            }
-        });
+        AsyncOperation asop = new AsyncOperation("insertCompetitor");
+        asop.setListener(this);
         asop.execute(urlParam);
 
     }

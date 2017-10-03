@@ -74,7 +74,7 @@ public class ClusterAdapter extends ArrayAdapter<Cluster> {
         lastPosition = position;
 
         viewHolder.mainText.setText(dataModel.getClusterName());
-        viewHolder.subText1.setText(dataModel.getTotalHomePass().toString());
+        viewHolder.subText1.setText(mContext.getString(R.string.fragment_cluster_homepass)+" : "+dataModel.getTotalHomePass().toString());
         viewHolder.subText2.setVisibility(View.GONE);
         viewHolder.subText3.setVisibility(View.GONE);
 //        viewHolder.subText2.setText(dataModel.getArpu());

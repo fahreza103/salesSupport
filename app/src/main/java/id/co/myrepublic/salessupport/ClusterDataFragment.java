@@ -1,9 +1,12 @@
 package id.co.myrepublic.salessupport;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -13,9 +16,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,21 +27,29 @@ import java.util.Map;
 import id.co.myrepublic.salessupport.adapter.ClusterAdapter;
 import id.co.myrepublic.salessupport.constant.AppConstant;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
+import id.co.myrepublic.salessupport.listener.DialogListener;
 import id.co.myrepublic.salessupport.model.Cluster;
 import id.co.myrepublic.salessupport.model.MainModel;
-import id.co.myrepublic.salessupport.model.UrlParam;
+import id.co.myrepublic.salessupport.support.DialogBuilder;
 import id.co.myrepublic.salessupport.util.AsyncOperation;
+import id.co.myrepublic.salessupport.util.StringUtil;
+import id.co.myrepublic.salessupport.util.UrlParam;
 
 
 /**
  * Created by myrepublicid on 26/9/17.
  */
 
-public class ClusterDataFragment extends Fragment implements AsyncTaskListener {
+public class ClusterDataFragment extends Fragment implements AsyncTaskListener, View.OnClickListener, DialogListener {
 
     private ListView listViewCluster;
     private ClusterAdapter clusterAdapter;
     private List<Cluster> dataModels = new ArrayList<Cluster>();
+    private List<Cluster> dataSearchResult = new ArrayList<Cluster>();
+
+    private LinearLayout fabLayout;
+    private FloatingActionButton fabSearch;
+    private FloatingActionButton fabRefresh;
 
     @Nullable
     @Override
@@ -71,18 +81,31 @@ public class ClusterDataFragment extends Fragment implements AsyncTaskListener {
         urlParam.setUrl(AppConstant.GET_CLUSTER_API_URL);
         urlParam.setParamMap(paramMap);
 
-        AsyncOperation asop = new AsyncOperation();
+        AsyncOperation asop = new AsyncOperation("getCluster");
         asop.setListener(this);
         asop.execute(urlParam);
 
         listViewCluster =(ListView)getActivity().findViewById(R.id.listCluster);
 
+        fabLayout = (LinearLayout) getActivity().findViewById(R.id.cluster_layout_floating);
+        fabRefresh = (FloatingActionButton)getActivity().findViewById(R.id.fab_clusterRefresh);
+        fabSearch = (FloatingActionButton)getActivity().findViewById(R.id.fab_clusterSearch);
 
+        fabLayout.setVisibility(View.GONE);
+        fabRefresh.setOnClickListener(this);
+        fabSearch.setOnClickListener(this);
+
+        dataSearchResult.clear();
         listViewCluster.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Cluster dataModel= dataModels.get(position);
+                Cluster dataModel= null;
+                if(dataSearchResult.size()>0) {
+                    dataModel = dataSearchResult.get(position);
+                } else {
+                    dataModel = dataModels.get(position);
+                }
 
                 Fragment fragment = new ClusterDetailDataFragment();
 
@@ -123,19 +146,60 @@ public class ClusterDataFragment extends Fragment implements AsyncTaskListener {
     }
 
     @Override
-    public void onAsyncTaskComplete(Object result) {
+    public void onAsyncTaskComplete(Object result, String taskName) {
+        fabLayout.setVisibility(View.VISIBLE);
         // Convert to Object
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            MainModel<Cluster> model = mapper.readValue((String)result,
-                    mapper.getTypeFactory().constructParametricType(MainModel.class, Cluster.class));
-            dataModels = model.getResponse();
-
-            clusterAdapter = new ClusterAdapter(dataModels,getActivity().getApplicationContext());
-            listViewCluster.setAdapter(clusterAdapter);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if(result != null) {
+            MainModel<Cluster> model = StringUtil.convertStringToObject("" + result, Cluster[].class);
+            if(model.getSuccess()) {
+                dataModels = model.getListObject();
+            } else {
+                // Error on session (expired or invalid)
+                if(AppConstant.SESSION_VALIDATION.equals(model.getAction())) {
+                    Intent intent = new Intent(getContext(), LoginActivity.class);
+                    startActivity(intent);
+                    getActivity().finish();
+                }
+            }
+            createCluster(dataModels);
+        } else {
+            DialogBuilder db = DialogBuilder.getInstance();
+            db.createAlertDialog(getContext(), getString(R.string.dialog_title_error),
+                    getString(R.string.dialog_content_failedconnect));
         }
 
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.fab_clusterRefresh :
+                dataSearchResult.clear();
+                createCluster(dataModels);
+                break;
+            case R.id.fab_clusterSearch :
+                DialogBuilder db = DialogBuilder.getInstance();
+                db.setDialogListener(this);
+                db.createInputDialog(getContext(),getString(android.R.string.search_go),
+                        getString(R.string.dialog_cluster_searchname));
+                break;
+        }
+    }
+
+    private void createCluster(List<Cluster> data) {
+        clusterAdapter = new ClusterAdapter(data,getActivity().getApplicationContext());
+        listViewCluster.setAdapter(clusterAdapter);
+    }
+
+    @Override
+    public void onDialogOkPressed(DialogInterface dialog, Object... result) {
+        String searchKey = ""+result[0];
+        dataSearchResult = new ArrayList<Cluster>();
+        for(Cluster cluster : dataModels) {
+            if(cluster.getClusterName() != null && cluster.getClusterName().toLowerCase().contains(searchKey.toLowerCase())) {
+                dataSearchResult.add(cluster);
+            }
+        }
+        createCluster(dataSearchResult);
     }
 }
