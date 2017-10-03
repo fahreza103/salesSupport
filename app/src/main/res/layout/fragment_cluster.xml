@@ -12,17 +12,19 @@
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
-        android:layout_width="65dp"
+        android:layout_width="75dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:id="@+id/cluster_layout_floating"
-        android:layout_height="150dp">
+        android:layout_margin="@dimen/fab_margin"
+        android:layout_height="180dp">
 
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_clusterSearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:useCompatPadding="true"
             app:backgroundTint="@color/colorLogo2"
             app:srcCompat="@android:drawable/ic_menu_search" />
 
@@ -32,9 +34,7 @@
             android:id="@+id/fab_clusterRefresh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="25dp"
+            app:useCompatPadding="true"
             app:backgroundTint="@color/colorLogo2"
             app:srcCompat="@android:drawable/ic_input_get" />
 
