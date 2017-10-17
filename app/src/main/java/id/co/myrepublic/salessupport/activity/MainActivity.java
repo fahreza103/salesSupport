@@ -1,4 +1,4 @@
-package id.co.myrepublic.salessupport;
+package id.co.myrepublic.salessupport.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,14 +15,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.List;
 
+import id.co.myrepublic.salessupport.R;
 import id.co.myrepublic.salessupport.constant.AppConstant;
 
 public class MainActivity extends AppCompatActivity
@@ -31,7 +29,7 @@ public class MainActivity extends AppCompatActivity
     public static TextView txtUser;
     public static TextView txtLoading;
     public static ProgressBar progressBar;
-    private LinearLayout layoutLogo;
+
 
 
     @Override
@@ -65,10 +63,15 @@ public class MainActivity extends AppCompatActivity
         this.txtLoading = (TextView) findViewById(R.id.content_main_progressbar_text);
         this.progressBar = (ProgressBar) findViewById(R.id.content_main_progressbar);
 
-        this.layoutLogo = (LinearLayout) findViewById(R.id.content_main_layout_logo);
+        // Call main fragment
+        Fragment fragment = new MainFragment();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        String backStateName = fragment.getClass().getName();
+        ft.replace(R.id.content_frame, fragment, backStateName);
+        ft.addToBackStack(backStateName);
+        ft.commit();
 
-        Animation animation = AnimationUtils.loadAnimation(this,R.anim.fade_in);
-        layoutLogo.startAnimation(animation);
+
     }
 
 
@@ -82,13 +85,12 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else if (fm.getBackStackEntryCount() > 1) {
+            if(fm.getBackStackEntryCount() == 2) {
+                setTitle("Main");
+            }
             fm.popBackStack();
         } else if (fm.getBackStackEntryCount() == 1) {
-            Animation animation = AnimationUtils.loadAnimation(this,R.anim.fade_in);
-            layoutLogo.startAnimation(animation);
-            layoutLogo.setVisibility(View.VISIBLE);
-            setTitle("Main");
-            fm.popBackStack();
+            finish();
         } else {
             super.onBackPressed();
         }
@@ -158,8 +160,6 @@ public class MainActivity extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
-
-        layoutLogo.setVisibility(View.GONE);
     }
 
     private void doLogout() {

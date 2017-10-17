@@ -1,4 +1,4 @@
-package id.co.myrepublic.salessupport;
+package id.co.myrepublic.salessupport.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +20,7 @@ import android.widget.TextView;
 import java.util.HashMap;
 import java.util.Map;
 
+import id.co.myrepublic.salessupport.R;
 import id.co.myrepublic.salessupport.constant.AppConstant;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
 import id.co.myrepublic.salessupport.model.MainModel;

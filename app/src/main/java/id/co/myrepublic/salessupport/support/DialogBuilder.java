@@ -72,7 +72,7 @@ public class DialogBuilder {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if(dialogListener != null && input.getText() != null) {
-                    dialogListener.onDialogOkPressed(dialog,input.getText().toString(),which);
+                    dialogListener.onDialogOkPressed(dialog,which,input.getText().toString(),which);
                 }
                 dialog.dismiss();
             }
@@ -80,10 +80,15 @@ public class DialogBuilder {
         builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                if(dialogListener != null) {
+                    dialogListener.onDialogCancelPressed(dialog,which);
+                }
                 dialog.cancel();
             }
         });
 
         builder.show();
     }
+
+
 }

@@ -1,4 +1,4 @@
-package id.co.myrepublic.salessupport;
+package id.co.myrepublic.salessupport.activity;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import id.co.myrepublic.salessupport.R;
 import id.co.myrepublic.salessupport.adapter.ClusterDetailAdapter;
 import id.co.myrepublic.salessupport.constant.AppConstant;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;

@@ -1,4 +1,4 @@
-package id.co.myrepublic.salessupport;
+package id.co.myrepublic.salessupport.activity;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import id.co.myrepublic.salessupport.R;
 import id.co.myrepublic.salessupport.adapter.ClusterAdapter;
 import id.co.myrepublic.salessupport.constant.AppConstant;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
@@ -40,7 +41,7 @@ import id.co.myrepublic.salessupport.util.UrlParam;
  * Created by myrepublicid on 26/9/17.
  */
 
-public class ClusterDataFragment extends Fragment implements AsyncTaskListener, View.OnClickListener, DialogListener {
+public class ClusterDataFragment extends Fragment implements AsyncTaskListener, View.OnClickListener, DialogListener, AdapterView.OnItemClickListener {
 
     private ListView listViewCluster;
     private ClusterAdapter clusterAdapter;
@@ -96,34 +97,33 @@ public class ClusterDataFragment extends Fragment implements AsyncTaskListener, 
         fabSearch.setOnClickListener(this);
 
         dataSearchResult.clear();
-        listViewCluster.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        listViewCluster.setOnItemClickListener(this);
+    }
 
-                Cluster dataModel= null;
-                if(dataSearchResult.size()>0) {
-                    dataModel = dataSearchResult.get(position);
-                } else {
-                    dataModel = dataModels.get(position);
-                }
 
-                Fragment fragment = new ClusterDetailDataFragment();
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+        Cluster dataModel= null;
+        if(dataSearchResult.size()>0) {
+            dataModel = dataSearchResult.get(position);
+        } else {
+            dataModel = dataModels.get(position);
+        }
 
-                Bundle bundle = new Bundle();
-                bundle.putString("clusterName", dataModel.getClusterName());
-                fragment.setArguments(bundle);
+        Fragment fragment = new ClusterDetailDataFragment();
 
-                String backStateName = this.getClass().getName();
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.content_frame, fragment,backStateName);
-                ft.addToBackStack(backStateName);
-                ft.commit();
+        Bundle bundle = new Bundle();
+        bundle.putString("clusterName", dataModel.getClusterName());
+        fragment.setArguments(bundle);
 
-                DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
-                drawer.closeDrawer(GravityCompat.START);
+        String backStateName = this.getClass().getName();
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_frame, fragment,backStateName);
+        ft.addToBackStack(backStateName);
+        ft.commit();
 
-            }
-        });
+        DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
     }
 
     @Override
@@ -192,7 +192,7 @@ public class ClusterDataFragment extends Fragment implements AsyncTaskListener, 
     }
 
     @Override
-    public void onDialogOkPressed(DialogInterface dialog, Object... result) {
+    public void onDialogOkPressed(DialogInterface dialog, int which,Object... result) {
         String searchKey = ""+result[0];
         dataSearchResult = new ArrayList<Cluster>();
         for(Cluster cluster : dataModels) {
@@ -202,4 +202,7 @@ public class ClusterDataFragment extends Fragment implements AsyncTaskListener, 
         }
         createCluster(dataSearchResult);
     }
+
+    @Override
+    public void onDialogCancelPressed(DialogInterface dialog, int which) {}
 }

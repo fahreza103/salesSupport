@@ -1,4 +1,4 @@
-package id.co.myrepublic.salessupport;
+package id.co.myrepublic.salessupport.activity;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -18,6 +18,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
+import id.co.myrepublic.salessupport.R;
 import id.co.myrepublic.salessupport.adapter.AreaAdapter;
 import id.co.myrepublic.salessupport.listener.DialogListener;
 import id.co.myrepublic.salessupport.model.Area;
@@ -142,7 +143,7 @@ public class AreasFragment extends Fragment implements View.OnClickListener, Dia
     }
 
     @Override
-    public void onDialogOkPressed(DialogInterface dialog, Object... result) {
+    public void onDialogOkPressed(DialogInterface dialog, int which,Object... result) {
         String searchKey = ""+result[0];
         dataSearchResult = new ArrayList<Area>();
         for(Area area : dataModels) {
@@ -153,4 +154,7 @@ public class AreasFragment extends Fragment implements View.OnClickListener, Dia
         createAreas(dataSearchResult);
 
     }
+
+    @Override
+    public void onDialogCancelPressed(DialogInterface dialog, int which) {}
 }

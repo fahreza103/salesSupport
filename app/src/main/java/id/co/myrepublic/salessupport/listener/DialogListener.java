@@ -10,8 +10,13 @@ public interface DialogListener {
 
     /**
      * Invoked when ok / confirm has been pressed
-     * @param dialog
-     * @param result
+     * @param dialog dialogBuilder Object
+     * @param result all input from the dialog should be stored here
      */
-    public void onDialogOkPressed(DialogInterface dialog, Object... result);
+    public void onDialogOkPressed(DialogInterface dialog, int which,Object... result);
+
+    /**
+     * invoked when cancel button has been pressed
+     */
+    public void onDialogCancelPressed (DialogInterface dialog, int which);
 }

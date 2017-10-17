@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/clusterdetail_txtfield"
         android:layout_marginLeft="10dp"
-        android:text="345,974"
+        android:text="345,97"
         android:textColor="@android:color/black" />
 
 

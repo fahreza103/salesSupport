@@ -3,7 +3,7 @@ package id.co.myrepublic.salessupport.util;
 import android.os.AsyncTask;
 import android.view.View;
 
-import id.co.myrepublic.salessupport.MainActivity;
+import id.co.myrepublic.salessupport.activity.MainActivity;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
 
 /**
