@@ -29,6 +29,7 @@
     <string name="activity_login_failed_connect">Failed To Connect</string>
     <string name="activity_login_failed_code">Code</string>
     <string name="activity_login_failed_desc">Description</string>
+    <string name="activity_login_failed_permission">You do not have permission to access</string>
 
     <string name="spinner_competitor_prompt">Choose a Competitor</string>
 

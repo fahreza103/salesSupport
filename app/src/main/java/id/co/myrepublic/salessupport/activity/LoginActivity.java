@@ -44,11 +44,14 @@ public class LoginActivity extends AppCompatActivity implements AsyncTaskListene
     private Context context;
     private WebView browser;
     private Button btnRetry;
-
     private LinearLayout errorFailConnectLayout;
+    private TextView txtErrorTitle;
     private TextView txtErrorCode;
     private TextView txtErrorDescription;
     private Button btnErrorRetry;
+
+    private Map<String,String> headerMap = new HashMap<String,String>();
+    private Map<String,String> cookieMap = new HashMap<String,String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +63,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncTaskListene
         browser = (WebView) findViewById(R.id.login_webview_login);
         btnRetry = (Button) findViewById(R.id.login_btn_retry);
         errorFailConnectLayout = (LinearLayout) findViewById(R.id.login_layout_weberror);
+        txtErrorTitle = (TextView) findViewById(R.id.login_txt_error_title);
         txtErrorCode = (TextView) findViewById(R.id.login_txt_error_code);
         txtErrorDescription = (TextView) findViewById(R.id.login_txt_error_description);
         btnErrorRetry = (Button) findViewById(R.id.login_btn_error_retry);
@@ -70,11 +74,13 @@ public class LoginActivity extends AppCompatActivity implements AsyncTaskListene
         btnRetry.setOnClickListener(this);
         btnErrorRetry.setOnClickListener(this);
 
+        headerMap.put("display_forgot_password","false");
+        browser.getSettings().setAppCacheEnabled(false);
+
         doCheckSession();
 
         context = getApplicationContext();
         mProgressBar.setMax(100);
-
 
         browser.setWebViewClient(new WebViewClient() {
             @Override
@@ -84,12 +90,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncTaskListene
 
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                errorFailConnectLayout.setVisibility(View.VISIBLE);
-                txtErrorCode.setText(getString(R.string.activity_login_failed_code)+" : "+errorCode);
-                txtErrorDescription.setText(getString(R.string.activity_login_failed_desc)+" : "+description);
-
-                String blankPage = "<html><body bgcolor=\"#7d17a6\"></body></html>";
-                browser.loadData(blankPage, "text/html; charset=utf-8", "utf-8");
+                showErrorWebView(errorCode,"Error",description);
             }
 
             @Override
@@ -102,7 +103,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncTaskListene
                     Log.i("INFO", "All the cookies in a string:" + cookies);
 
                     // Extract Cookie
-                    Map<String,String> cookieMap = StringUtil.extractCookie(cookies);
+                    cookieMap = StringUtil.extractCookie(cookies);
                     // Put to Session
                     SharedPreferences sp = getSharedPreferences(AppConstant.SESSION_KEY, Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sp.edit();
@@ -112,20 +113,17 @@ public class LoginActivity extends AppCompatActivity implements AsyncTaskListene
                     editor.putString(AppConstant.COOKIE_USERTYPE_KEY,cookieMap.get(AppConstant.COOKIE_USERTYPE_KEY));
                     editor.commit();
 
-                    // get user info
+                    // Check Permission
                     Map<Object,Object> paramMap = new HashMap<Object,Object>();
                     paramMap.put("session_id",cookieMap.get(AppConstant.COOKIE_SESSION_KEY));
-                    paramMap.put("user_id",cookieMap.get(AppConstant.COOKIE_USERID_KEY));
 
                     UrlParam urlParam = new UrlParam();
-                    urlParam.setUrl(AppConstant.GET_USER_INFO);
+                    urlParam.setUrl(AppConstant.CHECK_PERMISSION);
                     urlParam.setParamMap(paramMap);
 
-                    AsyncOperation asop = new AsyncOperation("getUserInfo");
+                    AsyncOperation asop = new AsyncOperation("checkPermission");
                     asop.setListener(LoginActivity.this);
                     asop.execute(urlParam);
-
-
 
                 }
                 return super.shouldOverrideUrlLoading(view,url);
@@ -163,7 +161,39 @@ public class LoginActivity extends AppCompatActivity implements AsyncTaskListene
 
     @Override
     public void onAsyncTaskComplete(Object result, String taskName) {
-        if("getUserInfo".equals(taskName)) {
+        if("checkPermission".equals(taskName)) {
+            boolean isPermitted = false;
+            if(result != null) {
+                MainModel<Map<Object,Object>> model = StringUtil.convertStringToObject("" + result, Map.class);
+                Map<Object,Object> mapResponse = model.getObject();
+                // Search for mobile app permission
+                for (Map.Entry<Object, Object> entry : mapResponse.entrySet()) {
+                    String value = entry.getValue() == null ? "-" : ""+ entry.getValue();
+                    if(AppConstant.PERMISSION_MOBILE_APP.equals(value))  {
+                        isPermitted = true;
+                        break;
+                    }
+                }
+            }
+
+            if (isPermitted) {
+                // Check User info
+                Map<Object,Object> paramMap = new HashMap<Object,Object>();
+                paramMap.put("session_id",cookieMap.get(AppConstant.COOKIE_SESSION_KEY));
+                paramMap.put("user_id",cookieMap.get(AppConstant.COOKIE_USERID_KEY));
+
+                UrlParam urlParam = new UrlParam();
+                urlParam.setUrl(AppConstant.GET_USER_INFO);
+                urlParam.setParamMap(paramMap);
+
+                AsyncOperation asop = new AsyncOperation("getUserInfo");
+                asop.setListener(LoginActivity.this);
+                asop.execute(urlParam);
+            } else {
+                showErrorWebView(401,"Unauthorized",getString(R.string.activity_login_failed_permission));
+            }
+
+        } else if("getUserInfo".equals(taskName)) {
             MainModel<ResponseUserSelect> model = StringUtil.convertStringToObject("" + result, ResponseUserSelect.class);
             if(result != null) {
                 Particulars particulars = model.getObject().getParticulars();
@@ -190,7 +220,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncTaskListene
                     startActivity(intent);
                     finish();
                 } else {
-                    browser.loadUrl(AppConstant.LOGIN_URL);
+                    browser.loadUrl(AppConstant.LOGIN_URL,headerMap);
                     browser.setVisibility(View.VISIBLE);
                 }
             } else {
@@ -215,7 +245,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncTaskListene
             case R.id.login_btn_error_retry :
                 errorFailConnectLayout.setVisibility(View.GONE);
                 browser.setVisibility(View.VISIBLE);
-                browser.loadUrl(AppConstant.LOGIN_URL);
+                browser.loadUrl(AppConstant.LOGIN_URL,headerMap);
                 break;
         }
 
@@ -241,9 +271,17 @@ public class LoginActivity extends AppCompatActivity implements AsyncTaskListene
             asop.execute(UrlParam.createParamCheckSession(sessionId));
         } else {
             browser.setVisibility(View.VISIBLE);
-            browser.loadUrl(AppConstant.LOGIN_URL);
+            browser.loadUrl(AppConstant.LOGIN_URL,headerMap);
         }
     }
 
+    private void showErrorWebView(int errorCode,String title, String description) {
+        errorFailConnectLayout.setVisibility(View.VISIBLE);
+        txtErrorTitle.setText(title);
+        txtErrorCode.setText(getString(R.string.activity_login_failed_code)+" : "+errorCode);
+        txtErrorDescription.setText(getString(R.string.activity_login_failed_desc)+" : "+description);
 
+        String blankPage = "<html><body bgcolor=\"#7d17a6\"></body></html>";
+        browser.loadData(blankPage, "text/html; charset=utf-8", "utf-8");
+    }
 }
