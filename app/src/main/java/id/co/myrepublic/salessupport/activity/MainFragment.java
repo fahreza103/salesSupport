@@ -6,11 +6,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 
 import id.co.myrepublic.salessupport.R;
+import id.co.myrepublic.salessupport.util.GlobalVariables;
 
 /**
  * Created by myrepublicid on 4/10/17.
@@ -32,8 +31,6 @@ public class MainFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         this.layoutLogo = (LinearLayout) getActivity().findViewById(R.id.content_main_layout_logo);
-
-        Animation animation = AnimationUtils.loadAnimation(getContext(),R.anim.fade_in);
-        layoutLogo.startAnimation(animation);
+        layoutLogo.startAnimation(GlobalVariables.getInstance().getFadeInAnim());
     }
 }

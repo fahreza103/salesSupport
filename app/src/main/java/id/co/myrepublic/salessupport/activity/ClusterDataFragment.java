@@ -1,9 +1,7 @@
 package id.co.myrepublic.salessupport.activity;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -25,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import id.co.myrepublic.salessupport.R;
-import id.co.myrepublic.salessupport.adapter.ClusterAdapter;
+import id.co.myrepublic.salessupport.adapter.CommonRowAdapter;
 import id.co.myrepublic.salessupport.constant.AppConstant;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
 import id.co.myrepublic.salessupport.listener.DialogListener;
@@ -33,6 +31,7 @@ import id.co.myrepublic.salessupport.model.Cluster;
 import id.co.myrepublic.salessupport.model.MainModel;
 import id.co.myrepublic.salessupport.support.DialogBuilder;
 import id.co.myrepublic.salessupport.util.AsyncOperation;
+import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.UrlParam;
 
@@ -44,7 +43,7 @@ import id.co.myrepublic.salessupport.util.UrlParam;
 public class ClusterDataFragment extends Fragment implements AsyncTaskListener, View.OnClickListener, DialogListener, AdapterView.OnItemClickListener {
 
     private ListView listViewCluster;
-    private ClusterAdapter clusterAdapter;
+    private CommonRowAdapter<Cluster> clusterAdapter;
     private List<Cluster> dataModels = new ArrayList<Cluster>();
     private List<Cluster> dataSearchResult = new ArrayList<Cluster>();
 
@@ -71,8 +70,8 @@ public class ClusterDataFragment extends Fragment implements AsyncTaskListener, 
         String areaCode = bundle.getString("areaCode", null);
 
         // get citylist from API
-        SharedPreferences sp = getActivity().getSharedPreferences(AppConstant.SESSION_KEY, Context.MODE_PRIVATE);
-        String sessionId = sp.getString(AppConstant.COOKIE_SESSION_KEY,null);
+        GlobalVariables sm = GlobalVariables.getInstance();
+        String sessionId = sm.getSessionKey();
 
         Map<Object,Object> paramMap = new HashMap<Object,Object>();
         paramMap.put("session_id",sessionId);
@@ -187,7 +186,7 @@ public class ClusterDataFragment extends Fragment implements AsyncTaskListener, 
     }
 
     private void createCluster(List<Cluster> data) {
-        clusterAdapter = new ClusterAdapter(data,getActivity().getApplicationContext());
+        clusterAdapter = new CommonRowAdapter<Cluster>(data,getActivity().getApplicationContext());
         listViewCluster.setAdapter(clusterAdapter);
     }
 

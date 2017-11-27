@@ -52,13 +52,22 @@ public class AsyncOperation extends AsyncTask<UrlParam, Integer, String> {
         // Empty previous result
         this.asyncStatus = 0;
         this.jsonResult = null;
+
+        GlobalVariables gvar = GlobalVariables.getInstance();
         // Should be set in MainActivity
         if(MainActivity.txtLoading != null) {
             MainActivity.txtLoading.setVisibility(View.VISIBLE);
+            MainActivity.txtLoading.startAnimation(gvar.getPopupAnim());
         }
 
         if(MainActivity.progressBar != null) {
             MainActivity.progressBar.setVisibility(View.VISIBLE);
+            MainActivity.progressBar.startAnimation(gvar.getPopupAnim());
+        }
+
+        if(MainActivity.progressIcon != null) {
+            MainActivity.progressIcon.setVisibility(View.VISIBLE);
+            MainActivity.progressIcon.startAnimation(gvar.getPopupAnim());
         }
     }
 
@@ -87,6 +96,10 @@ public class AsyncOperation extends AsyncTask<UrlParam, Integer, String> {
 
         if(MainActivity.progressBar != null) {
             MainActivity.progressBar.setVisibility(View.GONE);
+        }
+
+        if(MainActivity.progressIcon != null) {
+            MainActivity.progressIcon.setVisibility(View.GONE);
         }
 
         // if listener defined , do callback

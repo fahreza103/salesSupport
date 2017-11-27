@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.co.myrepublic.salessupport.R;
-import id.co.myrepublic.salessupport.adapter.AreaAdapter;
+import id.co.myrepublic.salessupport.adapter.CommonRowAdapter;
 import id.co.myrepublic.salessupport.listener.DialogListener;
 import id.co.myrepublic.salessupport.model.Area;
 import id.co.myrepublic.salessupport.support.DialogBuilder;
@@ -33,7 +33,7 @@ public class AreasFragment extends Fragment implements View.OnClickListener, Dia
 
     private static View view;
     private ListView listViewCity;
-    private AreaAdapter areaAdapter;
+    private CommonRowAdapter<Area> areaAdapter;
     private List<Area> dataModels = new ArrayList<Area>();
     private List<Area> dataSearchResult = new ArrayList<Area>();
 
@@ -138,7 +138,7 @@ public class AreasFragment extends Fragment implements View.OnClickListener, Dia
     }
 
     private void createAreas(List<Area> data) {
-        areaAdapter = new AreaAdapter(data,getActivity().getApplicationContext());
+        areaAdapter = new CommonRowAdapter<Area>(data,getActivity().getApplicationContext());
         listViewCity.setAdapter(areaAdapter);
     }
 

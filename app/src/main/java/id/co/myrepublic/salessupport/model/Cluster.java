@@ -6,18 +6,27 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import java.io.Serializable;
+
+import id.co.myrepublic.salessupport.annotation.PositionItem;
+import id.co.myrepublic.salessupport.constant.AppConstant;
+
 /**
  * Created by myrepublicid on 26/9/17.
  */
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Cluster {
+public class Cluster implements Serializable {
+
+    private static final long serialVersionUID = 93655123454912675L;
 
     private String cityName;
     @JsonProperty("total_homepass")
+    @PositionItem(type=AppConstant.ROWITEM_POSITION_SUBTEXT1, prefix = "Total Homepass : ")
     private Integer totalHomePass;
     @JsonProperty("clustername")
+    @PositionItem(type= AppConstant.ROWITEM_POSITION_MAINTEXT1)
     private String clusterName;
     private String arpu;
     private String totalSubs;

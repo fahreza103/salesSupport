@@ -2,11 +2,13 @@ package id.co.myrepublic.salessupport.util;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import id.co.myrepublic.salessupport.model.MainModel;
@@ -43,6 +45,8 @@ public class URLConnector {
 
             URL url = new URL(request);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+
             conn.setDoOutput(true);
             conn.setInstanceFollowRedirects(false);
             conn.setConnectTimeout(20000);
@@ -55,7 +59,14 @@ public class URLConnector {
             DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
             wr.write(postData);
 
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            InputStream inputStream = conn.getInputStream();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+            Map<String,List<String>> headers = conn.getHeaderFields();
+            List headerValues  = conn.getHeaderFields().get("Content-Length");
+            int length = conn.getContentLength();
+
+
             StringBuilder stringBuilder = new StringBuilder();
             String line;
             while ((line = bufferedReader.readLine()) != null) {

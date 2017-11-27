@@ -26,26 +26,38 @@
 
     <ProgressBar
         android:id="@+id/login_center_progressbar"
-        style="?android:attr/progressBarStyle"
+        android:indeterminateDrawable="@drawable/progressbar_drawable"
         android:layout_gravity="center"
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:visibility="gone"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_height="wrap_content" />
+        android:layout_height="150dp" />
+
+    <ImageView
+        android:id="@+id/login_center_progressbar_icon"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        app:srcCompat="@mipmap/ic_launcher" />
 
     <TextView
         android:id="@+id/login_center_progressbar_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="10dp"
         android:textColor="@color/colorLogo"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:visibility="gone"
         android:layout_below="@id/login_center_progressbar"
         android:text="@string/activity_loading" />
+
+
 
     <Button
         android:id="@+id/login_btn_retry"

@@ -43,6 +43,7 @@
     <string name="dialog_content_failedconnect">Failed to connect, please check your internet connection</string>
     <string name="dialog_areas_searchname">Area Name</string>
     <string name="dialog_cluster_searchname">Cluster Name</string>
+    <string name="dialog_clusterdetail_searchhomepass">Cluster Name</string>
 
     <string-array name="competitor_arrays">
         <item>Firstmedia</item>

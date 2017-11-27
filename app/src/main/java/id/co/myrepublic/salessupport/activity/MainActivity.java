@@ -1,8 +1,6 @@
 package id.co.myrepublic.salessupport.activity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -15,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -22,6 +21,7 @@ import java.util.List;
 
 import id.co.myrepublic.salessupport.R;
 import id.co.myrepublic.salessupport.constant.AppConstant;
+import id.co.myrepublic.salessupport.util.GlobalVariables;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity
     public static TextView txtUser;
     public static TextView txtLoading;
     public static ProgressBar progressBar;
+    public static ImageView progressIcon;
 
 
 
@@ -42,8 +43,8 @@ public class MainActivity extends AppCompatActivity
 
 
         // Get Session and set Userid
-        SharedPreferences sp = getSharedPreferences(AppConstant.SESSION_KEY, Context.MODE_PRIVATE);
-        String userName = sp.getString(AppConstant.COOKIE_USERNAME_KEY,null);
+        GlobalVariables sm = GlobalVariables.getInstance();
+        String userName = sm.getString(AppConstant.COOKIE_USERNAME_KEY,null);
 
 
 
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity
 
         this.txtLoading = (TextView) findViewById(R.id.content_main_progressbar_text);
         this.progressBar = (ProgressBar) findViewById(R.id.content_main_progressbar);
+        this.progressIcon = (ImageView) findViewById(R.id.content_main_progressbar_icon);
 
         // Call main fragment
         Fragment fragment = new MainFragment();
@@ -164,10 +166,8 @@ public class MainActivity extends AppCompatActivity
 
     private void doLogout() {
         // Clear session
-        SharedPreferences sp = getSharedPreferences(AppConstant.SESSION_KEY, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.clear();
-        editor.commit();
+        GlobalVariables sm = GlobalVariables.getInstance();
+        sm.clearSession();
 
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);

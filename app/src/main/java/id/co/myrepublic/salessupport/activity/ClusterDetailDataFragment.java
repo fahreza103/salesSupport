@@ -1,8 +1,7 @@
 package id.co.myrepublic.salessupport.activity;
 
 import android.app.Dialog;
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -25,14 +24,16 @@ import java.util.List;
 import java.util.Map;
 
 import id.co.myrepublic.salessupport.R;
-import id.co.myrepublic.salessupport.adapter.ClusterDetailAdapter;
+import id.co.myrepublic.salessupport.adapter.CommonRowAdapter;
 import id.co.myrepublic.salessupport.constant.AppConstant;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
+import id.co.myrepublic.salessupport.listener.DialogListener;
 import id.co.myrepublic.salessupport.model.CommonItem;
 import id.co.myrepublic.salessupport.model.MainModel;
 import id.co.myrepublic.salessupport.model.ResponseClusterInformation;
 import id.co.myrepublic.salessupport.support.DialogBuilder;
 import id.co.myrepublic.salessupport.util.AsyncOperation;
+import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.UrlParam;
 
@@ -41,18 +42,18 @@ import id.co.myrepublic.salessupport.util.UrlParam;
  * Created by myrepublicid on 26/9/17.
  */
 
-public class ClusterDetailDataFragment extends Fragment implements AsyncTaskListener {
+public class ClusterDetailDataFragment extends Fragment implements AsyncTaskListener , View.OnClickListener, DialogListener{
 
     private ListView listViewClusterDetail;
-    private ClusterDetailAdapter clusterDetailAdapter;
-    private FloatingActionButton fab;
+    private CommonRowAdapter<CommonItem> clusterDetailAdapter;
+    private FloatingActionButton fabCompetitor;
+    private FloatingActionButton fabSearch;
 
-
-    private SharedPreferences sp;
     private Map<Object, Object> mapResponse;
     private List<CommonItem> dataModels = new ArrayList<CommonItem>();
     private List<String> competitorList = new ArrayList<String>();
     private Dialog dialog;
+    private String clusterName;
 
     @Nullable
     @Override
@@ -70,12 +71,12 @@ public class ClusterDetailDataFragment extends Fragment implements AsyncTaskList
 
         // Get Bundle data from previous fragment
         Bundle bundle = this.getArguments();
-        final String clusterName = bundle.getString("clusterName", null);
+        clusterName = bundle.getString("clusterName", null);
 
 
         // get citylist from API
-        sp = getActivity().getSharedPreferences(AppConstant.SESSION_KEY, Context.MODE_PRIVATE);
-        String sessionId = sp.getString(AppConstant.COOKIE_SESSION_KEY,null);
+        GlobalVariables sm = GlobalVariables.getInstance();
+        String sessionId = sm.getSessionKey();
 
         Map<Object,Object> paramMap = new HashMap<Object,Object>();
         paramMap.put("session_id",sessionId);
@@ -92,14 +93,14 @@ public class ClusterDetailDataFragment extends Fragment implements AsyncTaskList
         listViewClusterDetail =(ListView)getActivity().findViewById(R.id.listClusterDetail);
 
         // Floating Button
-        fab = (FloatingActionButton) getActivity().findViewById(R.id.fab_addcompetitor);
-        fab.setVisibility(View.GONE);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDialog(clusterName);
-            }
-        });
+        fabCompetitor = (FloatingActionButton) getActivity().findViewById(R.id.fab_addcompetitor);
+        fabCompetitor.setVisibility(View.GONE);
+        fabCompetitor.setOnClickListener(this);
+
+        fabSearch = (FloatingActionButton) getActivity().findViewById(R.id.fab_homepassSearch);
+        fabSearch.setVisibility(View.GONE);
+        fabSearch.setOnClickListener(this);
+
     }
 
     @Override
@@ -107,7 +108,7 @@ public class ClusterDetailDataFragment extends Fragment implements AsyncTaskList
     {
         super.onDestroyView();
         try{
-            fab.setVisibility(View.GONE);
+            fabCompetitor.setVisibility(View.GONE);
             String backStateName = this.getClass().getName();
             FragmentManager manager = getActivity().getSupportFragmentManager();
             FragmentTransaction trans = manager.beginTransaction();
@@ -123,9 +124,25 @@ public class ClusterDetailDataFragment extends Fragment implements AsyncTaskList
     }
 
     @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.fab_addcompetitor :
+                showCompetitorDialog(clusterName);
+                break;
+            case R.id.fab_homepassSearch :
+                showSearchDialog();
+                break;
+        }
+
+    }
+
+
+
+    @Override
     public void onAsyncTaskComplete(Object result, String taskName) {
         if("getClusterDetail".equals(taskName)) {
-            fab.setVisibility(View.VISIBLE);
+            fabCompetitor.setVisibility(View.VISIBLE);
+            fabSearch.setVisibility(View.VISIBLE);
             if(result != null) {
                 MainModel<ResponseClusterInformation> model = StringUtil.convertStringToObject("" + result, ResponseClusterInformation.class);
                 ResponseClusterInformation rci = model.getObject();
@@ -142,7 +159,8 @@ public class ClusterDetailDataFragment extends Fragment implements AsyncTaskList
                         clusterDetail.setValue(value);
                         dataModels.add(clusterDetail);
                     }
-                    clusterDetailAdapter = new ClusterDetailAdapter(dataModels, getActivity().getApplicationContext());
+                    clusterDetailAdapter = new CommonRowAdapter(dataModels, getActivity().getApplicationContext());
+                    clusterDetailAdapter.setWidthText(150);
                     listViewClusterDetail.setAdapter(clusterDetailAdapter);
                 } else {
                     DialogBuilder db = DialogBuilder.getInstance();
@@ -172,7 +190,15 @@ public class ClusterDetailDataFragment extends Fragment implements AsyncTaskList
         }
     }
 
-    private void showDialog(final String clusterName) {
+
+    private void showSearchDialog() {
+        DialogBuilder db = DialogBuilder.getInstance();
+        db.setDialogListener(this);
+        db.createInputDialog(getContext(),getString(android.R.string.search_go),
+                getString(R.string.dialog_clusterdetail_searchhomepass));
+    }
+
+    private void showCompetitorDialog(final String clusterName) {
         final String clusterId = "" + mapResponse.get("clusterid");
 
         // custom dialog
@@ -195,7 +221,7 @@ public class ClusterDetailDataFragment extends Fragment implements AsyncTaskList
         txtClusterName.setText(clusterName);
 
         TextView txtUserId = (TextView) dialog.findViewById(R.id.dialogitem_txt_userid_value);
-        txtUserId.setText(sp.getString(AppConstant.COOKIE_USERID_KEY,""));
+        txtUserId.setText(GlobalVariables.getInstance().getString(AppConstant.COOKIE_USERID_KEY,""));
 
 
         Button cancelButton = (Button) dialog.findViewById(R.id.dialogitem_btn_cancel);
@@ -221,8 +247,9 @@ public class ClusterDetailDataFragment extends Fragment implements AsyncTaskList
     }
 
     private void insertCluster(String competitorName, String clusterId, String clusterName) {
-        String sessionId = sp.getString(AppConstant.COOKIE_SESSION_KEY,null);
-        String userId = sp.getString(AppConstant.COOKIE_USERID_KEY,null);
+        GlobalVariables gVar = GlobalVariables.getInstance();
+        String sessionId = gVar.getSessionKey();
+        String userId = gVar.getString(AppConstant.COOKIE_USERID_KEY,null);
 
         Map<Object,Object> paramMap = new HashMap<Object,Object>();
         paramMap.put("session_id",sessionId);
@@ -245,4 +272,11 @@ public class ClusterDetailDataFragment extends Fragment implements AsyncTaskList
 
     }
 
+    @Override
+    public void onDialogOkPressed(DialogInterface dialog, int which, Object... result) {
+
+    }
+
+    @Override
+    public void onDialogCancelPressed(DialogInterface dialog, int which) {}
 }

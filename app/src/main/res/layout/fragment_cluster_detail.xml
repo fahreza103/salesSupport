@@ -11,14 +11,36 @@
             android:layout_height="fill_parent"
             />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab_addcompetitor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
+            android:layout_width="75dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
+            android:id="@+id/cluster_layout_floating"
             android:layout_margin="@dimen/fab_margin"
-            app:backgroundTint="@color/colorLogo2"
-            app:srcCompat="@mipmap/add_icon" />
+            android:layout_height="180dp">
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/fab_homepassSearch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:useCompatPadding="true"
+                    app:backgroundTint="@color/colorLogo2"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    app:srcCompat="@android:drawable/ic_menu_search" />
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/fab_addcompetitor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    app:useCompatPadding="true"
+                    app:backgroundTint="@color/colorLogo2"
+                    app:srcCompat="@mipmap/add_icon" />
+
+        </LinearLayout>
 
 </RelativeLayout>

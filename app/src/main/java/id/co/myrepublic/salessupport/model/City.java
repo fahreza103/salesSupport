@@ -16,7 +16,7 @@ import java.io.Serializable;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class City  implements Serializable {
 
-    private static final long serialVersionUID = 6110135639324912675L;
+    private static final long serialVersionUID = 413655339324912675L;
 
     @JsonProperty("cityid")
     private String cityId;

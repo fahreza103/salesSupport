@@ -1,16 +1,24 @@
 package id.co.myrepublic.salessupport.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import id.co.myrepublic.salessupport.annotation.PositionItem;
+import id.co.myrepublic.salessupport.constant.AppConstant;
 
 /**
  * Created by myrepublicid on 28/9/17.
  */
 
-public class Area {
+public class Area implements Serializable {
+
+    private static final long serialVersionUID = 6557135639443912673L;
 
     private String areaId;
+    @PositionItem(type= AppConstant.ROWITEM_POSITION_SUBTEXT1)
     private String areaCode;
+    @PositionItem(type=AppConstant.ROWITEM_POSITION_MAINTEXT1)
     private String areaName;
     private String remark;
     private String areainitial;

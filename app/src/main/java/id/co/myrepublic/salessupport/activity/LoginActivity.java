@@ -2,17 +2,19 @@ package id.co.myrepublic.salessupport.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -27,6 +29,7 @@ import id.co.myrepublic.salessupport.model.MainModel;
 import id.co.myrepublic.salessupport.model.Particulars;
 import id.co.myrepublic.salessupport.model.ResponseUserSelect;
 import id.co.myrepublic.salessupport.support.DialogBuilder;
+import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.AsyncOperation;
 import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.UrlParam;
@@ -41,13 +44,14 @@ public class LoginActivity extends AppCompatActivity implements AsyncTaskListene
     private ProgressBar mProgressBar;
     private ProgressBar centerProgressBar;
     private TextView centerTextView;
+    private ImageView centerProgressLogo;
+    private TextView txtErrorTitle;
+    private TextView txtErrorCode;
+    private TextView txtErrorDescription;
     private Context context;
     private WebView browser;
     private Button btnRetry;
     private LinearLayout errorFailConnectLayout;
-    private TextView txtErrorTitle;
-    private TextView txtErrorCode;
-    private TextView txtErrorDescription;
     private Button btnErrorRetry;
 
     private Map<String,String> headerMap = new HashMap<String,String>();
@@ -58,8 +62,12 @@ public class LoginActivity extends AppCompatActivity implements AsyncTaskListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        setGlobalValue();
+
         centerProgressBar = (ProgressBar) findViewById(R.id.login_center_progressbar);
         centerTextView = (TextView) findViewById(R.id.login_center_progressbar_text);
+        centerProgressLogo = (ImageView) findViewById(R.id.login_center_progressbar_icon);
+
         browser = (WebView) findViewById(R.id.login_webview_login);
         btnRetry = (Button) findViewById(R.id.login_btn_retry);
         errorFailConnectLayout = (LinearLayout) findViewById(R.id.login_layout_weberror);
@@ -105,13 +113,10 @@ public class LoginActivity extends AppCompatActivity implements AsyncTaskListene
                     // Extract Cookie
                     cookieMap = StringUtil.extractCookie(cookies);
                     // Put to Session
-                    SharedPreferences sp = getSharedPreferences(AppConstant.SESSION_KEY, Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sp.edit();
-
-                    editor.putString(AppConstant.COOKIE_SESSION_KEY,cookieMap.get(AppConstant.COOKIE_SESSION_KEY));
-                    editor.putString(AppConstant.COOKIE_USERID_KEY,cookieMap.get(AppConstant.COOKIE_USERID_KEY));
-                    editor.putString(AppConstant.COOKIE_USERTYPE_KEY,cookieMap.get(AppConstant.COOKIE_USERTYPE_KEY));
-                    editor.commit();
+                    GlobalVariables sm = GlobalVariables.getInstance();
+                    sm.putString(AppConstant.COOKIE_SESSION_KEY,cookieMap.get(AppConstant.COOKIE_SESSION_KEY));
+                    sm.putString(AppConstant.COOKIE_USERID_KEY,cookieMap.get(AppConstant.COOKIE_USERID_KEY));
+                    sm.putString(AppConstant.COOKIE_USERTYPE_KEY,cookieMap.get(AppConstant.COOKIE_USERTYPE_KEY));
 
                     // Check Permission
                     Map<Object,Object> paramMap = new HashMap<Object,Object>();
@@ -198,11 +203,8 @@ public class LoginActivity extends AppCompatActivity implements AsyncTaskListene
             if(result != null) {
                 Particulars particulars = model.getObject().getParticulars();
                 // save to session
-                SharedPreferences sp = getSharedPreferences(AppConstant.SESSION_KEY, Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sp.edit();
-
-                editor.putString(AppConstant.COOKIE_USERNAME_KEY,particulars.getFirstName());
-                editor.commit();
+                GlobalVariables sm = GlobalVariables.getInstance();
+                sm.putString(AppConstant.COOKIE_USERNAME_KEY,particulars.getFirstName());
 
                 Intent intent = new Intent(context, MainActivity.class);
                 startActivity(intent);
@@ -212,6 +214,8 @@ public class LoginActivity extends AppCompatActivity implements AsyncTaskListene
         } else if("checkSession".equals(taskName)) {
             centerProgressBar.setVisibility(View.GONE);
             centerTextView.setVisibility(View.GONE);
+            centerProgressLogo.setVisibility(View.GONE);
+
             if (result != null) {
                 MainModel model = StringUtil.convertStringToObject("" + result, null);
                 // Success, session valid go to main, otherwise show login form, to authenticate
@@ -259,12 +263,13 @@ public class LoginActivity extends AppCompatActivity implements AsyncTaskListene
 
 
         // Check session, if has session and valid, directly go to mainactivity, otherwise login page
-        SharedPreferences sp = getSharedPreferences(AppConstant.SESSION_KEY, Context.MODE_PRIVATE);
-        String sessionId = sp.getString(AppConstant.COOKIE_SESSION_KEY,null);
+        GlobalVariables sm = GlobalVariables.getInstance();
+        String sessionId = sm.getSessionKey();
 
         if(sessionId != null) {
             centerProgressBar.setVisibility(View.VISIBLE);
             centerTextView.setVisibility(View.VISIBLE);
+            centerProgressLogo.setVisibility(View.VISIBLE);
             browser.setVisibility(View.GONE);
             AsyncOperation asop = new AsyncOperation("checkSession");
             asop.setListener(this);
@@ -283,5 +288,23 @@ public class LoginActivity extends AppCompatActivity implements AsyncTaskListene
 
         String blankPage = "<html><body bgcolor=\"#7d17a6\"></body></html>";
         browser.loadData(blankPage, "text/html; charset=utf-8", "utf-8");
+    }
+
+    private void setGlobalValue() {
+        // Set SharedPreference, and other context based values
+        GlobalVariables gvar = GlobalVariables.getInstance();
+        gvar.setSharedPreferences(this);
+
+        Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+        Animation fadeOut = AnimationUtils.loadAnimation(this,R.anim.fade_out);
+        Animation expandIn = AnimationUtils.loadAnimation(this,R.anim.expand_in);
+        Animation downTop = AnimationUtils.loadAnimation(this,R.anim.down_from_top);
+        Animation upBottom = AnimationUtils.loadAnimation(this,R.anim.up_from_bottom);
+
+        gvar.setDownTopAnim(downTop);
+        gvar.setFadeInAnim(fadeIn);
+        gvar.setFadeOutAnim(fadeOut);
+        gvar.setPopupAnim(expandIn);
+        gvar.setTopDownAnim(upBottom);
     }
 }
