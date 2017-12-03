@@ -2,6 +2,8 @@ package id.co.myrepublic.salessupport.model;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import java.io.Serializable;
+
 import id.co.myrepublic.salessupport.annotation.PositionItem;
 import id.co.myrepublic.salessupport.constant.AppConstant;
 
@@ -9,7 +11,9 @@ import id.co.myrepublic.salessupport.constant.AppConstant;
  * Created by myrepublicid on 27/9/17.
  */
 
-public class CommonItem {
+public class CommonItem implements Serializable {
+
+    private static final long serialVersionUID = 33355123454912675L;
 
     @PositionItem(type= AppConstant.ROWITEM_POSITION_MAINTEXT1)
     private String key;

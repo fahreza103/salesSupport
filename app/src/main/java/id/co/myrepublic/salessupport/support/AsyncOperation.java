@@ -1,13 +1,16 @@
-package id.co.myrepublic.salessupport.util;
+package id.co.myrepublic.salessupport.support;
 
 import android.os.AsyncTask;
 import android.view.View;
 
 import id.co.myrepublic.salessupport.activity.MainActivity;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
+import id.co.myrepublic.salessupport.util.GlobalVariables;
+import id.co.myrepublic.salessupport.util.URLConnector;
+import id.co.myrepublic.salessupport.util.UrlParam;
 
 /**
- * Created by myrepublicid on 28/9/17.
+ * Perform async task operation such as fetching data from API
  */
 
 public class AsyncOperation extends AsyncTask<UrlParam, Integer, String> {

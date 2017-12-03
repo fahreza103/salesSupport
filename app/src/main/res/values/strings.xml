@@ -10,6 +10,9 @@
     <string name="fragment_view_city">View Areas</string>
     <string name="fragment_view_cluster">View Cluster</string>
     <string name="fragment_view_cluster_detail">View Cluster Detail</string>
+    <string name="fragment_view_homepass">View Available Homepass</string>
+    <string name="fragment_view_salesorder">Create New Sales Order</string>
+
 
     <string name="fragment_cluster_homepass">Total Homepass</string>
 
@@ -19,6 +22,35 @@
     <string name="fragment_cluster_detail_internetpacket">Internet Package</string>
     <string name="fragment_cluster_detail_tvpacket">TV Package</string>
     <string name="fragment_cluster_detail_status">Status</string>
+
+    <string name="fragment_homepass_note">Tap the list to create SO / Survey</string>
+
+    <string name="fragment_sales_salesrefferal">Sales and Referral</string>
+    <string name="fragment_sales_agent_code">Sales Agent Code</string>
+    <string name="fragment_sales_agent_name">Sales Agent Name</string>
+    <string name="fragment_sales_event_rep_id">Event Rep ID</string>
+    <string name="fragment_sales_customer_ref_id">Customer Referral ID</string>
+    <string name="fragment_sales_know_us">How do you know us ?</string>
+    <string name="fragment_sales_promo_code">Promo Code (if any)</string>
+    <string name="fragment_sales_billing_address">Billing Address</string>
+    <string name="fragment_sales_billing_address_desc">Your Billing Address Same as Service Address ?</string>
+
+    <string name="fragment_customer_profile">Customer Profile</string>
+    <string name="fragment_customer_salutation">Salutation</string>
+    <string name="fragment_customer_full_name">Full Name</string>
+    <string name="fragment_customer_prefered_name">Prefered Name</string>
+    <string name="fragment_customer_nationality">Nationality</string>
+    <string name="fragment_customer_id_type">KTP / Sim / Passport</string>
+    <string name="fragment_customer_dob">Date Of Birth</string>
+    <string name="fragment_customer_gender">Gender</string>
+    <string name="fragment_customer_email">Email</string>
+    <string name="fragment_customer_mobile_phone">Mobile Phone</string>
+    <string name="fragment_customer_home_phone">Home Phone</string>
+    <string name="fragment_customer_work_phone">Work Phone</string>
+    <string name="fragment_customer_upload_id">Upload KTP</string>
+    <string name="fragment_customer_upload_selfie">Upload Selfie With Customer</string>
+    <string name="fragment_customer_upload_take_photo">Take a Photo</string>
+    <string name="fragment_customer_upload_gallery">Load Gallery</string>
 
 
     <string name="activity_login_username">Username</string>
@@ -43,12 +75,50 @@
     <string name="dialog_content_failedconnect">Failed to connect, please check your internet connection</string>
     <string name="dialog_areas_searchname">Area Name</string>
     <string name="dialog_cluster_searchname">Cluster Name</string>
-    <string name="dialog_clusterdetail_searchhomepass">Cluster Name</string>
+    <string name="dialog_clusterdetail_searchhomepass">Homepass Name</string>
+    <string name="dialog_homepass_action">Choose Action</string>
+    <string name="dialog_homepass_customer">Customer Classification</string>
+    <string name="dialog_sales_billing_address">Billing Address</string>
+    <string name="dialog_sales_billing_address_desc">Your Billing Address Same as Service Address?</string>
+    <string name="dialog_sales_service_address">Service Address</string>
+
+    <string name="tabhost_create_order">Create Order</string>
+    <string name="tabhost_create_survey">Create Survey</string>
+
+    <string name="button_confirm">Confirm</string>
+    <string name="button_ok">OK</string>
+    <string name="button_no">No</string>
+    <string name="button_cancel">Cancel</string>
 
     <string-array name="competitor_arrays">
         <item>Firstmedia</item>
         <item>MNC Play</item>
         <item>Indiehome</item>
+    </string-array>
+
+    <string-array name="customer_class_arrays">
+        <item>RES</item>
+        <item>SME</item>
+    </string-array>
+
+    <string-array name="customer_reff_arrays">
+        <item>Internet</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="salutation_arrays">
+        <item>Mr</item>
+        <item>Mrs</item>
+    </string-array>
+
+    <string-array name="nationality_arrays">
+        <item>Indonesian</item>
+        <item>Foreigner</item>
+    </string-array>
+
+    <string-array name="gender_arrays">
+        <item>Male</item>
+        <item>Female</item>
     </string-array>
 
 </resources>

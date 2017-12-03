@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -29,8 +28,8 @@ import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
 import id.co.myrepublic.salessupport.listener.DialogListener;
 import id.co.myrepublic.salessupport.model.Cluster;
 import id.co.myrepublic.salessupport.model.MainModel;
+import id.co.myrepublic.salessupport.support.AsyncOperation;
 import id.co.myrepublic.salessupport.support.DialogBuilder;
-import id.co.myrepublic.salessupport.util.AsyncOperation;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.UrlParam;
@@ -115,7 +114,7 @@ public class ClusterDataFragment extends Fragment implements AsyncTaskListener, 
         bundle.putString("clusterName", dataModel.getClusterName());
         fragment.setArguments(bundle);
 
-        String backStateName = this.getClass().getName();
+        String backStateName = fragment.getClass().getName();
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_frame, fragment,backStateName);
         ft.addToBackStack(backStateName);
@@ -125,24 +124,7 @@ public class ClusterDataFragment extends Fragment implements AsyncTaskListener, 
         drawer.closeDrawer(GravityCompat.START);
     }
 
-    @Override
-    public void onDestroyView ()
-    {
-        super.onDestroyView();
-        try{
-            String backStateName = this.getClass().getName();
-            FragmentManager manager = getActivity().getSupportFragmentManager();
-            FragmentTransaction trans = manager.beginTransaction();
-            ClusterDataFragment fragment = ((ClusterDataFragment) getFragmentManager().findFragmentByTag(backStateName));
-            if(fragment != null) {
-                trans.remove(fragment);
-                trans.commit();
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
 
-    }
 
     @Override
     public void onAsyncTaskComplete(Object result, String taskName) {

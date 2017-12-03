@@ -15,6 +15,10 @@ import id.co.myrepublic.salessupport.model.MainModel;
  */
 public class StringUtil {
 
+    public static boolean isEmpty(String value) {
+        return value == null || "".equals(value);
+    }
+
     /**
      * get cookies value from string, currently the format is
      * value=xxx;value2=xxx
@@ -64,5 +68,21 @@ public class StringUtil {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * Using jackson , convert java obj to json string
+     * @param obj
+     * @return String represent the object
+     */
+    public static String convertObjectToString (Object obj) {
+        String jsonInString = null;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            jsonInString = mapper.writeValueAsString(obj);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return jsonInString;
     }
 }

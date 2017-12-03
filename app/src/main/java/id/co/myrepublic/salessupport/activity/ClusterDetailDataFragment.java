@@ -8,6 +8,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +34,8 @@ import id.co.myrepublic.salessupport.listener.DialogListener;
 import id.co.myrepublic.salessupport.model.CommonItem;
 import id.co.myrepublic.salessupport.model.MainModel;
 import id.co.myrepublic.salessupport.model.ResponseClusterInformation;
+import id.co.myrepublic.salessupport.support.AsyncOperation;
 import id.co.myrepublic.salessupport.support.DialogBuilder;
-import id.co.myrepublic.salessupport.util.AsyncOperation;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.UrlParam;
@@ -69,6 +72,16 @@ public class ClusterDetailDataFragment extends Fragment implements AsyncTaskList
         //you can set the title for your toolbar here for different fragments different titles
         getActivity().setTitle(getActivity().getString(R.string.fragment_view_cluster_detail));
 
+
+        // Floating Button
+        fabCompetitor = (FloatingActionButton) getActivity().findViewById(R.id.fab_addcompetitor);
+        fabCompetitor.setOnClickListener(this);
+
+        fabSearch = (FloatingActionButton) getActivity().findViewById(R.id.fab_homepassSearch);
+        fabSearch.setOnClickListener(this);
+
+        toggleViewFloatingButton(View.GONE);
+
         // Get Bundle data from previous fragment
         Bundle bundle = this.getArguments();
         clusterName = bundle.getString("clusterName", null);
@@ -86,42 +99,29 @@ public class ClusterDetailDataFragment extends Fragment implements AsyncTaskList
         urlParam.setUrl(AppConstant.GET_CLUSTERDETAIL_API_URL);
         urlParam.setParamMap(paramMap);
 
-        AsyncOperation asop = new AsyncOperation("getClusterDetail");
-        asop.setListener(this);
-        asop.execute(urlParam);
 
         listViewClusterDetail =(ListView)getActivity().findViewById(R.id.listClusterDetail);
 
-        // Floating Button
-        fabCompetitor = (FloatingActionButton) getActivity().findViewById(R.id.fab_addcompetitor);
-        fabCompetitor.setVisibility(View.GONE);
-        fabCompetitor.setOnClickListener(this);
-
-        fabSearch = (FloatingActionButton) getActivity().findViewById(R.id.fab_homepassSearch);
-        fabSearch.setVisibility(View.GONE);
-        fabSearch.setOnClickListener(this);
-
-    }
-
-    @Override
-    public void onDestroyView ()
-    {
-        super.onDestroyView();
-        try{
-            fabCompetitor.setVisibility(View.GONE);
-            String backStateName = this.getClass().getName();
-            FragmentManager manager = getActivity().getSupportFragmentManager();
-            FragmentTransaction trans = manager.beginTransaction();
-            ClusterDetailDataFragment fragment = ((ClusterDetailDataFragment) getFragmentManager().findFragmentByTag(backStateName));
-            if(fragment != null) {
-                trans.remove(fragment);
-                trans.commit();
-            }
-        }catch(Exception e){
-            e.printStackTrace();
+        String caller = getCallerFragment();
+        if(dataModels.size() == 0) {
+            AsyncOperation asop = new AsyncOperation("getClusterDetail");
+            asop.setListener(this);
+            asop.execute(urlParam);
+        } else {
+            toggleViewFloatingButton(View.VISIBLE);
+            listViewClusterDetail.setAdapter(clusterDetailAdapter);
         }
 
+
+
     }
+
+    private String getCallerFragment(){
+        FragmentManager fm = getFragmentManager();
+        int count = getFragmentManager().getBackStackEntryCount();
+        return fm.getBackStackEntryAt(count-1).getName();
+    }
+
 
     @Override
     public void onClick(View view) {
@@ -136,37 +136,43 @@ public class ClusterDetailDataFragment extends Fragment implements AsyncTaskList
 
     }
 
+    private void toggleViewFloatingButton(int visible) {
+        fabCompetitor.setVisibility(visible);
+        fabSearch.setVisibility(visible);
+    }
+
+    private void populateItem(ResponseClusterInformation rci) {
+        competitorList = rci.getCompetitorList();
+        mapResponse = rci.getCluster();
+        if(mapResponse != null && !mapResponse.isEmpty()) {
+            for (Map.Entry<Object, Object> entry : mapResponse.entrySet()) {
+                String key = entry.getKey() == null ? "-" : ""+ entry.getKey();
+                String value = entry.getValue() == null ? "-" : ""+ entry.getValue();
+
+                CommonItem clusterDetail = new CommonItem();
+                clusterDetail.setKey(key);
+                clusterDetail.setValue(value);
+                dataModels.add(clusterDetail);
+            }
+            clusterDetailAdapter = new CommonRowAdapter(dataModels, getActivity().getApplicationContext());
+            clusterDetailAdapter.setWidthText(150);
+            listViewClusterDetail.setAdapter(clusterDetailAdapter);
+        } else {
+            DialogBuilder db = DialogBuilder.getInstance();
+            db.createAlertDialog(getContext(), getString(R.string.dialog_title_error),
+                    getString(R.string.dialog_content_failedconnect));
+        }
+    }
 
 
     @Override
     public void onAsyncTaskComplete(Object result, String taskName) {
         if("getClusterDetail".equals(taskName)) {
-            fabCompetitor.setVisibility(View.VISIBLE);
-            fabSearch.setVisibility(View.VISIBLE);
+            toggleViewFloatingButton(View.VISIBLE);
             if(result != null) {
                 MainModel<ResponseClusterInformation> model = StringUtil.convertStringToObject("" + result, ResponseClusterInformation.class);
                 ResponseClusterInformation rci = model.getObject();
-                mapResponse = rci.getCluster();
-
-                competitorList = rci.getCompetitorList();
-                if(mapResponse != null && !mapResponse.isEmpty()) {
-                    for (Map.Entry<Object, Object> entry : mapResponse.entrySet()) {
-                        String key = entry.getKey() == null ? "-" : ""+ entry.getKey();
-                        String value = entry.getValue() == null ? "-" : ""+ entry.getValue();
-
-                        CommonItem clusterDetail = new CommonItem();
-                        clusterDetail.setKey(key);
-                        clusterDetail.setValue(value);
-                        dataModels.add(clusterDetail);
-                    }
-                    clusterDetailAdapter = new CommonRowAdapter(dataModels, getActivity().getApplicationContext());
-                    clusterDetailAdapter.setWidthText(150);
-                    listViewClusterDetail.setAdapter(clusterDetailAdapter);
-                } else {
-                    DialogBuilder db = DialogBuilder.getInstance();
-                    db.createAlertDialog(getContext(), getString(R.string.dialog_title_error),
-                            getString(R.string.dialog_content_failedconnect));
-                }
+                populateItem(rci);
 
             }
         } else if ("insertCompetitor".equals(taskName)) {
@@ -243,6 +249,8 @@ public class ClusterDetailDataFragment extends Fragment implements AsyncTaskList
             }
         });
 
+
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogTheme;
         dialog.show();
     }
 
@@ -274,7 +282,37 @@ public class ClusterDetailDataFragment extends Fragment implements AsyncTaskList
 
     @Override
     public void onDialogOkPressed(DialogInterface dialog, int which, Object... result) {
+        // Search List Homepass
+        List<String> homepassSearch = new ArrayList<String>();
+        for(CommonItem commonItem : dataModels) {
+            if("List Available Homepass".equalsIgnoreCase(commonItem.getKey())) {
+                String[] homepassList = commonItem.getValue().split("\n");
+                if(!StringUtil.isEmpty((String) result[0])) {
+                    for (String homepass : homepassList) {
+                        if(homepass.toLowerCase().contains(result[0]+"")) {
+                            homepassSearch.add(homepass);
+                        }
+                    }
+                } else {
+                    homepassSearch =  Arrays.asList(homepassList);
+                }
+                break;
+            }
+        }
 
+        Bundle bundle = new Bundle();
+        bundle.putStringArrayList("homepassList",new ArrayList<>(homepassSearch));
+
+        Fragment fragment = new HomepassFragment();
+        fragment.setArguments(bundle);
+
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_frame, fragment,fragment.getClass().getName());
+        ft.addToBackStack(fragment.getClass().getName());
+        ft.commit();
+
+        DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
     }
 
     @Override

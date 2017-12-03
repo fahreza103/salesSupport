@@ -30,7 +30,7 @@ import id.co.myrepublic.salessupport.model.Particulars;
 import id.co.myrepublic.salessupport.model.ResponseUserSelect;
 import id.co.myrepublic.salessupport.support.DialogBuilder;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
-import id.co.myrepublic.salessupport.util.AsyncOperation;
+import id.co.myrepublic.salessupport.support.AsyncOperation;
 import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.UrlParam;
 
@@ -167,7 +167,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncTaskListene
     @Override
     public void onAsyncTaskComplete(Object result, String taskName) {
         if("checkPermission".equals(taskName)) {
-            boolean isPermitted = false;
+            boolean isPermitted = true;
             if(result != null) {
                 MainModel<Map<Object,Object>> model = StringUtil.convertStringToObject("" + result, Map.class);
                 Map<Object,Object> mapResponse = model.getObject();
@@ -297,14 +297,16 @@ public class LoginActivity extends AppCompatActivity implements AsyncTaskListene
 
         Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
         Animation fadeOut = AnimationUtils.loadAnimation(this,R.anim.fade_out);
-        Animation expandIn = AnimationUtils.loadAnimation(this,R.anim.expand_in);
+        Animation popIn = AnimationUtils.loadAnimation(this,R.anim.pop_in);
         Animation downTop = AnimationUtils.loadAnimation(this,R.anim.down_from_top);
         Animation upBottom = AnimationUtils.loadAnimation(this,R.anim.up_from_bottom);
+        Animation expandIn = AnimationUtils.loadAnimation(this, R.anim.expand_in);
 
         gvar.setDownTopAnim(downTop);
         gvar.setFadeInAnim(fadeIn);
         gvar.setFadeOutAnim(fadeOut);
-        gvar.setPopupAnim(expandIn);
+        gvar.setPopupAnim(popIn);
         gvar.setTopDownAnim(upBottom);
+        gvar.setExpandAnim(expandIn);
     }
 }

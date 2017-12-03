@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -51,24 +50,6 @@ public class AreasFragment extends Fragment implements View.OnClickListener, Dia
 
     }
 
-    @Override
-    public void onDestroyView ()
-    {
-        super.onDestroyView();
-        try{
-            String backStateName = this.getClass().getName();
-            FragmentManager manager = getActivity().getSupportFragmentManager();
-            FragmentTransaction trans = manager.beginTransaction();
-            AreasFragment fragment = ((AreasFragment) getFragmentManager().findFragmentByTag(backStateName));
-            if(fragment != null) {
-                trans.remove(fragment);
-                trans.commit();
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-
-    }
 
 
     @Override

@@ -16,6 +16,7 @@ public class GlobalVariables {
     private Animation popupAnim;
     private Animation downTopAnim;
     private Animation TopDownAnim;
+    private Animation expandAnim;
 
     protected GlobalVariables() {}
 
@@ -92,5 +93,13 @@ public class GlobalVariables {
 
     public void setTopDownAnim(Animation topDownAnim) {
         TopDownAnim = topDownAnim;
+    }
+
+    public Animation getExpandAnim() {
+        return expandAnim;
+    }
+
+    public void setExpandAnim(Animation expandAnim) {
+        this.expandAnim = expandAnim;
     }
 }

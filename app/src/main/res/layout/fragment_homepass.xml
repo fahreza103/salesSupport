@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:id="@+id/homepass_list_header"
@@ -35,9 +35,9 @@
             android:textSize="18dp"
             android:text="Homepass Detail" />
 
-        <android.support.v4.widget.Space
+        <View
             android:layout_below="@id/homepass_txt_no"
-            android:layout_height="8dp"
+            android:layout_height="2dp"
             android:layout_marginTop="5dp"
             android:background="@color/colorLogo"
             android:layout_width="match_parent" />
@@ -49,9 +49,30 @@
         android:layout_below="@id/homepass_list_header"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_marginBottom="40dp"
         />
 
 
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:id="@+id/homepass_list_footer"
+        android:background="@drawable/side_nav_bar"
+        android:layout_alignParentBottom="true"
+        android:layout_height="40dp">
 
+        <TextView
+            android:id="@+id/homepass_txt_note"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/white"
+            android:textSize="18dp"
+            android:text="@string/fragment_homepass_note" />
+
+
+
+    </RelativeLayout>
 
 </RelativeLayout>

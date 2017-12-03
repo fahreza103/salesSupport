@@ -18,11 +18,12 @@ import id.co.myrepublic.salessupport.R;
 import id.co.myrepublic.salessupport.annotation.PositionItem;
 import id.co.myrepublic.salessupport.constant.AppConstant;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
+import id.co.myrepublic.salessupport.util.StringUtil;
 
 /**
- * Created by myrepublicid on 27/11/17.
+ * Common Row Adapter to populate custom listview with 2 maintext on top and 2 subtext below the maintext
+ * @param <T> any model class to populate data, make sure inside the model resides PositionItem Annotation on the fields otherwise no item will shown in the list
  */
-
 public class CommonRowAdapter<T> extends ArrayAdapter<T> {
 
     private List<T> dataSet;
@@ -77,6 +78,7 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
         GlobalVariables gvar = GlobalVariables.getInstance();
         result.startAnimation((position > lastPosition) ? gvar.getTopDownAnim() : gvar.getDownTopAnim());
         lastPosition = position;
+        boolean hasSubText = false;
 
         // Read the annotation
         try {
@@ -92,15 +94,17 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
                     String postfix = posItem.postfix();
 
                     if(AppConstant.ROWITEM_POSITION_MAINTEXT1.equals(annotationValue)) {
-                        viewHolder.mainText1.setText(fieldValue != null && !"".equals(fieldValue) ? prefix+fieldValue+postfix : "");
+                        viewHolder.mainText1.setText(!StringUtil.isEmpty(fieldValue) ? prefix+fieldValue+postfix : "");
                     }
                     if(AppConstant.ROWITEM_POSITION_MAINTEXT2.equals(annotationValue)) {
-                        viewHolder.mainText2.setText(fieldValue != null && !"".equals(fieldValue) ? prefix+fieldValue+postfix : "");
+                        viewHolder.mainText2.setText(!StringUtil.isEmpty(fieldValue) ? prefix+fieldValue+postfix : "");
                     }
                     if(AppConstant.ROWITEM_POSITION_SUBTEXT1.equals(annotationValue)) {
+                        hasSubText = true;
                         viewHolder.subText1.setText(fieldValue != null && !"".equals(fieldValue) ? prefix+fieldValue+postfix : "");
                     }
                     if(AppConstant.ROWITEM_POSITION_SUBTEXT2.equals(annotationValue)) {
+                        hasSubText = true;
                         viewHolder.subText2.setText(fieldValue != null && !"".equals(fieldValue) ? prefix+fieldValue+postfix : "");
                     }
 
@@ -108,6 +112,12 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+        // Make gone so it not using any space
+        if(!hasSubText) {
+            viewHolder.subText1.setVisibility(View.GONE);
+            viewHolder.subText2.setVisibility(View.GONE);
         }
 
         // Set width beetween Text

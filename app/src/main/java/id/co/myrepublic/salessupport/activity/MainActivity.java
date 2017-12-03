@@ -17,8 +17,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.util.List;
-
 import id.co.myrepublic.salessupport.R;
 import id.co.myrepublic.salessupport.constant.AppConstant;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
@@ -81,13 +79,15 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         android.support.v4.app.FragmentManager fm = this.getSupportFragmentManager();
-        List<Fragment> fragments = fm.getFragments();
+        // This is to clear the data in ClusterDetail if back pressed
+        Fragment clusterDetailFragment = fm.findFragmentByTag(ClusterDetailDataFragment.class.getName());
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else if (fm.getBackStackEntryCount() > 1) {
-            if(fm.getBackStackEntryCount() == 2) {
+            if (fm.getBackStackEntryCount() == 2) {
                 setTitle("Main");
             }
             fm.popBackStack();

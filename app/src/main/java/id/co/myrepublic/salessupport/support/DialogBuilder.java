@@ -6,6 +6,7 @@ import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.widget.EditText;
 
+import id.co.myrepublic.salessupport.R;
 import id.co.myrepublic.salessupport.listener.DialogListener;
 
 /**
@@ -46,8 +47,11 @@ public class DialogBuilder {
                         dialog.dismiss();
                     }
                 })
-            .setIcon(android.R.drawable.ic_dialog_alert)
-            .show();
+            .setIcon(android.R.drawable.ic_dialog_alert);
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogTheme;
+        dialog.show();
+
     }
 
     /**
@@ -63,7 +67,7 @@ public class DialogBuilder {
 
         // Set up the input
         final EditText input = new EditText(context);
-        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        // Specify the type of input expected;
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
 
@@ -72,7 +76,7 @@ public class DialogBuilder {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if(dialogListener != null && input.getText() != null) {
-                    dialogListener.onDialogOkPressed(dialog,which,input.getText().toString(),which);
+                    dialogListener.onDialogOkPressed(dialog,which,input.getText().toString().toLowerCase(),which);
                 }
                 dialog.dismiss();
             }
@@ -87,7 +91,9 @@ public class DialogBuilder {
             }
         });
 
-        builder.show();
+        AlertDialog dialog = builder.create();
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogTheme;
+        dialog.show();
     }
 
 
