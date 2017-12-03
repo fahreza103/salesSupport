@@ -10,7 +10,7 @@ import id.co.myrepublic.salessupport.R;
 import id.co.myrepublic.salessupport.listener.DialogListener;
 
 /**
- * Created by myrepublicid on 2/10/17.
+ * Common dialog builder
  */
 
 public class DialogBuilder {

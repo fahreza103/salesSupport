@@ -191,9 +191,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight=".50"
                     android:ems="10"
-                    android:inputType="date"
+                    android:inputType="none"
                     android:clickable="true"
-                    android:editable="false"
                     android:text="" />
 
             </LinearLayout>
@@ -203,6 +202,27 @@
                 android:layout_height="80dp"
                 android:orientation="horizontal">
 
+                <TextView
+                    android:id="@+id/customer_txt_gender"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".50"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/fragment_customer_gender"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@android:color/black" />
+
+                <Spinner
+                    android:id="@+id/customer_spinner_gender"
+                    android:layout_width="match_parent"
+                    android:layout_weight=".50"
+                    android:spinnerMode="dropdown"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/spinner_bg"
+                    android:paddingBottom="10dp"
+                    android:entries="@array/gender_arrays"
+                    android:layout_height="wrap_content" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -210,6 +230,26 @@
                 android:layout_height="80dp"
                 android:orientation="horizontal">
 
+                <TextView
+                    android:id="@+id/customer_txt_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".50"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/fragment_customer_email"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@android:color/black" />
+
+                <EditText
+                    android:id="@+id/customer_editText_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".50"
+                    android:ems="10"
+                    android:inputType="textEmailAddress"
+                    android:clickable="true"
+                    android:text="" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -217,6 +257,26 @@
                 android:layout_height="80dp"
                 android:orientation="horizontal">
 
+                <TextView
+                    android:id="@+id/customer_txt_mobile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".50"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/fragment_customer_mobile_phone"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@android:color/black" />
+
+                <EditText
+                    android:id="@+id/customer_editText_mobilephone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".50"
+                    android:ems="10"
+                    android:inputType="phone"
+                    android:clickable="true"
+                    android:text="" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -224,18 +284,58 @@
                 android:layout_height="80dp"
                 android:orientation="horizontal">
 
+                <TextView
+                    android:id="@+id/customer_txt_homephone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".50"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/fragment_customer_home_phone"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@android:color/black" />
+
+                <EditText
+                    android:id="@+id/customer_editText_homephone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".50"
+                    android:ems="10"
+                    android:inputType="phone"
+                    android:clickable="true"
+                    android:text="" />
+
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
                 android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/customer_txt_workphone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".50"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/fragment_customer_work_phone"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@android:color/black" />
+
+                <EditText
+                    android:id="@+id/customer_editText_workphone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".50"
+                    android:ems="10"
+                    android:inputType="phone"
+                    android:clickable="true"
+                    android:text="" />
 
             </LinearLayout>
 
 
             <Button
-                android:id="@+id/sales_btn_confirm"
+                android:id="@+id/customer_btn_confirm"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"

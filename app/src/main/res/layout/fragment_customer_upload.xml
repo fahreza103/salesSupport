@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/customer_txt_customerprofile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:paddingBottom="5dp"
+        android:text="@string/fragment_customer_profile"
+        android:textStyle="bold"
+        android:textSize="33dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@android:color/black" />
+
+    <View
+        android:layout_height="2dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/colorLogo"
+        android:layout_width="match_parent" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/customer_txt_upload_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:gravity="center_horizontal"
+                    android:text="@string/fragment_customer_upload_id"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@android:color/black" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/customer_btn_id_takephoto"
+                        android:layout_below="@id/customer_txt_upload_id"
+                        android:layout_width="150dp"
+                        android:layout_height="40dp"
+                        android:layout_margin="10dp"
+                        android:textColor="@color/white"
+                        android:background="@drawable/button_blue"
+                        android:text="@string/fragment_customer_upload_take_photo" />
+
+                    <Button
+                        android:id="@+id/customer_btn_id_gallery"
+                        android:layout_width="150dp"
+                        android:layout_height="40dp"
+                        android:layout_margin="10dp"
+                        android:textColor="@color/white"
+                        android:background="@drawable/button_blue"
+                        android:text="@string/fragment_customer_upload_gallery" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/customer_image_id_preview"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/customer_txt_upload_selfie"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:gravity="center_horizontal"
+                    android:text="@string/fragment_customer_upload_selfie"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@android:color/black" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/customer_btn_selfie_takephoto"
+                        android:layout_below="@id/customer_txt_upload_id"
+                        android:layout_width="150dp"
+                        android:layout_height="40dp"
+                        android:layout_margin="10dp"
+                        android:textColor="@color/white"
+                        android:background="@drawable/button_blue"
+                        android:text="@string/fragment_customer_upload_take_photo" />
+
+                    <Button
+                        android:id="@+id/customer_btn_selfie_gallery"
+                        android:layout_width="150dp"
+                        android:layout_height="40dp"
+                        android:layout_margin="10dp"
+                        android:textColor="@color/white"
+                        android:background="@drawable/button_blue"
+                        android:text="@string/fragment_customer_upload_gallery" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/customer_image_selfie_preview"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
