@@ -2,6 +2,7 @@ package id.co.myrepublic.salessupport.activity;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -171,8 +172,17 @@ public class ClusterDetailDataFragment extends Fragment implements AsyncTaskList
             toggleViewFloatingButton(View.VISIBLE);
             if(result != null) {
                 MainModel<ResponseClusterInformation> model = StringUtil.convertStringToObject("" + result, ResponseClusterInformation.class);
-                ResponseClusterInformation rci = model.getObject();
-                populateItem(rci);
+                if(model.getSuccess()) {
+                    ResponseClusterInformation rci = model.getObject();
+                    populateItem(rci);
+                } else {
+                    // Error on session (expired or invalid)
+                    if(AppConstant.SESSION_VALIDATION.equals(model.getAction())) {
+                        Intent intent = new Intent(getContext(), LoginActivity.class);
+                        startActivity(intent);
+                        getActivity().finish();
+                    }
+                }
 
             }
         } else if ("insertCompetitor".equals(taskName)) {

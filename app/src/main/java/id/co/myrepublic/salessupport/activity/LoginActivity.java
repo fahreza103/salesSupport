@@ -62,6 +62,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncTaskListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+
         setGlobalValue();
 
         centerProgressBar = (ProgressBar) findViewById(R.id.login_center_progressbar);

@@ -20,6 +20,8 @@ public class DatePickerBuilder implements View.OnFocusChangeListener, DatePicker
     private Calendar myCalendar;
     private Context ctx;
 
+
+
     public DatePickerBuilder(EditText editText, Context ctx){
         this.editText = editText;
         this.ctx = ctx;

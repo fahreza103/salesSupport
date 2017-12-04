@@ -140,6 +140,16 @@
 
             </LinearLayout>
 
+            <Button
+                android:id="@+id/customer_btn_confirm"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_gravity="center"
+                android:textColor="@color/white"
+                android:background="@drawable/button_blue"
+                android:text="@string/button_confirm" />
+
         </LinearLayout>
     </ScrollView>
 

@@ -52,6 +52,21 @@
     <string name="fragment_customer_upload_take_photo">Take a Photo</string>
     <string name="fragment_customer_upload_gallery">Load Gallery</string>
 
+    <string name="fragment_plan_create">Create Plan</string>
+    <string name="fragment_plan_internet_package">Internet Package</string>
+    <string name="fragment_plan_tv_package">TV Package</string>
+    <string name="fragment_plan_stb">STB</string>
+    <string name="fragment_plan_alacarte">Ala Carte</string>
+    <string name="fragment_plan_movies">Movies</string>
+    <string name="fragment_plan_sport">Sport</string>
+    <string name="fragment_plan_xtras">Xtras</string>
+    <string name="fragment_plan_ip_public">IP Public</string>
+    <string name="fragment_plan_promotion">Promotion</string>
+    <string name="fragment_plan_remarks">Remarks</string>
+
+    <string name="fragment_verification">Customer Verification</string>
+    <string name="fragment_verification_desc">Please enter the code that has been sent to :</string>
+
 
     <string name="activity_login_username">Username</string>
     <string name="activity_login_password">Password</string>
@@ -89,6 +104,7 @@
     <string name="button_ok">OK</string>
     <string name="button_no">No</string>
     <string name="button_cancel">Cancel</string>
+    <string name="button_resend">Resend</string>
 
     <string-array name="competitor_arrays">
         <item>Firstmedia</item>

@@ -80,17 +80,22 @@ public class ClusterDataFragment extends Fragment implements AsyncTaskListener, 
         urlParam.setUrl(AppConstant.GET_CLUSTER_API_URL);
         urlParam.setParamMap(paramMap);
 
-        AsyncOperation asop = new AsyncOperation("getCluster");
-        asop.setListener(this);
-        asop.execute(urlParam);
-
-        listViewCluster =(ListView)getActivity().findViewById(R.id.listCluster);
-
         fabLayout = (LinearLayout) getActivity().findViewById(R.id.cluster_layout_floating);
         fabRefresh = (FloatingActionButton)getActivity().findViewById(R.id.fab_clusterRefresh);
         fabSearch = (FloatingActionButton)getActivity().findViewById(R.id.fab_clusterSearch);
+        listViewCluster =(ListView)getActivity().findViewById(R.id.listCluster);
 
         fabLayout.setVisibility(View.GONE);
+        if(dataModels.size() ==0) {
+            AsyncOperation asop = new AsyncOperation("getCluster");
+            asop.setListener(this);
+            asop.execute(urlParam);
+        } else {
+            fabLayout.setVisibility(View.VISIBLE);
+            listViewCluster.setAdapter(clusterAdapter);
+        }
+
+
         fabRefresh.setOnClickListener(this);
         fabSearch.setOnClickListener(this);
 

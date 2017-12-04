@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import id.co.myrepublic.salessupport.R;
 import id.co.myrepublic.salessupport.constant.AppConstant;
+import id.co.myrepublic.salessupport.support.AppPermission;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
 
 public class MainActivity extends AppCompatActivity
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         setTitle("Main");
 
+        AppPermission.requestPermission(this);
 
         // Get Session and set Userid
         GlobalVariables sm = GlobalVariables.getInstance();

@@ -8,6 +8,9 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +38,7 @@ public class CustomerUploadFragment extends Fragment implements View.OnClickList
     private Button btnCameraId;
     private Button btnGallerySelfie;
     private Button btnCameraSelfie;
+    private Button btnConfirm;
     private ImageView imageViewPreviewId;
     private ImageView imageViewPreviewSelfie;
 
@@ -58,6 +62,7 @@ public class CustomerUploadFragment extends Fragment implements View.OnClickList
         btnCameraId = (Button) getActivity().findViewById(R.id.customer_btn_id_takephoto);
         btnGallerySelfie = (Button) getActivity().findViewById(R.id.customer_btn_selfie_gallery);
         btnCameraSelfie = (Button) getActivity().findViewById(R.id.customer_btn_selfie_takephoto);
+        btnConfirm = (Button) getActivity().findViewById(R.id.customer_btn_confirm) ;
 
         imageViewPreviewId = (ImageView) getActivity().findViewById(R.id.customer_image_id_preview);
         imageViewPreviewSelfie = (ImageView) getActivity().findViewById(R.id.customer_image_selfie_preview) ;
@@ -66,6 +71,7 @@ public class CustomerUploadFragment extends Fragment implements View.OnClickList
         btnGallerySelfie.setOnClickListener(this);
         btnCameraId.setOnClickListener(this);
         btnCameraSelfie.setOnClickListener(this);
+        btnConfirm.setOnClickListener(this);
     }
 
     @Override
@@ -83,6 +89,18 @@ public class CustomerUploadFragment extends Fragment implements View.OnClickList
 
             case R.id.customer_btn_selfie_takephoto :
                 openCamera(IMAGE_SELFIE_CAMERA_PREVIEW);
+                break;
+            case R.id.customer_btn_confirm :
+                Fragment fragment = new PlanFragment();
+                //fragment.setArguments(bundle);
+
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, fragment,fragment.getClass().getName());
+                ft.addToBackStack(fragment.getClass().getName());
+                ft.commit();
+
+                DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
+                drawer.closeDrawer(GravityCompat.START);
                 break;
         }
     }
@@ -150,12 +168,12 @@ public class CustomerUploadFragment extends Fragment implements View.OnClickList
                     imageViewPreviewSelfie.setImageURI(imageUri);
                     imageViewPreviewSelfie.setVisibility(View.VISIBLE);
                 } else if (requestCode == IMAGE_ID_CAMERA_PREVIEW) {
-                    Bundle extras = data.getExtras();
                     Bitmap bmp = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), cameraImageUri);
                     imageViewPreviewId.setImageBitmap(bmp);
                     imageViewPreviewId.setVisibility(View.VISIBLE);
                 } else if (requestCode == IMAGE_SELFIE_CAMERA_PREVIEW) {
-                    imageViewPreviewSelfie.setImageURI(cameraImageUri);
+                    Bitmap bmp = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), cameraImageUri);
+                    imageViewPreviewSelfie.setImageBitmap(bmp);
                     imageViewPreviewSelfie.setVisibility(View.VISIBLE);
                 }
             }
