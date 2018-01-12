@@ -29,8 +29,8 @@ import id.co.myrepublic.salessupport.model.MainModel;
 import id.co.myrepublic.salessupport.model.Particulars;
 import id.co.myrepublic.salessupport.model.ResponseUserSelect;
 import id.co.myrepublic.salessupport.support.DialogBuilder;
+import id.co.myrepublic.salessupport.support.DownloadAsyncOperation;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
-import id.co.myrepublic.salessupport.support.AsyncOperation;
 import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.UrlParam;
 
@@ -127,7 +127,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncTaskListene
                     urlParam.setUrl(AppConstant.CHECK_PERMISSION);
                     urlParam.setParamMap(paramMap);
 
-                    AsyncOperation asop = new AsyncOperation("checkPermission");
+                    DownloadAsyncOperation asop = new DownloadAsyncOperation("checkPermission");
                     asop.setListener(LoginActivity.this);
                     asop.execute(urlParam);
 
@@ -192,7 +192,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncTaskListene
                 urlParam.setUrl(AppConstant.GET_USER_INFO);
                 urlParam.setParamMap(paramMap);
 
-                AsyncOperation asop = new AsyncOperation("getUserInfo");
+                DownloadAsyncOperation asop = new DownloadAsyncOperation("getUserInfo");
                 asop.setListener(LoginActivity.this);
                 asop.execute(urlParam);
             } else {
@@ -272,7 +272,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncTaskListene
             centerTextView.setVisibility(View.VISIBLE);
             centerProgressLogo.setVisibility(View.VISIBLE);
             browser.setVisibility(View.GONE);
-            AsyncOperation asop = new AsyncOperation("checkSession");
+            DownloadAsyncOperation asop = new DownloadAsyncOperation("checkSession");
             asop.setListener(this);
             asop.execute(UrlParam.createParamCheckSession(sessionId));
         } else {

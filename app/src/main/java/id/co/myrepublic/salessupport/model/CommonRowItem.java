@@ -5,7 +5,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import java.io.Serializable;
 
 /**
- * Created by myrepublicid on 27/11/17.
+ * Used to populate text in row adapter on listView
  */
 
 public class CommonRowItem implements Serializable {

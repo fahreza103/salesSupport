@@ -11,6 +11,41 @@
         android:gravity="center"
         android:orientation="vertical">
 
+        <id.co.myrepublic.salessupport.widget.CustomEditText
+            android:id="@+id/custom_edittext_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:validator="required"
+            app:labelText="Name"
+            app:inputType="text"
+        />
+
+        <id.co.myrepublic.salessupport.widget.CustomEditText
+            android:id="@+id/custom_edittext_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:validator="required"
+            app:labelText="Phone"
+            app:inputType="phone"
+            />
+
+        <id.co.myrepublic.salessupport.widget.CustomEditText
+            android:id="@+id/custom_edittext_3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:validator="required,email"
+            app:labelText="Email"
+            app:inputType="text"
+            />
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/btnColor"
+            android:text="@string/activity_login_retry" />
+
         <ImageView
             android:id="@+id/content_main_image_logo"
             android:layout_width="match_parent"

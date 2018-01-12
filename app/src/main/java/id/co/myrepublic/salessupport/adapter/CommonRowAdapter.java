@@ -16,7 +16,7 @@ import java.util.List;
 
 import id.co.myrepublic.salessupport.R;
 import id.co.myrepublic.salessupport.annotation.PositionItem;
-import id.co.myrepublic.salessupport.constant.AppConstant;
+import id.co.myrepublic.salessupport.constant.RowItemConstant;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
 
@@ -89,21 +89,21 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
                 String fieldValue = getStringFromReflectionObject(field.get(dataModel));
                 if(annotation instanceof  PositionItem) {
                     PositionItem posItem = (PositionItem) annotation;
-                    String annotationValue = posItem.type();
+                    RowItemConstant annotationValue = posItem.type();
                     String prefix = posItem.prefix();
                     String postfix = posItem.postfix();
 
-                    if(AppConstant.ROWITEM_POSITION_MAINTEXT1.equals(annotationValue)) {
+                    if(RowItemConstant.MAINTEXT1==annotationValue) {
                         viewHolder.mainText1.setText(!StringUtil.isEmpty(fieldValue) ? prefix+fieldValue+postfix : "");
                     }
-                    if(AppConstant.ROWITEM_POSITION_MAINTEXT2.equals(annotationValue)) {
+                    if(RowItemConstant.MAINTEXT2==annotationValue) {
                         viewHolder.mainText2.setText(!StringUtil.isEmpty(fieldValue) ? prefix+fieldValue+postfix : "");
                     }
-                    if(AppConstant.ROWITEM_POSITION_SUBTEXT1.equals(annotationValue)) {
+                    if(RowItemConstant.SUBTEXT1==annotationValue) {
                         hasSubText = true;
                         viewHolder.subText1.setText(fieldValue != null && !"".equals(fieldValue) ? prefix+fieldValue+postfix : "");
                     }
-                    if(AppConstant.ROWITEM_POSITION_SUBTEXT2.equals(annotationValue)) {
+                    if(RowItemConstant.SUBTEXT2==annotationValue) {
                         hasSubText = true;
                         viewHolder.subText2.setText(fieldValue != null && !"".equals(fieldValue) ? prefix+fieldValue+postfix : "");
                     }

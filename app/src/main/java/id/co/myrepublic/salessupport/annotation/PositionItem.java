@@ -5,6 +5,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import id.co.myrepublic.salessupport.constant.RowItemConstant;
+
 /**
  * Used to define text position on CommonRowAdapter
  * it can be mainText, mainText2, subText, or subText2
@@ -16,7 +18,7 @@ public @interface PositionItem {
      * Type of the position
      * @return
      */
-    String type();
+    RowItemConstant type();
 
     /**
      * Text after rowitem value

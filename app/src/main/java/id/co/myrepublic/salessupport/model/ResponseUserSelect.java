@@ -5,7 +5,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import java.io.Serializable;
 
 /**
- * Created by myrepublicid on 2/10/17.
+ * User Select Response API
  */
 
 public class ResponseUserSelect implements Serializable {

@@ -28,8 +28,8 @@ import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
 import id.co.myrepublic.salessupport.listener.DialogListener;
 import id.co.myrepublic.salessupport.model.Cluster;
 import id.co.myrepublic.salessupport.model.MainModel;
-import id.co.myrepublic.salessupport.support.AsyncOperation;
 import id.co.myrepublic.salessupport.support.DialogBuilder;
+import id.co.myrepublic.salessupport.support.DownloadAsyncOperation;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.UrlParam;
@@ -87,7 +87,7 @@ public class ClusterDataFragment extends Fragment implements AsyncTaskListener, 
 
         fabLayout.setVisibility(View.GONE);
         if(dataModels.size() ==0) {
-            AsyncOperation asop = new AsyncOperation("getCluster");
+            DownloadAsyncOperation asop = new DownloadAsyncOperation("getCluster");
             asop.setListener(this);
             asop.execute(urlParam);
         } else {

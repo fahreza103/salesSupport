@@ -35,8 +35,8 @@ import id.co.myrepublic.salessupport.listener.DialogListener;
 import id.co.myrepublic.salessupport.model.CommonItem;
 import id.co.myrepublic.salessupport.model.MainModel;
 import id.co.myrepublic.salessupport.model.ResponseClusterInformation;
-import id.co.myrepublic.salessupport.support.AsyncOperation;
 import id.co.myrepublic.salessupport.support.DialogBuilder;
+import id.co.myrepublic.salessupport.support.DownloadAsyncOperation;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.UrlParam;
@@ -105,7 +105,7 @@ public class ClusterDetailDataFragment extends Fragment implements AsyncTaskList
 
         String caller = getCallerFragment();
         if(dataModels.size() == 0) {
-            AsyncOperation asop = new AsyncOperation("getClusterDetail");
+            DownloadAsyncOperation asop = new DownloadAsyncOperation("getClusterDetail");
             asop.setListener(this);
             asop.execute(urlParam);
         } else {
@@ -284,7 +284,7 @@ public class ClusterDetailDataFragment extends Fragment implements AsyncTaskList
         Toast.makeText(getActivity(), "Insert Cluster Information...",
                 Toast.LENGTH_LONG).show();
 
-        AsyncOperation asop = new AsyncOperation("insertCompetitor");
+        DownloadAsyncOperation asop = new DownloadAsyncOperation("insertCompetitor");
         asop.setListener(this);
         asop.execute(urlParam);
 

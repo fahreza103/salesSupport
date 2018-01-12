@@ -24,8 +24,4 @@ public interface AppConstant {
     public static final String SESSION_VALIDATION = "session_validation";
     public static final String PERMISSION_MOBILE_APP = "ux.homepass.mobile_sales_support";
 
-    public static final String ROWITEM_POSITION_MAINTEXT1 = "mainText1";
-    public static final String ROWITEM_POSITION_MAINTEXT2 = "mainText2";
-    public static final String ROWITEM_POSITION_SUBTEXT1 = "subText1";
-    public static final String ROWITEM_POSITION_SUBTEXT2 = "subText2";
 }

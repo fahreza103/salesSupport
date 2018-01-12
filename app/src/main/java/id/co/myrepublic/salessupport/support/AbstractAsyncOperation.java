@@ -6,25 +6,19 @@ import android.view.View;
 import id.co.myrepublic.salessupport.activity.MainActivity;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
-import id.co.myrepublic.salessupport.util.URLConnector;
-import id.co.myrepublic.salessupport.util.UrlParam;
 
 /**
- * Perform async task operation such as fetching data from API
+ * Abstract class for async operation
  */
 
-public class AsyncOperation extends AsyncTask<UrlParam, Integer, String> {
+public abstract class AbstractAsyncOperation extends AsyncTask<Object, Integer, String> {
 
-    private String taskName;
+    protected String taskName;
     private String jsonResult;
     // -1 = failed , 0 = not yet run, 1 = success
     private int asyncStatus = 0;
     private AsyncTaskListener listener;
 
-
-    public AsyncOperation(String taskName) {
-        this.taskName = taskName;
-    }
 
     public String getJsonResult() {
         return jsonResult;
@@ -74,15 +68,8 @@ public class AsyncOperation extends AsyncTask<UrlParam, Integer, String> {
         }
     }
 
-    protected String doInBackground(UrlParam... urlParams) {
-        String result = URLConnector.doConnect(urlParams[0].getUrl(),urlParams[0].getParamMap());
 
-        return result;
-    }
-
-    protected void onProgressUpdate(Integer... progress) {
-
-    }
+    protected void onProgressUpdate(Integer... progress) {}
 
     protected void onPostExecute(String result) {
         // Null return, failed

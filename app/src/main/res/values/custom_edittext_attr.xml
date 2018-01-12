@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CustomEditText">
+        <attr name="validator" format="string" />
+        <attr name="labelText" format="string" />
+        <attr name="inputValue" format="string" />
+        <attr name="inputType" format="string" />
+        <attr name="clickable" format="boolean" />
+        <attr name="label_width" format="dimension" />
+    </declare-styleable>
+</resources>

@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * Created by myrepublicid on 2/10/17.
+ * Particulars response API
  */
 
 @JsonIgnoreProperties(ignoreUnknown = true)
