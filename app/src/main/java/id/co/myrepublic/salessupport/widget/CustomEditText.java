@@ -85,6 +85,10 @@ public class CustomEditText extends LinearLayout {
         setFormEnabled(attrEnabled);
     }
 
+    /**
+     *  This is to save the current state of this component after going into the next fragment / activity
+     *
+     */
     @Override
     public Parcelable onSaveInstanceState() {
         Bundle bundle = new Bundle();
@@ -93,6 +97,10 @@ public class CustomEditText extends LinearLayout {
         return bundle;
     }
 
+    /**
+     * Restore the state of this component, so the value will be restored and not losing after back from other fragment / activity
+     * @param state
+     */
     @Override
     public void onRestoreInstanceState(Parcelable state) {
         if (state instanceof Bundle) {
@@ -104,6 +112,12 @@ public class CustomEditText extends LinearLayout {
         super.onRestoreInstanceState(state);
     }
 
+    /*
+       https://stackoverflow.com/questions/25998596/how-to-retrieve-state-of-custom-views
+       The reason this occurs is that the EditText within each instance of your ComplexView shares an ID with every other instance of that View.
+       When your ComplexView dispatches save/restore events to it's children, things get a little funky with Views that share the same ID.
+       
+     */
     @Override
     protected void dispatchSaveInstanceState(SparseArray<Parcelable> container) {
         dispatchFreezeSelfOnly(container);
@@ -113,6 +127,7 @@ public class CustomEditText extends LinearLayout {
     protected void dispatchRestoreInstanceState(SparseArray<Parcelable> container) {
         dispatchThawSelfOnly(container);
     }
+    //================
 
     /**
      * if this edittext has date validator, set the format here, if not specified , default format dd/MM/yyyy will be used
