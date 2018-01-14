@@ -5,7 +5,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import java.io.Serializable;
 
 import id.co.myrepublic.salessupport.annotation.PositionItem;
-import id.co.myrepublic.salessupport.constant.RowItemConstant;
+import id.co.myrepublic.salessupport.constant.RowItem;
 
 /**
  * Common model with default key and value pair
@@ -15,9 +15,9 @@ public class CommonItem implements Serializable {
 
     private static final long serialVersionUID = 33355123454912675L;
 
-    @PositionItem(type= RowItemConstant.MAINTEXT1)
+    @PositionItem(type= RowItem.MAINTEXT1)
     private String key;
-    @PositionItem(type= RowItemConstant.MAINTEXT2)
+    @PositionItem(type= RowItem.MAINTEXT2)
     private String value;
 
     public String getKey() {

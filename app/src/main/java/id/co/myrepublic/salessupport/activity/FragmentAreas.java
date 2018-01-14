@@ -28,7 +28,7 @@ import id.co.myrepublic.salessupport.support.DialogBuilder;
  * Created by myrepublicid on 26/9/17.
  */
 
-public class AreasFragment extends Fragment implements View.OnClickListener, DialogListener {
+public class FragmentAreas extends Fragment implements View.OnClickListener, DialogListener {
 
     private static View view;
     private ListView listViewCity;
@@ -83,7 +83,7 @@ public class AreasFragment extends Fragment implements View.OnClickListener, Dia
 //                Snackbar.make(view, dataModel.getCityName()+"\n"+dataModel.getArpu()+"\n"+dataModel.getActiveSubs(), Snackbar.LENGTH_LONG)
 //                        .setAction("No action", null).show();
 
-                Fragment fragment = new ClusterDataFragment();
+                Fragment fragment = new FragmentClusterData();
 
                 Bundle bundle = new Bundle();
                 bundle.putString("areaName", dataModel.getAreaName());

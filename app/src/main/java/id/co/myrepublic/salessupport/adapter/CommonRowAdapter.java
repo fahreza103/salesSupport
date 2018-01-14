@@ -16,13 +16,15 @@ import java.util.List;
 
 import id.co.myrepublic.salessupport.R;
 import id.co.myrepublic.salessupport.annotation.PositionItem;
-import id.co.myrepublic.salessupport.constant.RowItemConstant;
+import id.co.myrepublic.salessupport.constant.RowItem;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
 
 /**
  * Common Row Adapter to populate custom listview with 2 maintext on top and 2 subtext below the maintext
  * @param <T> any model class to populate data, make sure inside the model resides PositionItem Annotation on the fields otherwise no item will shown in the list
+ *
+ * @author Fahreza Tamara
  */
 public class CommonRowAdapter<T> extends ArrayAdapter<T> {
 
@@ -89,21 +91,21 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
                 String fieldValue = getStringFromReflectionObject(field.get(dataModel));
                 if(annotation instanceof  PositionItem) {
                     PositionItem posItem = (PositionItem) annotation;
-                    RowItemConstant annotationValue = posItem.type();
+                    RowItem annotationValue = posItem.type();
                     String prefix = posItem.prefix();
                     String postfix = posItem.postfix();
 
-                    if(RowItemConstant.MAINTEXT1==annotationValue) {
+                    if(RowItem.MAINTEXT1==annotationValue) {
                         viewHolder.mainText1.setText(!StringUtil.isEmpty(fieldValue) ? prefix+fieldValue+postfix : "");
                     }
-                    if(RowItemConstant.MAINTEXT2==annotationValue) {
+                    if(RowItem.MAINTEXT2==annotationValue) {
                         viewHolder.mainText2.setText(!StringUtil.isEmpty(fieldValue) ? prefix+fieldValue+postfix : "");
                     }
-                    if(RowItemConstant.SUBTEXT1==annotationValue) {
+                    if(RowItem.SUBTEXT1==annotationValue) {
                         hasSubText = true;
                         viewHolder.subText1.setText(fieldValue != null && !"".equals(fieldValue) ? prefix+fieldValue+postfix : "");
                     }
-                    if(RowItemConstant.SUBTEXT2==annotationValue) {
+                    if(RowItem.SUBTEXT2==annotationValue) {
                         hasSubText = true;
                         viewHolder.subText2.setText(fieldValue != null && !"".equals(fieldValue) ? prefix+fieldValue+postfix : "");
                     }

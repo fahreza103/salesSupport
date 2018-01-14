@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.co.myrepublic.salessupport.annotation.PositionItem;
-import id.co.myrepublic.salessupport.constant.RowItemConstant;
+import id.co.myrepublic.salessupport.constant.RowItem;
 
 /**
  * Model for Area
@@ -16,9 +16,9 @@ public class Area implements Serializable {
     private static final long serialVersionUID = 6557135639443912673L;
 
     private String areaId;
-    @PositionItem(type= RowItemConstant.SUBTEXT1)
+    @PositionItem(type= RowItem.SUBTEXT1)
     private String areaCode;
-    @PositionItem(type= RowItemConstant.MAINTEXT1)
+    @PositionItem(type= RowItem.MAINTEXT1)
     private String areaName;
     private String remark;
     private String areainitial;

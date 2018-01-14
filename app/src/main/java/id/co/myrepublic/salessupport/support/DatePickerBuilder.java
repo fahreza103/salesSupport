@@ -19,12 +19,14 @@ public class DatePickerBuilder implements View.OnFocusChangeListener, DatePicker
     private EditText editText;
     private Calendar myCalendar;
     private Context ctx;
+    private String dateFormat;
 
 
 
-    public DatePickerBuilder(EditText editText, Context ctx){
+    public DatePickerBuilder(EditText editText, Context ctx, String dateFormat){
         this.editText = editText;
         this.ctx = ctx;
+        this.dateFormat = dateFormat;
         this.editText.setOnFocusChangeListener(this);
         this.editText.setOnKeyListener(null);
         myCalendar = Calendar.getInstance();
@@ -34,8 +36,8 @@ public class DatePickerBuilder implements View.OnFocusChangeListener, DatePicker
     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth)     {
         // this.editText.setText();
 
-        String myFormat = "MM/dd/yyyy"; //In which you need put here
-        SimpleDateFormat sdformat = new SimpleDateFormat(myFormat, Locale.US);
+
+        SimpleDateFormat sdformat = new SimpleDateFormat(this.dateFormat, Locale.US);
         myCalendar.set(Calendar.YEAR, year);
         myCalendar.set(Calendar.MONTH, monthOfYear);
         myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);

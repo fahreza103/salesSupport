@@ -46,7 +46,7 @@ import id.co.myrepublic.salessupport.util.UrlParam;
  * Created by myrepublicid on 26/9/17.
  */
 
-public class ClusterDetailDataFragment extends Fragment implements AsyncTaskListener , View.OnClickListener, DialogListener{
+public class FragmentClusterDetailData extends Fragment implements AsyncTaskListener , View.OnClickListener, DialogListener{
 
     private ListView listViewClusterDetail;
     private CommonRowAdapter<CommonItem> clusterDetailAdapter;
@@ -178,7 +178,7 @@ public class ClusterDetailDataFragment extends Fragment implements AsyncTaskList
                 } else {
                     // Error on session (expired or invalid)
                     if(AppConstant.SESSION_VALIDATION.equals(model.getAction())) {
-                        Intent intent = new Intent(getContext(), LoginActivity.class);
+                        Intent intent = new Intent(getContext(), ActivityLogin.class);
                         startActivity(intent);
                         getActivity().finish();
                     }
@@ -313,7 +313,7 @@ public class ClusterDetailDataFragment extends Fragment implements AsyncTaskList
         Bundle bundle = new Bundle();
         bundle.putStringArrayList("homepassList",new ArrayList<>(homepassSearch));
 
-        Fragment fragment = new HomepassFragment();
+        Fragment fragment = new FragmentHomepass();
         fragment.setArguments(bundle);
 
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();

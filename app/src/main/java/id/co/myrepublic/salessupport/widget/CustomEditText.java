@@ -3,9 +3,13 @@ package id.co.myrepublic.salessupport.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.StyleableRes;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.InputType;
+import android.text.method.KeyListener;
 import android.util.AttributeSet;
+import android.util.SparseArray;
+import android.view.Gravity;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -14,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.co.myrepublic.salessupport.R;
+import id.co.myrepublic.salessupport.support.DatePickerBuilder;
 import id.co.myrepublic.salessupport.support.Validator;
 import id.co.myrepublic.salessupport.util.StringUtil;
 
@@ -23,22 +28,11 @@ import static id.co.myrepublic.salessupport.support.Validator.VALIDATION_REQUIRE
 
 /**
  * Custom editview with validation implementations and label text
+ *
+ * @author Fahreza Tamara
  */
 
 public class CustomEditText extends LinearLayout {
-
-    @StyleableRes
-    int index0 = 0;
-    @StyleableRes
-    int index1 = 1;
-    @StyleableRes
-    int index2 = 2;
-    @StyleableRes
-    int index3 = 3;
-    @StyleableRes
-    int index4 = 4;
-    @StyleableRes
-    int index5 = 5;
 
     private List<String> validators = new ArrayList<String>();
     private Boolean hasRequiredValidation = false;
@@ -46,6 +40,7 @@ public class CustomEditText extends LinearLayout {
 
     private TextView labelText;
     private EditText editText;
+    private Context context;
 
     public CustomEditText(Context context) {
         super(context);
@@ -53,23 +48,26 @@ public class CustomEditText extends LinearLayout {
 
     public CustomEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
-        if(!isInEditMode()) {
-            init(context, attrs);
-        }
+        this.context = context;
+        init(context, attrs);
     }
 
     private void init(Context context, AttributeSet attrs) {
         inflate(context, R.layout.customview_edittext, this);
 
-        int[] sets = {R.attr.validator, R.attr.labelText,R.attr.inputType,R.attr.inputValue,R.attr.clickable};
+        int[] sets = {R.attr.validator, R.attr.labelText,R.attr.inputType,R.attr.clickable,R.attr.dateFormat,R.attr.inputHeight,R.attr.value,R.attr.inputHint,R.attr.enabled};
         TypedArray typedArray = context.obtainStyledAttributes(attrs, sets);
 
-        String attrValidator = typedArray.getString(index0);
-        String attrLabelText = typedArray.getString(index1);
-        String attrInputType = typedArray.getString(index2);
-        String attrInputValue = typedArray.getString(index3);
-        Boolean attrClickable = typedArray.getBoolean(index4,true);
-        Float attrLabelWidth  = typedArray.getDimension(index5,0);
+        String attrValidator = typedArray.getString(R.styleable.appAttr_validator);
+        String attrLabelText = typedArray.getString(R.styleable.appAttr_labelText);
+        String attrInputType = typedArray.getString(R.styleable.appAttr_inputType);
+        String attrInputValue = typedArray.getString(R.styleable.appAttr_value);
+        Boolean attrClickable = typedArray.getBoolean(R.styleable.appAttr_clickable,true);
+        Boolean attrEnabled = typedArray.getBoolean(R.styleable.appAttr_enabled,true);
+        String attrDateFormat  = typedArray.getString(R.styleable.appAttr_dateFormat);
+        String attrInputHint = typedArray.getString(R.styleable.appAttr_dateFormat);
+        int attrInputHeight = typedArray.getDimensionPixelSize(R.styleable.appAttr_inputHeight,0);
+
 
         typedArray.recycle();
 
@@ -78,9 +76,42 @@ public class CustomEditText extends LinearLayout {
 
         setValidator(attrValidator);
         setLabelText(attrLabelText);
+        setDateFormat(attrDateFormat);
         setInputType(attrInputType);
         setInputValue(attrInputValue);
         setEditTextClickable(attrClickable);
+        setInputHeight(attrInputHeight);
+        setInputHint(attrInputHint);
+        setFormEnabled(attrEnabled);
+    }
+
+    @Override
+    public Parcelable onSaveInstanceState() {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("superState", super.onSaveInstanceState());
+        bundle.putString("editTextValue", getInputValue());
+        return bundle;
+    }
+
+    @Override
+    public void onRestoreInstanceState(Parcelable state) {
+        if (state instanceof Bundle) {
+            Bundle bundle = (Bundle) state;
+            String editTextValue = bundle.getString("editTextValue");
+            setInputValue(editTextValue);
+            state = bundle.getParcelable("superState");
+        }
+        super.onRestoreInstanceState(state);
+    }
+
+    @Override
+    protected void dispatchSaveInstanceState(SparseArray<Parcelable> container) {
+        dispatchFreezeSelfOnly(container);
+    }
+
+    @Override
+    protected void dispatchRestoreInstanceState(SparseArray<Parcelable> container) {
+        dispatchThawSelfOnly(container);
     }
 
     /**
@@ -123,6 +154,32 @@ public class CustomEditText extends LinearLayout {
      */
     public void setError(String message, Drawable drawable) {
         this.editText.setError(message,drawable);
+    }
+
+    /**
+     * Set editText height
+     * @param height
+     */
+    public void setInputHeight(int height) {
+        if(height > 0)
+          editText.getLayoutParams().height = (int) height;
+    }
+
+    public void setInputHint(String hint) {
+        editText.setHint(hint);
+    }
+
+    public void setFormEnabled(Boolean enabled) {
+        KeyListener mKeyListener = editText.getKeyListener();
+        if(enabled) {
+            editText.setKeyListener(mKeyListener);
+            editText.setFocusable(true);
+            editText.setEnabled(true);
+        } else {
+            editText.setKeyListener(null);
+            editText.setFocusable(false);
+            editText.setEnabled(false);
+        }
     }
 
     /**
@@ -170,18 +227,24 @@ public class CustomEditText extends LinearLayout {
         this.editText.setInputType(inputType);
     }
 
+    /**
+     * set Input type of edittext
+     * @param inputTypeAttr
+     */
     public void setInputType(String inputTypeAttr) {
         int inputType = InputType.TYPE_CLASS_TEXT;
         if("text".equals(inputTypeAttr)) {
             inputType = InputType.TYPE_CLASS_TEXT;
         } else if("phone".equals(inputTypeAttr)) {
             inputType = InputType.TYPE_CLASS_PHONE;
-        } else if("none".equals(inputType)) {
+        } else if("none".equals(inputTypeAttr)) {
             inputType = InputType.TYPE_NULL;
-        } else if("textMultiline".equals(inputType)) {
+        } else if("textMultiline".equals(inputTypeAttr)) {
             inputType = InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_MULTI_LINE;
-        } else if("calendar".equals(inputType)) {
+            editText.setGravity(Gravity.TOP);
+        } else if("calendar".equals(inputTypeAttr)) {
             inputType = InputType.TYPE_NULL;
+            new DatePickerBuilder(this.editText,this.context,this.dateFormat);
         }
         this.editText.setInputType(inputType);
     }
@@ -198,7 +261,7 @@ public class CustomEditText extends LinearLayout {
         return labelText.getText().toString();
     }
 
-    public String getInputText() {
+    public String getInputValue() {
         return editText.getText().toString();
     }
 

@@ -27,7 +27,7 @@ import id.co.myrepublic.salessupport.R;
 import static android.app.Activity.RESULT_OK;
 
 
-public class CustomerUploadFragment extends Fragment implements View.OnClickListener {
+public class FragmentCustomerUpload extends Fragment implements View.OnClickListener {
 
     private static final int IMAGE_ID_GALLERY_PREVIEW = 0;
     private static final int IMAGE_SELFIE_GALLERY_PREVIEW = 1;
@@ -91,7 +91,7 @@ public class CustomerUploadFragment extends Fragment implements View.OnClickList
                 openCamera(IMAGE_SELFIE_CAMERA_PREVIEW);
                 break;
             case R.id.customer_btn_confirm :
-                Fragment fragment = new PlanFragment();
+                Fragment fragment = new FragmentPlan();
                 //fragment.setArguments(bundle);
 
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();

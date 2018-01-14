@@ -39,7 +39,7 @@ import id.co.myrepublic.salessupport.util.UrlParam;
  * Created by myrepublicid on 27/9/17.
  */
 
-public class LoginActivity extends AppCompatActivity implements AsyncTaskListener, View.OnClickListener {
+public class ActivityLogin extends AppCompatActivity implements AsyncTaskListener, View.OnClickListener {
 
     private ProgressBar mProgressBar;
     private ProgressBar centerProgressBar;
@@ -128,7 +128,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncTaskListene
                     urlParam.setParamMap(paramMap);
 
                     DownloadAsyncOperation asop = new DownloadAsyncOperation("checkPermission");
-                    asop.setListener(LoginActivity.this);
+                    asop.setListener(ActivityLogin.this);
                     asop.execute(urlParam);
 
                 }
@@ -193,7 +193,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncTaskListene
                 urlParam.setParamMap(paramMap);
 
                 DownloadAsyncOperation asop = new DownloadAsyncOperation("getUserInfo");
-                asop.setListener(LoginActivity.this);
+                asop.setListener(ActivityLogin.this);
                 asop.execute(urlParam);
             } else {
                 showErrorWebView(401,"Unauthorized",getString(R.string.activity_login_failed_permission));
@@ -207,7 +207,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncTaskListene
                 GlobalVariables sm = GlobalVariables.getInstance();
                 sm.putString(AppConstant.COOKIE_USERNAME_KEY,particulars.getFirstName());
 
-                Intent intent = new Intent(context, MainActivity.class);
+                Intent intent = new Intent(context, ActivityMain.class);
                 startActivity(intent);
                 finish();
             }
@@ -221,7 +221,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncTaskListene
                 MainModel model = StringUtil.convertStringToObject("" + result, null);
                 // Success, session valid go to main, otherwise show login form, to authenticate
                 if (model.getSuccess()) {
-                    Intent intent = new Intent(context, MainActivity.class);
+                    Intent intent = new Intent(context, ActivityMain.class);
                     startActivity(intent);
                     finish();
                 } else {

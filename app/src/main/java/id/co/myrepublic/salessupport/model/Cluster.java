@@ -9,7 +9,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import java.io.Serializable;
 
 import id.co.myrepublic.salessupport.annotation.PositionItem;
-import id.co.myrepublic.salessupport.constant.RowItemConstant;
+import id.co.myrepublic.salessupport.constant.RowItem;
 
 /**
  * Created by myrepublicid on 26/9/17.
@@ -23,10 +23,10 @@ public class Cluster implements Serializable {
 
     private String cityName;
     @JsonProperty("total_homepass")
-    @PositionItem(type= RowItemConstant.SUBTEXT1, prefix = "Total Homepass : ")
+    @PositionItem(type= RowItem.SUBTEXT1, prefix = "Total Homepass : ")
     private Integer totalHomePass;
     @JsonProperty("clustername")
-    @PositionItem(type= RowItemConstant.MAINTEXT1)
+    @PositionItem(type= RowItem.MAINTEXT1)
     private String clusterName;
     private String arpu;
     private String totalSubs;

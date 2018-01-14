@@ -22,7 +22,7 @@ import id.co.myrepublic.salessupport.constant.AppConstant;
 import id.co.myrepublic.salessupport.support.AppPermission;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
 
-public class MainActivity extends AppCompatActivity
+public class ActivityMain extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     public static TextView txtUser;
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity
         this.progressIcon = (ImageView) findViewById(R.id.content_main_progressbar_icon);
 
         // Call main fragment
-        Fragment fragment = new MainFragment();
+        Fragment fragment = new FragmentMain();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         String backStateName = fragment.getClass().getName();
         ft.replace(R.id.content_frame, fragment, backStateName);
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity
     public void onBackPressed() {
         android.support.v4.app.FragmentManager fm = this.getSupportFragmentManager();
         // This is to clear the data in ClusterDetail if back pressed
-        Fragment clusterDetailFragment = fm.findFragmentByTag(ClusterDetailDataFragment.class.getName());
+        Fragment clusterDetailFragment = fm.findFragmentByTag(FragmentClusterDetailData.class.getName());
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity
         //initializing the fragment object which is selected
         switch (itemId) {
             case R.id.data:
-                fragment = new AreasFragment();
+                fragment = new FragmentAreas();
                 break;
             case R.id.logout:
                 doLogout();
@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity
         GlobalVariables sm = GlobalVariables.getInstance();
         sm.clearSession();
 
-        Intent intent = new Intent(this, LoginActivity.class);
+        Intent intent = new Intent(this, ActivityLogin.class);
         startActivity(intent);
         finish();
         return;

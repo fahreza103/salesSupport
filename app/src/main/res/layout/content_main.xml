@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="id.co.myrepublic.salessupport.activity.MainActivity"
+    tools:context="id.co.myrepublic.salessupport.activity.ActivityMain"
     tools:showIn="@layout/app_bar_main">
 
     <!--<com.daimajia.numberprogressbar.NumberProgressBar-->

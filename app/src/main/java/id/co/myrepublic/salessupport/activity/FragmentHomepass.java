@@ -29,7 +29,7 @@ import id.co.myrepublic.salessupport.model.CommonItem;
  * Created by myrepublicid on 28/11/17.
  */
 
-public class HomepassFragment extends Fragment {
+public class FragmentHomepass extends Fragment {
 
     private ListView listViewHomepass;
     private Dialog dialog;
@@ -109,7 +109,7 @@ public class HomepassFragment extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putString("homepassId",itemSelected);
 
-                Fragment fragment = new SalesFragment();
+                Fragment fragment = new FragmentSales();
                 fragment.setArguments(bundle);
 
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();

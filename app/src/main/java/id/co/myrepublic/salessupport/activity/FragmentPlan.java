@@ -14,7 +14,7 @@ import android.widget.Button;
 import id.co.myrepublic.salessupport.R;
 
 
-public class PlanFragment extends Fragment implements View.OnClickListener {
+public class FragmentPlan extends Fragment implements View.OnClickListener {
 
     private Button btnConfirm;
 
@@ -38,7 +38,7 @@ public class PlanFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        Fragment fragment = new VerificationFragment();
+        Fragment fragment = new FragmentVerification();
         //fragment.setArguments(bundle);
 
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();

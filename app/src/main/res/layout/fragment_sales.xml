@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/sales_layout"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <TextView
@@ -27,120 +30,50 @@
         android:layout_height="match_parent">
 
         <LinearLayout
+            android:id="@+id/sales_scroll_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <LinearLayout
+            <id.co.myrepublic.salessupport.widget.CustomEditText
+                android:id="@+id/sales_editText_sales_agent_code"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:inputType="text"
+                app:validator="required"
+                app:labelText="@string/fragment_sales_agent_code" />
 
-                    <TextView
-                        android:id="@+id/sales_txt_sales_agent_code"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight=".50"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginLeft="10dp"
-                        android:text="@string/fragment_sales_agent_code"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textColor="@android:color/black" />
-
-                    <EditText
-                        android:id="@+id/sales_editText_sales_agent_code"
-                        android:layout_width="match_parent"
-                        android:layout_weight=".50"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:layout_marginTop="5dp"
-                        android:inputType="textShortMessage"
-                        android:text="" />
-
-
-            </LinearLayout>
-
-            <LinearLayout
+            <id.co.myrepublic.salessupport.widget.CustomEditText
+                android:id="@+id/sales_editText_sales_agent_name"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:inputType="text"
+                app:enabled="false"
+                app:labelText="@string/fragment_sales_agent_name" />
 
-                    <TextView
-                        android:id="@+id/sales_txt_sales_agent_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight=".50"
-                        android:layout_marginLeft="10dp"
-                        android:text="@string/fragment_sales_agent_name"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textColor="@android:color/black" />
+            <id.co.myrepublic.salessupport.widget.CustomEditText
+                android:id="@+id/sales_editText_event_rep_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:inputType="text"
+                app:labelText="@string/fragment_sales_event_rep_id" />
 
+            <id.co.myrepublic.salessupport.widget.CustomEditText
+                android:id="@+id/sales_editText_customer_reff"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:inputType="text"
+                app:labelText="@string/fragment_sales_customer_ref_id" />
 
-                    <EditText
-                        android:id="@+id/sales_editText_sales_agent_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight=".50"
-                        android:ems="10"
-                        android:inputType="textPersonName"
-                        android:text="" />
-            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/sales_txt_event_rep_id"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".50"
-                    android:layout_marginLeft="10dp"
-                    android:text="@string/fragment_sales_event_rep_id"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@android:color/black" />
-
-                <EditText
-                    android:id="@+id/sales_editText_event_rep_id"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".50"
-                    android:ems="10"
-                    android:inputType="textShortMessage"
-                    android:text="" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/sales_txt_customer_reff"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".50"
-                    android:layout_marginLeft="10dp"
-                    android:text="@string/fragment_sales_customer_ref_id"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@android:color/black" />
-
-                <EditText
-                    android:id="@+id/sales_editText_customer_reff"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".50"
-                    android:ems="10"
-                    android:inputType="textShortMessage"
-                    android:text="" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -150,7 +83,7 @@
                     android:layout_weight=".50"
                     android:layout_marginLeft="10dp"
                     android:text="@string/fragment_sales_know_us"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@android:color/black" />
 
                 <Spinner
@@ -166,31 +99,13 @@
 
             </LinearLayout>
 
-            <LinearLayout
+            <id.co.myrepublic.salessupport.widget.CustomEditText
+                android:id="@+id/sales_editText_promo_code"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/sales_txt_promo_code"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".50"
-                    android:layout_marginLeft="10dp"
-                    android:text="@string/fragment_sales_promo_code"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@android:color/black" />
-
-                <EditText
-                    android:id="@+id/sales_editText_promo_code"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".50"
-                    android:ems="10"
-                    android:inputType="textShortMessage"
-                    android:text="" />
-
-            </LinearLayout>
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:inputType="text"
+                app:labelText="@string/fragment_sales_promo_code" />
 
 
         <Button

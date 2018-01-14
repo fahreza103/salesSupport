@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="appAttr">
+        <attr name="validator" format="string"/>
+        <attr name="labelText" format="string" />
+        <attr name="inputType" format="string" />
+        <attr name="clickable" format="boolean" />
+        <attr name="dateFormat" format="string" />
+        <attr name="inputHeight" format="dimension" />
+        <attr name="value" format="string" />
+        <attr name="inputHint" format="string" />
+        <attr name="enabled" format="boolean" />
+    </declare-styleable>
+</resources>

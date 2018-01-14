@@ -10,15 +10,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.LinearLayout;
+
+import java.util.HashMap;
 
 import id.co.myrepublic.salessupport.R;
-import id.co.myrepublic.salessupport.support.DatePickerBuilder;
+import id.co.myrepublic.salessupport.support.FormExtractor;
+import id.co.myrepublic.salessupport.support.Validator;
 
-public class CustomerProfileFragment extends Fragment implements View.OnClickListener {
+public class FragmentCustomerProfile extends Fragment implements View.OnClickListener {
 
     private Button btnConfirm;
-    private EditText dateOfBirth;
+    private LinearLayout scrollContentLayout;
 
     @Nullable
     @Override
@@ -33,24 +36,30 @@ public class CustomerProfileFragment extends Fragment implements View.OnClickLis
         //you can set the title for your toolbar here for different fragments different titles
         getActivity().setTitle(getActivity().getString(R.string.fragment_view_salesorder));
 
-        dateOfBirth = (EditText) getActivity().findViewById(R.id.customer_editText_dob);
-        DatePickerBuilder datePickerBuilder = new DatePickerBuilder(dateOfBirth,getContext());
-
         btnConfirm = (Button) getActivity().findViewById(R.id.customer_btn_confirm);
         btnConfirm.setOnClickListener(this);
+
+        scrollContentLayout = (LinearLayout) getActivity().findViewById(R.id.customer_scroll_layout);
     }
 
     @Override
     public void onClick(View view) {
-        Fragment fragment = new CustomerUploadFragment();
-        //fragment.setArguments(bundle);
+        boolean valid = Validator.validate(getContext(),scrollContentLayout);
+        if(valid) {
+            Bundle bundle = this.getArguments();
+            HashMap<String,Object> customerData = FormExtractor.extractValues(getContext(),scrollContentLayout);
+            bundle.putSerializable("customerData",customerData);
 
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.content_frame, fragment,fragment.getClass().getName());
-        ft.addToBackStack(fragment.getClass().getName());
-        ft.commit();
+            Fragment fragment = new FragmentCustomerUpload();
+            fragment.setArguments(bundle);
 
-        DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.content_frame, fragment, fragment.getClass().getName());
+            ft.addToBackStack(fragment.getClass().getName());
+            ft.commit();
+
+            DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
+        }
     }
 }

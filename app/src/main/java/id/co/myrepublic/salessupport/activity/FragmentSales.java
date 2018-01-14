@@ -11,18 +11,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.HashMap;
+
 import id.co.myrepublic.salessupport.R;
+import id.co.myrepublic.salessupport.support.FormExtractor;
+import id.co.myrepublic.salessupport.support.Validator;
 
 /**
  * Created by myrepublicid on 30/11/17.
  */
 
-public class SalesFragment extends Fragment implements View.OnClickListener{
+public class FragmentSales extends Fragment implements View.OnClickListener{
 
     private Button btnConfirm;
     private Dialog dialog;
+    private LinearLayout scrollContentLayout;
 
     @Nullable
     @Override
@@ -37,6 +43,8 @@ public class SalesFragment extends Fragment implements View.OnClickListener{
         //you can set the title for your toolbar here for different fragments different titles
         getActivity().setTitle(getActivity().getString(R.string.fragment_view_salesorder));
 
+
+        scrollContentLayout = (LinearLayout) getActivity().findViewById(R.id.sales_scroll_layout);
         btnConfirm = (Button) getActivity().findViewById(R.id.sales_btn_confirm);
         btnConfirm.setOnClickListener(this);
 
@@ -44,7 +52,9 @@ public class SalesFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        showAddressDialog();
+        boolean result = Validator.validate(getContext(),scrollContentLayout);
+        if(result)
+            showAddressDialog();
     }
 
     private void showAddressDialog() {
@@ -68,35 +78,39 @@ public class SalesFragment extends Fragment implements View.OnClickListener{
         noButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                nextFragment("NO");
             }
         });
 
         Button okButton = (Button) dialog.findViewById(R.id.dialogitem_btn_ok);
-        // if button is clicked, call API insert cluster
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                String itemSelected = ""+spinnerCustomerClass.getSelectedItem();
-//                Bundle bundle = new Bundle();
-//                bundle.putString("homepassId",itemSelected);
-
-                Fragment fragment = new CustomerProfileFragment();
-//                fragment.setArguments(bundle);
-
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.content_frame, fragment,fragment.getClass().getName());
-                ft.addToBackStack(fragment.getClass().getName());
-                ft.commit();
-
-                DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
-                drawer.closeDrawer(GravityCompat.START);
-                dialog.dismiss();
+                nextFragment("YES");
             }
         });
 
 
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogTheme;
         dialog.show();
+    }
+
+    private void nextFragment(String answer) {
+        HashMap<String,Object> formValues = FormExtractor.extractValues(getContext(),scrollContentLayout);
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("salesData",formValues);
+
+        Fragment fragment = new FragmentCustomerProfile();
+        fragment.setArguments(bundle);
+
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_frame, fragment,fragment.getClass().getName());
+        ft.addToBackStack(fragment.getClass().getName());
+        ft.commit();
+
+        DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        dialog.dismiss();
     }
 }
