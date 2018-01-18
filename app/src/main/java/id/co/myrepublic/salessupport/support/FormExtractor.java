@@ -9,6 +9,7 @@ import android.widget.Spinner;
 
 import java.util.HashMap;
 
+import id.co.myrepublic.salessupport.model.Channels;
 import id.co.myrepublic.salessupport.widget.CustomEditText;
 
 /**
@@ -42,8 +43,8 @@ public class FormExtractor {
                 }
             } else if(child instanceof Spinner) {
                 Spinner spinner = (Spinner) child;
-                String spinnerSelectedItem = spinner.getSelectedItem() == null ? null : spinner.getSelectedItem().toString();
-                resultMap.put(context.getResources().getResourceEntryName(spinner.getId()), spinnerSelectedItem);
+                Object item = spinner.getSelectedItem();
+                resultMap.put(context.getResources().getResourceEntryName(spinner.getId()), item);
             } else if(child instanceof CheckBox) {
                 CheckBox checkBox = (CheckBox) child;
                 resultMap.put(context.getResources().getResourceEntryName(checkBox.getId()), checkBox.isChecked());
