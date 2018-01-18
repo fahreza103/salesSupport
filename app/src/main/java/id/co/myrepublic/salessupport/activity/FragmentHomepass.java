@@ -1,6 +1,7 @@
 package id.co.myrepublic.salessupport.activity;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,20 +20,33 @@ import android.widget.TabHost;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import id.co.myrepublic.salessupport.R;
 import id.co.myrepublic.salessupport.adapter.CommonRowAdapter;
-import id.co.myrepublic.salessupport.model.CommonItem;
+import id.co.myrepublic.salessupport.constant.AppConstant;
+import id.co.myrepublic.salessupport.constant.AsyncUiDisplayType;
+import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
+import id.co.myrepublic.salessupport.model.Homepass;
+import id.co.myrepublic.salessupport.model.MainModel;
+import id.co.myrepublic.salessupport.support.AbstractAsyncOperation;
+import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
+import id.co.myrepublic.salessupport.util.GlobalVariables;
+import id.co.myrepublic.salessupport.util.StringUtil;
+import id.co.myrepublic.salessupport.util.UrlParam;
 
 /**
  * Created by myrepublicid on 28/11/17.
  */
 
-public class FragmentHomepass extends Fragment {
+public class FragmentHomepass extends Fragment implements AsyncTaskListener {
 
     private ListView listViewHomepass;
     private Dialog dialog;
+    private TabHost host;
+    private List<Homepass> homePassList = new ArrayList<Homepass>();
 
     @Nullable
     @Override
@@ -49,34 +63,34 @@ public class FragmentHomepass extends Fragment {
 
         listViewHomepass = (ListView) getActivity().findViewById(R.id.listHompass);
 
+        if(homePassList.size() == 0) {
+            GlobalVariables gVar = GlobalVariables.getInstance();
+            String sessionId = gVar.getSessionKey();
 
-        // Get Bundle data from previous fragment
-        Bundle bundle = this.getArguments();
-        List<String> homepassList = bundle.getStringArrayList("homepassList");
+            // Get Bundle data from previous fragment
+            Bundle bundle = this.getArguments();
+            String clusterId = bundle.getString("cluster_id");
+            String address = bundle.getString("address");
 
-        final List<CommonItem> listViewData = new ArrayList<CommonItem>();
-        for(int i=1;i<=homepassList.size();i++) {
-            String value = homepassList.get(i-1);
+            Map<Object, Object> paramMap = new HashMap<Object, Object>();
+            paramMap.put("session_id", sessionId);
+            paramMap.put("cluster_id", clusterId);
+            paramMap.put("address", address);
 
-            CommonItem ci = new CommonItem();
-            ci.setKey(""+i);
-            ci.setValue(value);
-            listViewData.add(ci);
+            UrlParam urlParam = new UrlParam();
+            urlParam.setUrl(AppConstant.GET_HOMEPASS_API_URL);
+            urlParam.setParamMap(paramMap);
+
+            ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(getContext(), "homepassSearch", AsyncUiDisplayType.DIALOG);
+            asop.setDialogMsg("Fetch Homepass Data");
+            asop.setListener(this);
+            asop.execute(urlParam);
+        } else {
+            populateItem(homePassList);
         }
-
-        CommonRowAdapter<CommonItem> adapter = new CommonRowAdapter<CommonItem>(listViewData,getActivity().getApplicationContext());
-        adapter.setWidthText(40);
-        listViewHomepass.setAdapter(adapter);
-        listViewHomepass.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                CommonItem commonItem = listViewData.get(position);
-                showOrderDialog(commonItem);
-            }
-        });
     }
 
-    private void showOrderDialog(CommonItem commonItem) {
+    private void showOrderDialog(final Homepass homepass) {
 
         // custom dialog
         dialog = new Dialog(getContext());
@@ -87,7 +101,7 @@ public class FragmentHomepass extends Fragment {
         final Spinner spinnerCustomerClass = (Spinner) dialog.findViewById(R.id.dialogitem_spinner_customer_class);
 
         final TextView txtHomepassName = (TextView) dialog.findViewById(R.id.dialogitem_txt_homepass_value);
-        txtHomepassName.setText(commonItem.getValue());
+        txtHomepassName.setText(homepass.getHomepassAddressView());
 
         initTabHost();
 
@@ -106,8 +120,12 @@ public class FragmentHomepass extends Fragment {
             @Override
             public void onClick(View v) {
                 String itemSelected = ""+spinnerCustomerClass.getSelectedItem();
+                if(!"RES".equals(itemSelected)) {
+                    itemSelected = "NON-RES";
+                }
                 Bundle bundle = new Bundle();
-                bundle.putString("homepassId",itemSelected);
+                bundle.putSerializable("homepassData",homepass);
+                bundle.putString("customerClassification",itemSelected);
 
                 Fragment fragment = new FragmentSales();
                 fragment.setArguments(bundle);
@@ -129,7 +147,7 @@ public class FragmentHomepass extends Fragment {
     }
 
     private void initTabHost() {
-        TabHost host = (TabHost) dialog.findViewById(R.id.homepass_dialog_tabhost);
+        host = (TabHost) dialog.findViewById(R.id.homepass_dialog_tabhost);
         host.setup();
 
         //Tab 1
@@ -154,4 +172,48 @@ public class FragmentHomepass extends Fragment {
     }
 
 
+    @Override
+    public void onAsynTaskStart(String taskName) {}
+
+    @Override
+    public void onAsyncTaskComplete(Object result, String taskName) {
+        Map<String,String> resultMap = (Map<String,String>) result;
+        String jsonResult = resultMap.get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
+        if("homepassSearch".equals(taskName)) {
+            if(jsonResult != null) {
+                MainModel<Homepass> model = StringUtil.convertStringToObject(jsonResult, Homepass[].class);
+                if(model.getSuccess()) {
+                    homePassList = model.getListObject();
+                    for(Homepass homepass : homePassList) {
+                        homepass.setHomepassAddressView(
+                                homepass.getStreet()+" Block "+
+                                homepass.getBlock()+" No. "+
+                                homepass.getHomeNumber()
+                        );
+                    }
+                    populateItem(model.getListObject());
+                } else {
+                    // Error on session (expired or invalid)
+                    if(AppConstant.SESSION_VALIDATION.equals(model.getAction())) {
+                        Intent intent = new Intent(getContext(), ActivityLogin.class);
+                        startActivity(intent);
+                        getActivity().finish();
+                    }
+                }
+
+            }
+        }
+    }
+
+    private void populateItem(final List<Homepass> listObject) {
+        CommonRowAdapter<Homepass> adapter = new CommonRowAdapter<Homepass>(listObject,getActivity().getApplicationContext());
+        listViewHomepass.setAdapter(adapter);
+        listViewHomepass.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Homepass homepass = listObject.get(position);
+                showOrderDialog(homepass);
+            }
+        });
+    }
 }

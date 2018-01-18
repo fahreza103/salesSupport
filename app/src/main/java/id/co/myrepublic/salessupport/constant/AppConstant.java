@@ -16,6 +16,8 @@ public interface AppConstant {
     public static final String GET_CLUSTER_API_URL = BASE_API_URL+"/homepass/get_cluster_list";
     public static final String GET_CLUSTERDETAIL_API_URL = BASE_API_URL+"/homepass/get_cluster_information";
     public static final String INSERT_CLUSTERINFO_API_URL = BASE_API_URL+"/homepass/insert_cluster_information";
+    public static final String GET_HOMEPASS_API_URL = BASE_API_URL+"/homepass/get_address_list";
+    public static final String GET_CHANNELS_API_URL = BASE_API_URL+"/misc/get_channels";
     public static final String SESSION_KEY = "myrepublicid";
     public static final String COOKIE_SESSION_KEY = "mySessionId";
     public static final String COOKIE_USERID_KEY = "myUserId";

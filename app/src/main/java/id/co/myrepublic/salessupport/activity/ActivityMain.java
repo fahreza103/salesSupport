@@ -81,8 +81,6 @@ public class ActivityMain extends AppCompatActivity
     @Override
     public void onBackPressed() {
         android.support.v4.app.FragmentManager fm = this.getSupportFragmentManager();
-        // This is to clear the data in ClusterDetail if back pressed
-        Fragment clusterDetailFragment = fm.findFragmentByTag(FragmentClusterDetailData.class.getName());
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 

@@ -1,5 +1,6 @@
 package id.co.myrepublic.salessupport.support;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
@@ -76,7 +77,7 @@ public class DialogBuilder {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if(dialogListener != null && input.getText() != null) {
-                    dialogListener.onDialogOkPressed(dialog,which,input.getText().toString().toLowerCase(),which);
+                    dialogListener.onDialogOkPressed(dialog,which,input.getText().toString().toLowerCase());
                 }
                 dialog.dismiss();
             }
@@ -94,6 +95,15 @@ public class DialogBuilder {
         AlertDialog dialog = builder.create();
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogTheme;
         dialog.show();
+    }
+
+    public ProgressDialog createProgressDialog(Context context, String message) {
+        ProgressDialog dialog = new ProgressDialog(context);
+        dialog.setTitle("LOADING");
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setMessage(message);
+        dialog.show();
+        return dialog;
     }
 
 

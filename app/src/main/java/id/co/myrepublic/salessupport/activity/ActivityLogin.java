@@ -24,12 +24,14 @@ import java.util.Map;
 
 import id.co.myrepublic.salessupport.R;
 import id.co.myrepublic.salessupport.constant.AppConstant;
+import id.co.myrepublic.salessupport.constant.AsyncUiDisplayType;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
 import id.co.myrepublic.salessupport.model.MainModel;
 import id.co.myrepublic.salessupport.model.Particulars;
 import id.co.myrepublic.salessupport.model.ResponseUserSelect;
+import id.co.myrepublic.salessupport.support.AbstractAsyncOperation;
 import id.co.myrepublic.salessupport.support.DialogBuilder;
-import id.co.myrepublic.salessupport.support.DownloadAsyncOperation;
+import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.UrlParam;
@@ -127,7 +129,7 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
                     urlParam.setUrl(AppConstant.CHECK_PERMISSION);
                     urlParam.setParamMap(paramMap);
 
-                    DownloadAsyncOperation asop = new DownloadAsyncOperation("checkPermission");
+                    ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation("checkPermission", AsyncUiDisplayType.SCREEN);
                     asop.setListener(ActivityLogin.this);
                     asop.execute(urlParam);
 
@@ -166,11 +168,16 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
     }
 
     @Override
+    public void onAsynTaskStart(String taskName) {}
+
+    @Override
     public void onAsyncTaskComplete(Object result, String taskName) {
+        Map<String,String> resultMap = (Map<String,String>) result;
+        String jsonResult = resultMap.get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
         if("checkPermission".equals(taskName)) {
             boolean isPermitted = true;
-            if(result != null) {
-                MainModel<Map<Object,Object>> model = StringUtil.convertStringToObject("" + result, Map.class);
+            if(jsonResult != null) {
+                MainModel<Map<Object,Object>> model = StringUtil.convertStringToObject(jsonResult, Map.class);
                 Map<Object,Object> mapResponse = model.getObject();
                 // Search for mobile app permission
                 for (Map.Entry<Object, Object> entry : mapResponse.entrySet()) {
@@ -192,7 +199,7 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
                 urlParam.setUrl(AppConstant.GET_USER_INFO);
                 urlParam.setParamMap(paramMap);
 
-                DownloadAsyncOperation asop = new DownloadAsyncOperation("getUserInfo");
+                ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation("getUserInfo",AsyncUiDisplayType.SCREEN);
                 asop.setListener(ActivityLogin.this);
                 asop.execute(urlParam);
             } else {
@@ -200,8 +207,9 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
             }
 
         } else if("getUserInfo".equals(taskName)) {
-            MainModel<ResponseUserSelect> model = StringUtil.convertStringToObject("" + result, ResponseUserSelect.class);
-            if(result != null) {
+            if(jsonResult != null) {
+                MainModel<ResponseUserSelect> model = StringUtil.convertStringToObject(jsonResult, ResponseUserSelect.class);
+
                 Particulars particulars = model.getObject().getParticulars();
                 // save to session
                 GlobalVariables sm = GlobalVariables.getInstance();
@@ -217,8 +225,8 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
             centerTextView.setVisibility(View.GONE);
             centerProgressLogo.setVisibility(View.GONE);
 
-            if (result != null) {
-                MainModel model = StringUtil.convertStringToObject("" + result, null);
+            if (jsonResult != null) {
+                MainModel model = StringUtil.convertStringToObject(jsonResult, null);
                 // Success, session valid go to main, otherwise show login form, to authenticate
                 if (model.getSuccess()) {
                     Intent intent = new Intent(context, ActivityMain.class);
@@ -272,7 +280,7 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
             centerTextView.setVisibility(View.VISIBLE);
             centerProgressLogo.setVisibility(View.VISIBLE);
             browser.setVisibility(View.GONE);
-            DownloadAsyncOperation asop = new DownloadAsyncOperation("checkSession");
+            ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation("checkSession",AsyncUiDisplayType.SCREEN);
             asop.setListener(this);
             asop.execute(UrlParam.createParamCheckSession(sessionId));
         } else {

@@ -94,7 +94,6 @@
                     android:background="@drawable/spinner_bg"
                     android:layout_weight=".50"
                     android:paddingBottom="10dp"
-                    android:entries="@array/customer_reff_arrays"
                     android:layout_height="wrap_content" />
 
             </LinearLayout>

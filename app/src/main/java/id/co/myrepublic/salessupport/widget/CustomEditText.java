@@ -10,6 +10,7 @@ import android.text.method.KeyListener;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.Gravity;
+import android.view.animation.Animation;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -203,7 +204,7 @@ public class CustomEditText extends LinearLayout {
      */
     public Boolean validate() {
         if (validators.size() == 0) return true;
-        return Validator.validate(this);
+        return Validator.validate(this) == 0 ? true : false;
     }
 
     public void setLabelText(String text) {
@@ -288,5 +289,13 @@ public class CustomEditText extends LinearLayout {
         return this.dateFormat;
     }
 
+    public void setInputOnFocusChangeListener(OnFocusChangeListener listener) {
+        editText.setOnFocusChangeListener(listener);
+    }
+
+    public void setInputAnimation(Animation animation) {
+        animation.setDuration(500);
+        editText.startAnimation(animation);
+    }
 
 }

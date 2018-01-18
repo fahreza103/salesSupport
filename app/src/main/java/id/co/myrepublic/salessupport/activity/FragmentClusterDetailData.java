@@ -22,7 +22,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,13 +29,15 @@ import java.util.Map;
 import id.co.myrepublic.salessupport.R;
 import id.co.myrepublic.salessupport.adapter.CommonRowAdapter;
 import id.co.myrepublic.salessupport.constant.AppConstant;
+import id.co.myrepublic.salessupport.constant.AsyncUiDisplayType;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
 import id.co.myrepublic.salessupport.listener.DialogListener;
 import id.co.myrepublic.salessupport.model.CommonItem;
 import id.co.myrepublic.salessupport.model.MainModel;
 import id.co.myrepublic.salessupport.model.ResponseClusterInformation;
+import id.co.myrepublic.salessupport.support.AbstractAsyncOperation;
 import id.co.myrepublic.salessupport.support.DialogBuilder;
-import id.co.myrepublic.salessupport.support.DownloadAsyncOperation;
+import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.UrlParam;
@@ -105,7 +106,7 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
 
         String caller = getCallerFragment();
         if(dataModels.size() == 0) {
-            DownloadAsyncOperation asop = new DownloadAsyncOperation("getClusterDetail");
+            ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation("getClusterDetail", AsyncUiDisplayType.SCREEN);
             asop.setListener(this);
             asop.execute(urlParam);
         } else {
@@ -167,11 +168,16 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
 
 
     @Override
+    public void onAsynTaskStart(String taskName) {}
+
+    @Override
     public void onAsyncTaskComplete(Object result, String taskName) {
+        Map<String,String> resultMap = (Map<String,String>) result;
+        String jsonResult = resultMap.get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
         if("getClusterDetail".equals(taskName)) {
             toggleViewFloatingButton(View.VISIBLE);
-            if(result != null) {
-                MainModel<ResponseClusterInformation> model = StringUtil.convertStringToObject("" + result, ResponseClusterInformation.class);
+            if(jsonResult != null) {
+                MainModel<ResponseClusterInformation> model = StringUtil.convertStringToObject(jsonResult, ResponseClusterInformation.class);
                 if(model.getSuccess()) {
                     ResponseClusterInformation rci = model.getObject();
                     populateItem(rci);
@@ -187,8 +193,8 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
             }
         } else if ("insertCompetitor".equals(taskName)) {
             dialog.dismiss();
-            if(result != null) {
-                MainModel model = StringUtil.convertStringToObject("" + result, null);
+            if(jsonResult != null) {
+                MainModel model = StringUtil.convertStringToObject(jsonResult, null);
                 Boolean success = model.getSuccess();
                 if(success) {
                     Toast.makeText(getActivity(), "Insert Success",
@@ -284,7 +290,7 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
         Toast.makeText(getActivity(), "Insert Cluster Information...",
                 Toast.LENGTH_LONG).show();
 
-        DownloadAsyncOperation asop = new DownloadAsyncOperation("insertCompetitor");
+        ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation("insertCompetitor", AsyncUiDisplayType.SCREEN);
         asop.setListener(this);
         asop.execute(urlParam);
 
@@ -292,26 +298,11 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
 
     @Override
     public void onDialogOkPressed(DialogInterface dialog, int which, Object... result) {
-        // Search List Homepass
-        List<String> homepassSearch = new ArrayList<String>();
-        for(CommonItem commonItem : dataModels) {
-            if("List Available Homepass".equalsIgnoreCase(commonItem.getKey())) {
-                String[] homepassList = commonItem.getValue().split("\n");
-                if(!StringUtil.isEmpty((String) result[0])) {
-                    for (String homepass : homepassList) {
-                        if(homepass.toLowerCase().contains(result[0]+"")) {
-                            homepassSearch.add(homepass);
-                        }
-                    }
-                } else {
-                    homepassSearch =  Arrays.asList(homepassList);
-                }
-                break;
-            }
-        }
+        // pass homepass_id and search address value
 
         Bundle bundle = new Bundle();
-        bundle.putStringArrayList("homepassList",new ArrayList<>(homepassSearch));
+        bundle.putString("cluster_id",clusterName);
+        bundle.putString("address", (String) result[0]);
 
         Fragment fragment = new FragmentHomepass();
         fragment.setArguments(bundle);

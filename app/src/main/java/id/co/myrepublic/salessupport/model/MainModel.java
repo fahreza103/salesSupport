@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,7 +28,7 @@ public class MainModel<T> implements Serializable {
     private String error;
 
     @JsonProperty("success")
-    private Boolean success;
+    private boolean success;
 
     @JsonProperty("timestamp")
     private String timestamp;
@@ -48,7 +49,7 @@ public class MainModel<T> implements Serializable {
      * if response is an array, the value will be set here
      */
     @JsonIgnoreProperties
-    private List<T> listObject;
+    private List<T> listObject = new ArrayList<T>();
 
     public String getAction() {
         return action;
@@ -58,11 +59,11 @@ public class MainModel<T> implements Serializable {
         this.action = action;
     }
 
-    public Boolean getSuccess() {
+    public boolean getSuccess() {
         return success;
     }
 
-    public void setSuccess(Boolean success) {
+    public void setSuccess(boolean success) {
         this.success = success;
     }
 

@@ -7,6 +7,12 @@ package id.co.myrepublic.salessupport.listener;
 public interface AsyncTaskListener<T> {
 
     /**
+     * Invoked before aysncTask is performed
+     * @param taskName
+     */
+    public void onAsynTaskStart(String taskName);
+
+    /**
      * Invoked when asynctask is complete
      * @param result
      * @param taskName

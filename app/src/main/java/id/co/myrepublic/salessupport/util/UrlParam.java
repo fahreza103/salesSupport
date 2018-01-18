@@ -12,6 +12,7 @@ import id.co.myrepublic.salessupport.constant.AppConstant;
 public class UrlParam {
 
     private String url;
+    private String resultKey;
     private Map<Object,Object> paramMap;
 
     public String getUrl() {
@@ -29,6 +30,15 @@ public class UrlParam {
     public void setParamMap(Map<Object, Object> paramMap) {
         this.paramMap = paramMap;
     }
+
+    public String getResultKey() {
+        return resultKey;
+    }
+
+    public void setResultKey(String resultKey) {
+        this.resultKey = resultKey;
+    }
+
 
     public static UrlParam createParamCheckSession(String sessionId) {
         Map<Object,Object> paramMap = new HashMap<Object,Object>();

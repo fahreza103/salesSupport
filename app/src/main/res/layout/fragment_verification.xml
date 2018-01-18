@@ -64,24 +64,31 @@
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/verification_btn_resend"
-        android:layout_width="100dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:layout_gravity="center"
-        android:textColor="@color/white"
-        android:background="@drawable/button_blue"
-        android:text="@string/button_resend" />
+        android:gravity="center"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/verification_btn_resend"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:background="@drawable/button_blue"
+            android:text="@string/button_resend" />
 
-    <Button
-        android:id="@+id/verification_btn_confirm"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:layout_gravity="center"
-        android:textColor="@color/white"
-        android:background="@drawable/button_blue"
-        android:text="@string/button_confirm" />
+        <Button
+            android:id="@+id/verification_btn_confirm"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:background="@drawable/button_blue"
+            android:text="@string/button_confirm" />
+    </LinearLayout>
 
 </LinearLayout>

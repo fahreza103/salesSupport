@@ -2,10 +2,13 @@ package id.co.myrepublic.salessupport.adapter;
 
 import android.content.Context;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.lang.annotation.Annotation;
@@ -31,30 +34,44 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
     private List<T> dataSet;
     private Context mContext;
     private Integer widthText;
+    private Integer rowHeight;
+    private Integer textGravity;
+    private CommonRowAdapter.ViewHolder viewHolder;
 
     // View lookup cache
     private static class ViewHolder {
-        TextView mainText1;
-        TextView mainText2;
-        TextView subText1;
-        TextView subText2;
+        private RelativeLayout rowLayout;
+        private TextView mainText1;
+        private TextView mainText2;
+        private TextView subText1;
+        private TextView subText2;
+    }
+
+    public CommonRowAdapter(List<T> data, Context context, int textViewResourceId) {
+        super(context, R.layout.row_item_common,textViewResourceId, data);
+        this.dataSet = data;
+        this.mContext=context;
     }
 
     public CommonRowAdapter(List<T> data, Context context) {
         super(context, R.layout.row_item_common, data);
         this.dataSet = data;
         this.mContext=context;
-
     }
 
     private int lastPosition = -1;
 
+    // For spinner
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getDropDownView(int position, View convertView, ViewGroup parent) {
+        View view = getComponentView(position,convertView,parent);
+        return view;
+    }
+
+    public View getComponentView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
         T dataModel = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
-        CommonRowAdapter.ViewHolder viewHolder; // view lookup cache stored in tag
 
         final View result;
 
@@ -64,6 +81,7 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.row_item_common, parent, false);
 
+            viewHolder.rowLayout = (RelativeLayout) convertView.findViewById(R.id.rowitem_layout);
             viewHolder.mainText1 = (TextView) convertView.findViewById(R.id.rowitem_maintext);
             viewHolder.mainText2= (TextView) convertView.findViewById(R.id.rowitem_maintext2);
             viewHolder.subText1 = (TextView) convertView.findViewById(R.id.rowitem_subtext);
@@ -132,8 +150,28 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
             viewHolder.subText1.requestLayout();
         }
 
+        // Layout height
+        if(rowHeight != null) {
+            int dimensionInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, rowHeight, mContext.getResources().getDisplayMetrics());
+            viewHolder.rowLayout.getLayoutParams().height=dimensionInDp;
+            viewHolder.rowLayout.requestLayout();
+        }
+
+        // Text Gravity
+        if(textGravity != null) {
+            RelativeLayout.LayoutParams layoutParams =
+                    (RelativeLayout.LayoutParams)viewHolder.mainText1.getLayoutParams();
+            layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+        }
+
         // Return the completed view to render on screen
         return convertView;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        return getComponentView(position,convertView,parent);
     }
 
     private String getStringFromReflectionObject(Object obj) {
@@ -159,5 +197,21 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
      */
     public void setWidthText(Integer widthText) {
         this.widthText = widthText;
+    }
+
+    public Integer getRowHeight() {
+        return rowHeight;
+    }
+
+    public void setRowHeight(Integer rowHeight) {
+        this.rowHeight = rowHeight;
+    }
+
+    public Integer getTextGravity() {
+        return textGravity;
+    }
+
+    public void setTextGravity(Integer textGravity) {
+        this.textGravity = textGravity;
     }
 }

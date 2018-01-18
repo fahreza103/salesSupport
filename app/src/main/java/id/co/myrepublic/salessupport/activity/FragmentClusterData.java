@@ -1,7 +1,6 @@
 package id.co.myrepublic.salessupport.activity;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -24,12 +23,14 @@ import java.util.Map;
 import id.co.myrepublic.salessupport.R;
 import id.co.myrepublic.salessupport.adapter.CommonRowAdapter;
 import id.co.myrepublic.salessupport.constant.AppConstant;
+import id.co.myrepublic.salessupport.constant.AsyncUiDisplayType;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
 import id.co.myrepublic.salessupport.listener.DialogListener;
 import id.co.myrepublic.salessupport.model.Cluster;
 import id.co.myrepublic.salessupport.model.MainModel;
+import id.co.myrepublic.salessupport.support.AbstractAsyncOperation;
 import id.co.myrepublic.salessupport.support.DialogBuilder;
-import id.co.myrepublic.salessupport.support.DownloadAsyncOperation;
+import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.UrlParam;
@@ -87,7 +88,7 @@ public class FragmentClusterData extends Fragment implements AsyncTaskListener, 
 
         fabLayout.setVisibility(View.GONE);
         if(dataModels.size() ==0) {
-            DownloadAsyncOperation asop = new DownloadAsyncOperation("getCluster");
+            ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation("getCluster", AsyncUiDisplayType.SCREEN);
             asop.setListener(this);
             asop.execute(urlParam);
         } else {
@@ -130,22 +131,19 @@ public class FragmentClusterData extends Fragment implements AsyncTaskListener, 
     }
 
 
+    @Override
+    public void onAsynTaskStart(String taskName) {}
 
     @Override
     public void onAsyncTaskComplete(Object result, String taskName) {
+        Map<String,String> resultMap = (Map<String,String>) result;
+        String jsonResult = resultMap.get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
         fabLayout.setVisibility(View.VISIBLE);
         // Convert to Object
-        if(result != null) {
-            MainModel<Cluster> model = StringUtil.convertStringToObject("" + result, Cluster[].class);
+        if(jsonResult != null) {
+            MainModel<Cluster> model = StringUtil.convertStringToObject(jsonResult, Cluster[].class);
             if(model.getSuccess()) {
                 dataModels = model.getListObject();
-            } else {
-                // Error on session (expired or invalid)
-                if(AppConstant.SESSION_VALIDATION.equals(model.getAction())) {
-                    Intent intent = new Intent(getContext(), ActivityLogin.class);
-                    startActivity(intent);
-                    getActivity().finish();
-                }
             }
             createCluster(dataModels);
         } else {

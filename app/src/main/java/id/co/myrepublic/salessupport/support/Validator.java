@@ -1,12 +1,14 @@
 package id.co.myrepublic.salessupport.support;
 
 import android.content.Context;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,6 +29,9 @@ public class Validator {
     public static final String VALIDATION_EMAIL = "email";
     public static final String VALIDATION_DATE = "date";
 
+    public static final String VALIDATION_KEY_RESULT = "validation_result";
+
+    public static final String VALIDATION_MSG_FAILED = "Validation error, please check your fields";
     public static final String VALIDATION_MSG_REQUIRED = "This field is required";
     public static final String VALIDATION_MSG_EMAIL = "Invalid email format";
     public static final String VALIDATION_MSG_DATE = "Invalid date format";
@@ -58,6 +63,7 @@ public class Validator {
      * @return
      */
     private static Boolean validateDate(String value, String format) {
+        if(StringUtil.isEmpty(value)) return true;
         try {
             format = format==null ? DEFAULT_DATE_FORMAT : format;
             DateFormat df = new SimpleDateFormat(format);
@@ -70,7 +76,7 @@ public class Validator {
     }
 
     /**
-     * perform validation
+     * perform validation, private call
      * @param editText
      * @return
      */
@@ -96,11 +102,11 @@ public class Validator {
     }
 
     /**
-     * perform validation by specified array of CustomEditText
+     * perform validation by specified dynamic array of CustomEditText
      * @param editTexts
-     * @return true if validation success, otherwise false
+     * @return number of failed validation
      */
-    public static Boolean validate (CustomEditText... editTexts) {
+    public static int validate (CustomEditText... editTexts) {
         int numOfFailed = 0;
         for(CustomEditText editText : editTexts) {
             editText.setError(null);
@@ -112,10 +118,7 @@ public class Validator {
             }
         }
 
-        if(numOfFailed>0) {
-            return false;
-        }
-        return true;
+        return numOfFailed;
     }
 
     /**
@@ -124,28 +127,31 @@ public class Validator {
      * @return true if validation success, otherwise false
      */
     public static Boolean validate (Context context,ViewGroup v) {
-        int numOfFailed = 0;
+        int numOfFailedTotal = 0;
         CustomEditText focusInvalidEditText = null;
-        for(int i=0;i<v.getChildCount();i++) {
-            Object child = v.getChildAt(i);
-            if (child instanceof CustomEditText) {
-                CustomEditText editText = (CustomEditText)child;
-                editText.setError(null);
-                for(String validator : editText.getValidators()) {
-                    boolean valid = validate(validator,editText);
-                    if(!valid) {
-                        numOfFailed++;
-                        focusInvalidEditText = editText;
-                    }
+        // Single component
+        if(v instanceof CustomEditText) {
+            CustomEditText editText = (CustomEditText) v;
+            int numOfFailed = validate(editText);
+            focusInvalidEditText = numOfFailed > 0 ? editText : focusInvalidEditText;
+            numOfFailedTotal += numOfFailed;
+        } else {
+            // Inside some layout with child
+            for (int i = 0; i < v.getChildCount(); i++) {
+                Object child = v.getChildAt(i);
+                if (child instanceof CustomEditText) {
+                    CustomEditText editText = (CustomEditText) child;
+                    int numOfFailed = validate(editText);
+                    focusInvalidEditText = numOfFailed > 0 ? editText : focusInvalidEditText;
+                    numOfFailedTotal += numOfFailed;
                 }
             }
         }
-
-        if(numOfFailed > 0) {
+        if(numOfFailedTotal > 0) {
             if(context!= null) {
                 focusInvalidEditText.requestFocus();
-                Toast.makeText(context, "Validation error, please check your fields",
-                        Toast.LENGTH_LONG).show();
+                Toast.makeText(context, VALIDATION_MSG_FAILED,
+                        Toast.LENGTH_SHORT).show();
             }
             return false;
         }

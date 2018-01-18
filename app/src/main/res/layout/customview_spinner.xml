@@ -14,8 +14,8 @@
             android:layout_height="wrap_content"
             android:layout_weight=".50"
             android:layout_marginLeft="10dp"
-            android:text="@string/fragment_sales_know_us"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="label"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/black" />
 
         <Spinner

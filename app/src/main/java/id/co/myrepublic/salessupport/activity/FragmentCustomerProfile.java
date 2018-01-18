@@ -23,6 +23,9 @@ public class FragmentCustomerProfile extends Fragment implements View.OnClickLis
     private Button btnConfirm;
     private LinearLayout scrollContentLayout;
 
+    private HashMap<String,Object> formValues = new HashMap<String,Object>();
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -44,11 +47,11 @@ public class FragmentCustomerProfile extends Fragment implements View.OnClickLis
 
     @Override
     public void onClick(View view) {
-        boolean valid = Validator.validate(getContext(),scrollContentLayout);
+        formValues = FormExtractor.extractValues(getContext(),scrollContentLayout,true);
+        boolean valid = (boolean) formValues.get(Validator.VALIDATION_KEY_RESULT);
         if(valid) {
             Bundle bundle = this.getArguments();
-            HashMap<String,Object> customerData = FormExtractor.extractValues(getContext(),scrollContentLayout);
-            bundle.putSerializable("customerData",customerData);
+            bundle.putSerializable("customerData",formValues);
 
             Fragment fragment = new FragmentCustomerUpload();
             fragment.setArguments(bundle);

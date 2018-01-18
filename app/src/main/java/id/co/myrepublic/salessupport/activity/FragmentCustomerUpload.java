@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import id.co.myrepublic.salessupport.R;
+import id.co.myrepublic.salessupport.util.StringUtil;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -43,7 +44,9 @@ public class FragmentCustomerUpload extends Fragment implements View.OnClickList
     private ImageView imageViewPreviewSelfie;
 
     private Uri cameraImageUri;
-    private String mCurrentPhotoPath;
+    private String imagePath;
+    private String idImagePath;
+    private String selfieImagePath;
 
     @Nullable
     @Override
@@ -91,8 +94,12 @@ public class FragmentCustomerUpload extends Fragment implements View.OnClickList
                 openCamera(IMAGE_SELFIE_CAMERA_PREVIEW);
                 break;
             case R.id.customer_btn_confirm :
+                Bundle bundle = this.getArguments();
+                bundle.putString("customerIdPhoto",idImagePath);
+                bundle.putString("customerSelfiePhoto",selfieImagePath);
+
                 Fragment fragment = new FragmentPlan();
-                //fragment.setArguments(bundle);
+                fragment.setArguments(bundle);
 
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.content_frame, fragment,fragment.getClass().getName());
@@ -107,8 +114,10 @@ public class FragmentCustomerUpload extends Fragment implements View.OnClickList
 
     private void openCamera(int type) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        File imageFile = getFile();
         //getting uri of the file
-        cameraImageUri = Uri.fromFile(getFile());
+        cameraImageUri = Uri.fromFile(imageFile);
+
 
         //Setting the file Uri to my photo
         intent.putExtra(MediaStore.EXTRA_OUTPUT,cameraImageUri);
@@ -136,11 +145,11 @@ public class FragmentCustomerUpload extends Fragment implements View.OnClickList
 
         try {
             image_file = File.createTempFile(imageFileName,".jpg",folder);
+            imagePath = image_file.getAbsolutePath();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        mCurrentPhotoPath = image_file.getAbsolutePath();
         return image_file;
     }
 
@@ -164,17 +173,21 @@ public class FragmentCustomerUpload extends Fragment implements View.OnClickList
                 if (requestCode == IMAGE_ID_GALLERY_PREVIEW) {
                     imageViewPreviewId.setImageURI(imageUri);
                     imageViewPreviewId.setVisibility(View.VISIBLE);
+                    idImagePath = StringUtil.getPath(getContext(),imageUri);
                 } else if (requestCode == IMAGE_SELFIE_GALLERY_PREVIEW) {
                     imageViewPreviewSelfie.setImageURI(imageUri);
                     imageViewPreviewSelfie.setVisibility(View.VISIBLE);
+                    selfieImagePath = StringUtil.getPath(getContext(),imageUri);
                 } else if (requestCode == IMAGE_ID_CAMERA_PREVIEW) {
                     Bitmap bmp = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), cameraImageUri);
                     imageViewPreviewId.setImageBitmap(bmp);
                     imageViewPreviewId.setVisibility(View.VISIBLE);
+                    idImagePath = imagePath;
                 } else if (requestCode == IMAGE_SELFIE_CAMERA_PREVIEW) {
                     Bitmap bmp = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), cameraImageUri);
                     imageViewPreviewSelfie.setImageBitmap(bmp);
                     imageViewPreviewSelfie.setVisibility(View.VISIBLE);
+                    selfieImagePath = imagePath;
                 }
             }
         } catch (IOException e) {
