@@ -9,7 +9,6 @@
         android:id="@+id/rowitem_maintext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=""
         android:layout_marginLeft="5dp"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@android:color/black"
@@ -21,14 +20,12 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/rowitem_maintext"
         android:layout_marginLeft="10dp"
-        android:text=""
         android:textColor="@android:color/black" />
 
     <TextView
         android:id="@+id/rowitem_subtext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=""
         android:layout_marginLeft="5dp"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@android:color/black"
@@ -41,7 +38,6 @@
         android:layout_toRightOf="@id/rowitem_subtext"
         android:layout_below="@id/rowitem_maintext2"
         android:layout_marginLeft="10dp"
-        android:text=""
         android:textColor="@android:color/black" />
 
 

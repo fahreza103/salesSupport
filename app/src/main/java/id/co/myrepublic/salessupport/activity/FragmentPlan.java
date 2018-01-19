@@ -140,14 +140,15 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
     private void populateSpinner(Spinner spinner,List<CatalogItem> catalogList) {
         catalogList = new ArrayList<>(catalogList);
         CatalogItem catalogItem = new CatalogItem();
-        catalogItem.setName("");
+        catalogItem.setName("[Select]");
         catalogList.add(0,catalogItem);
 
-        final CommonRowAdapter<CatalogItem> adapter = new CommonRowAdapter<CatalogItem>(catalogList,getContext(),R.layout.row_item_common);
-        //adapter.setRowHeight(40);
+        CommonRowAdapter adapter = new CommonRowAdapter(catalogList,getContext(),R.id.rowitem_maintext);
+        adapter.setSpinner(true);
         adapter.setTextGravity(Gravity.CENTER_VERTICAL);
 
         spinner.setAdapter(adapter);
-        spinner.setSelection(1);
+        //spinner.setSelection(1);
+
     }
 }

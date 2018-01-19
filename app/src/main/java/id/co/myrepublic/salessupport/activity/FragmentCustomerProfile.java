@@ -47,7 +47,7 @@ public class FragmentCustomerProfile extends Fragment implements View.OnClickLis
 
     @Override
     public void onClick(View view) {
-        formValues = FormExtractor.extractValues(getContext(),scrollContentLayout,true);
+        formValues = FormExtractor.extractValues(getContext(),scrollContentLayout,false);
         boolean valid = (boolean) formValues.get(Validator.VALIDATION_KEY_RESULT);
         if(valid) {
             Bundle bundle = this.getArguments();

@@ -37,6 +37,7 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
     private Integer rowHeight;
     private Integer textGravity;
     private CommonRowAdapter.ViewHolder viewHolder;
+    private Boolean isSpinner = false;
 
     // View lookup cache
     private static class ViewHolder {
@@ -64,9 +65,15 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
     // For spinner
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
-        View view = getComponentView(position,convertView,parent);
-        return view;
+        return getComponentView(position,convertView,parent);
     }
+
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        return getComponentView(position,convertView,parent);
+    }
+
 
     public View getComponentView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
@@ -78,7 +85,7 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
         if (convertView == null) {
 
             viewHolder = new CommonRowAdapter.ViewHolder();
-            LayoutInflater inflater = LayoutInflater.from(getContext());
+            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.row_item_common, parent, false);
 
             viewHolder.rowLayout = (RelativeLayout) convertView.findViewById(R.id.rowitem_layout);
@@ -95,9 +102,7 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
             result=convertView;
         }
 
-        GlobalVariables gvar = GlobalVariables.getInstance();
-        result.startAnimation((position > lastPosition) ? gvar.getTopDownAnim() : gvar.getDownTopAnim());
-        lastPosition = position;
+
         boolean hasSubText = false;
 
         // Read the annotation
@@ -165,13 +170,17 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
         }
 
+        // Spinner animation only animate the text, not the entire layout because it will stacked when changing item selected
+        GlobalVariables gvar = GlobalVariables.getInstance();
+        if(isSpinner) {
+            viewHolder.mainText1.startAnimation((position > lastPosition) ? gvar.getTopDownAnim() : gvar.getDownTopAnim());
+        } else {
+            result.startAnimation((position > lastPosition) ? gvar.getTopDownAnim() : gvar.getDownTopAnim());
+        }
+
+        lastPosition = position;
         // Return the completed view to render on screen
         return convertView;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        return getComponentView(position,convertView,parent);
     }
 
     private String getStringFromReflectionObject(Object obj) {
@@ -213,5 +222,13 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
 
     public void setTextGravity(Integer textGravity) {
         this.textGravity = textGravity;
+    }
+
+    public Boolean getSpinner() {
+        return isSpinner;
+    }
+
+    public void setSpinner(Boolean spinner) {
+        isSpinner = spinner;
     }
 }

@@ -217,22 +217,11 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
     }
 
     private void populateKnowUsSpinner(List<Channels> channelsList) {
-        channelsList = new ArrayList<>(channelsList);
-        Channels channels = new Channels();
-        channels.setName("");
-        channelsList.add(0,channels);
-
-        final CommonRowAdapter<Channels> adapter = new CommonRowAdapter<Channels>(channelsList,getContext(),R.layout.row_item_common);
-        adapter.setRowHeight(60);
+        CommonRowAdapter<Channels> adapter = new CommonRowAdapter<Channels>(channelsList,getContext(),R.layout.row_item_common);
+        adapter.setSpinner(true);
         adapter.setTextGravity(Gravity.CENTER_VERTICAL);
 
         spinnerKnowUs.setAdapter(adapter);
-        spinnerKnowUs.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-            }
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-        spinnerKnowUs.setSelection(1);
+
     }
 }
