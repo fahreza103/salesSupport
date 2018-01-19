@@ -47,6 +47,7 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
     private Dialog dialog;
     private TabHost host;
     private List<Homepass> homePassList = new ArrayList<Homepass>();
+    private Boolean isAlreadyLoaded = false;
 
     @Nullable
     @Override
@@ -63,7 +64,8 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
 
         listViewHomepass = (ListView) getActivity().findViewById(R.id.listHompass);
 
-        if(homePassList.size() == 0) {
+        if(!isAlreadyLoaded) {
+            isAlreadyLoaded = true;
             GlobalVariables gVar = GlobalVariables.getInstance();
             String sessionId = gVar.getSessionKey();
 
@@ -91,6 +93,7 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
     }
 
     private void showOrderDialog(final Homepass homepass) {
+        final Bundle bundle = this.getArguments();
 
         // custom dialog
         dialog = new Dialog(getContext());
@@ -123,7 +126,6 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
                 if(!"RES".equals(itemSelected)) {
                     itemSelected = "NON-RES";
                 }
-                Bundle bundle = new Bundle();
                 bundle.putSerializable("homepassData",homepass);
                 bundle.putString("customerClassification",itemSelected);
 
@@ -184,12 +186,15 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
                 MainModel<Homepass> model = StringUtil.convertStringToObject(jsonResult, Homepass[].class);
                 if(model.getSuccess()) {
                     homePassList = model.getListObject();
+                    int i = 1;
                     for(Homepass homepass : homePassList) {
                         homepass.setHomepassAddressView(
                                 homepass.getStreet()+" Block "+
                                 homepass.getBlock()+" No. "+
                                 homepass.getHomeNumber()
                         );
+                        homepass.setNo(i);
+                        i++;
                     }
                     populateItem(model.getListObject());
                 } else {

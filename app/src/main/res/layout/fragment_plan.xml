@@ -15,7 +15,7 @@
         android:text="@string/fragment_plan_create"
         android:textStyle="bold"
         android:textSize="33dp"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@android:color/black" />
 
     <View
@@ -47,7 +47,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_marginLeft="10dp"
                     android:text="@string/fragment_plan_internet_package"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@android:color/black" />
 
                 <Spinner
@@ -75,7 +75,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_marginLeft="10dp"
                     android:text="@string/fragment_plan_tv_package"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@android:color/black" />
 
                 <Spinner
@@ -104,7 +104,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_marginLeft="10dp"
                     android:text="@string/fragment_plan_stb"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@android:color/black" />
 
                 <Spinner
@@ -132,7 +132,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_marginLeft="10dp"
                     android:text="@string/fragment_plan_alacarte"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@android:color/black" />
 
                 <LinearLayout
@@ -181,7 +181,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_marginLeft="10dp"
                     android:text="@string/fragment_plan_promotion"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@android:color/black" />
 
                 <Spinner

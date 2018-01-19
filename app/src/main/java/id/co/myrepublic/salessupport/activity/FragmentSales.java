@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -23,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import id.co.myrepublic.salessupport.R;
 import id.co.myrepublic.salessupport.adapter.CommonRowAdapter;
@@ -34,8 +32,6 @@ import id.co.myrepublic.salessupport.listener.DialogListener;
 import id.co.myrepublic.salessupport.model.Channels;
 import id.co.myrepublic.salessupport.model.Homepass;
 import id.co.myrepublic.salessupport.model.MainModel;
-import id.co.myrepublic.salessupport.model.ResponseClusterInformation;
-import id.co.myrepublic.salessupport.support.AbstractAsyncOperation;
 import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
 import id.co.myrepublic.salessupport.support.DialogBuilder;
 import id.co.myrepublic.salessupport.support.FormExtractor;
@@ -60,6 +56,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
 
     private HashMap<String,Object> formValues = new HashMap<String,Object>();
     List<Channels> channelsList = new ArrayList<Channels>();
+    Boolean isAlreadyLoaded = false;
 
     @Nullable
     @Override
@@ -74,7 +71,25 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
         //you can set the title for your toolbar here for different fragments different titles
         getActivity().setTitle(getActivity().getString(R.string.fragment_view_salesorder));
 
-        if(scrollContentLayout == null) {
+        scrollContentLayout = (LinearLayout) getActivity().findViewById(R.id.sales_scroll_layout);
+        btnConfirm = (Button) getActivity().findViewById(R.id.sales_btn_confirm);
+        btnConfirm.setOnClickListener(this);
+
+        spinnerKnowUs = (Spinner) getActivity().findViewById(R.id.sales_spinner_know_us);
+        editTextsalesCode = (CustomEditText) getActivity().findViewById(R.id.sales_editText_sales_agent_code);
+        editTextSalesName = (CustomEditText) getActivity().findViewById(R.id.sales_editText_sales_agent_name);
+        editTextsalesCode.setInputOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (!hasFocus) {
+                    editTextSalesName.setInputValue(editTextsalesCode.getInputValue());
+                    editTextSalesName.setInputAnimation(GlobalVariables.getInstance().getFadeInAnim());
+                }
+            }
+        });
+
+        if(!isAlreadyLoaded) {
+            isAlreadyLoaded = true;
             GlobalVariables gVar = GlobalVariables.getInstance();
             String sessionId = gVar.getSessionKey();
 
@@ -95,22 +110,9 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
             asop.setListener(this);
             asop.execute(urlParam);
 
-            scrollContentLayout = (LinearLayout) getActivity().findViewById(R.id.sales_scroll_layout);
-            btnConfirm = (Button) getActivity().findViewById(R.id.sales_btn_confirm);
-            btnConfirm.setOnClickListener(this);
 
-            spinnerKnowUs = (Spinner) getActivity().findViewById(R.id.sales_spinner_know_us);
-            editTextsalesCode = (CustomEditText) getActivity().findViewById(R.id.sales_editText_sales_agent_code);
-            editTextSalesName = (CustomEditText) getActivity().findViewById(R.id.sales_editText_sales_agent_name);
-            editTextsalesCode.setInputOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View view, boolean hasFocus) {
-                    if (!hasFocus) {
-                        editTextSalesName.setInputValue(editTextsalesCode.getInputValue());
-                        editTextSalesName.setInputAnimation(GlobalVariables.getInstance().getFadeInAnim());
-                    }
-                }
-            });
+        } else {
+            populateKnowUsSpinner(channelsList);
         }
     }
 
@@ -227,7 +229,6 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
         spinnerKnowUs.setAdapter(adapter);
         spinnerKnowUs.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-
             }
             public void onNothingSelected(AdapterView<?> parent) {
             }

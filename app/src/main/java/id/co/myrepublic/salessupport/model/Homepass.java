@@ -1,6 +1,5 @@
 package id.co.myrepublic.salessupport.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -128,9 +127,18 @@ public class Homepass implements Serializable {
     @JsonProperty("main_address")
     private String mainAddress;
 
-    @PositionItem(type= RowItem.MAINTEXT1)
+    @PositionItem(type= RowItem.MAINTEXT2)
     private String homepassAddressView;
+    @PositionItem(type= RowItem.MAINTEXT1)
+    private int no;
 
+    public int getNo() {
+        return no;
+    }
+
+    public void setNo(int no) {
+        this.no = no;
+    }
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
