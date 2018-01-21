@@ -105,40 +105,44 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
 
         boolean hasSubText = false;
 
-        // Read the annotation
-        try {
-            for (Field field : dataModel.getClass().getDeclaredFields()) {
-                Annotation annotation = field.getAnnotation(PositionItem.class);
-                field.setAccessible(true);
+        if(dataModel instanceof String) {
+            String value = (String) dataModel;
+            viewHolder.mainText1.setText(!StringUtil.isEmpty(value) ? value : "");
+        } else {
+            // Read the annotation
+            try {
+                for (Field field : dataModel.getClass().getDeclaredFields()) {
+                    Annotation annotation = field.getAnnotation(PositionItem.class);
+                    field.setAccessible(true);
 
-                String fieldValue = getStringFromReflectionObject(field.get(dataModel));
-                if(annotation instanceof  PositionItem) {
-                    PositionItem posItem = (PositionItem) annotation;
-                    RowItem annotationValue = posItem.type();
-                    String prefix = posItem.prefix();
-                    String postfix = posItem.postfix();
+                    String fieldValue = getStringFromReflectionObject(field.get(dataModel));
+                    if (annotation instanceof PositionItem) {
+                        PositionItem posItem = (PositionItem) annotation;
+                        RowItem annotationValue = posItem.type();
+                        String prefix = posItem.prefix();
+                        String postfix = posItem.postfix();
 
-                    if(RowItem.MAINTEXT1==annotationValue) {
-                        viewHolder.mainText1.setText(!StringUtil.isEmpty(fieldValue) ? prefix+fieldValue+postfix : "");
-                    }
-                    if(RowItem.MAINTEXT2==annotationValue) {
-                        viewHolder.mainText2.setText(!StringUtil.isEmpty(fieldValue) ? prefix+fieldValue+postfix : "");
-                    }
-                    if(RowItem.SUBTEXT1==annotationValue) {
-                        hasSubText = true;
-                        viewHolder.subText1.setText(fieldValue != null && !"".equals(fieldValue) ? prefix+fieldValue+postfix : "");
-                    }
-                    if(RowItem.SUBTEXT2==annotationValue) {
-                        hasSubText = true;
-                        viewHolder.subText2.setText(fieldValue != null && !"".equals(fieldValue) ? prefix+fieldValue+postfix : "");
-                    }
+                        if (RowItem.MAINTEXT1 == annotationValue) {
+                            viewHolder.mainText1.setText(!StringUtil.isEmpty(fieldValue) ? prefix + fieldValue + postfix : "");
+                        }
+                        if (RowItem.MAINTEXT2 == annotationValue) {
+                            viewHolder.mainText2.setText(!StringUtil.isEmpty(fieldValue) ? prefix + fieldValue + postfix : "");
+                        }
+                        if (RowItem.SUBTEXT1 == annotationValue) {
+                            hasSubText = true;
+                            viewHolder.subText1.setText(fieldValue != null && !"".equals(fieldValue) ? prefix + fieldValue + postfix : "");
+                        }
+                        if (RowItem.SUBTEXT2 == annotationValue) {
+                            hasSubText = true;
+                            viewHolder.subText2.setText(fieldValue != null && !"".equals(fieldValue) ? prefix + fieldValue + postfix : "");
+                        }
 
+                    }
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-
         // Make gone so it not using any space
         if(!hasSubText) {
             viewHolder.subText1.setVisibility(View.GONE);

@@ -56,8 +56,7 @@ public class CustomEditText extends LinearLayout {
     private void init(Context context, AttributeSet attrs) {
         inflate(context, R.layout.customview_edittext, this);
 
-        int[] sets = {R.attr.validator, R.attr.labelText,R.attr.inputType,R.attr.clickable,R.attr.dateFormat,R.attr.inputHeight,R.attr.value,R.attr.inputHint,R.attr.enabled};
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, sets);
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.appAttr);
 
         String attrValidator = typedArray.getString(R.styleable.appAttr_validator);
         String attrLabelText = typedArray.getString(R.styleable.appAttr_labelText);
@@ -72,7 +71,7 @@ public class CustomEditText extends LinearLayout {
 
         typedArray.recycle();
 
-        labelText = (TextView) findViewById(R.id.custom_edittext_label);
+        labelText = (TextView) findViewById(R.id.custom_widget_label);
         editText  = (EditText) findViewById(R.id.custom_edittext_input);
 
         setValidator(attrValidator);
