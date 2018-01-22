@@ -35,10 +35,10 @@ public class FragmentCustomerUpload extends Fragment implements View.OnClickList
     private static final int IMAGE_ID_CAMERA_PREVIEW = 2;
     private static final int IMAGE_SELFIE_CAMERA_PREVIEW = 3;
 
-    private Button btnGalleryId;
+    //private Button btnGalleryId;
     private Button btnCameraId;
-    private Button btnGallerySelfie;
-    private Button btnCameraSelfie;
+    //private Button btnGallerySelfie;
+    //private Button btnCameraSelfie;
     private Button btnConfirm;
     private ImageView imageViewPreviewId;
     private ImageView imageViewPreviewSelfie;
@@ -61,38 +61,38 @@ public class FragmentCustomerUpload extends Fragment implements View.OnClickList
         //you can set the title for your toolbar here for different fragments different titles
         getActivity().setTitle(getActivity().getString(R.string.fragment_view_salesorder));
 
-        btnGalleryId = (Button) getActivity().findViewById(R.id.customer_btn_id_gallery);
+        //btnGalleryId = (Button) getActivity().findViewById(R.id.customer_btn_id_gallery);
         btnCameraId = (Button) getActivity().findViewById(R.id.customer_btn_id_takephoto);
-        btnGallerySelfie = (Button) getActivity().findViewById(R.id.customer_btn_selfie_gallery);
-        btnCameraSelfie = (Button) getActivity().findViewById(R.id.customer_btn_selfie_takephoto);
+        //btnGallerySelfie = (Button) getActivity().findViewById(R.id.customer_btn_selfie_gallery);
+        //btnCameraSelfie = (Button) getActivity().findViewById(R.id.customer_btn_selfie_takephoto);
         btnConfirm = (Button) getActivity().findViewById(R.id.customer_btn_confirm) ;
 
         imageViewPreviewId = (ImageView) getActivity().findViewById(R.id.customer_image_id_preview);
-        imageViewPreviewSelfie = (ImageView) getActivity().findViewById(R.id.customer_image_selfie_preview) ;
+        //imageViewPreviewSelfie = (ImageView) getActivity().findViewById(R.id.customer_image_selfie_preview) ;
 
-        btnGalleryId.setOnClickListener(this);
-        btnGallerySelfie.setOnClickListener(this);
+        //btnGalleryId.setOnClickListener(this);
+        //btnGallerySelfie.setOnClickListener(this);
         btnCameraId.setOnClickListener(this);
-        btnCameraSelfie.setOnClickListener(this);
+        //btnCameraSelfie.setOnClickListener(this);
         btnConfirm.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.customer_btn_id_gallery :
-                openGallery(IMAGE_ID_GALLERY_PREVIEW);
-                break;
+            //case R.id.customer_btn_id_gallery :
+            //    openGallery(IMAGE_ID_GALLERY_PREVIEW);
+            //    break;
             case R.id.customer_btn_id_takephoto :
                 openCamera(IMAGE_ID_CAMERA_PREVIEW);
                 break;
-            case R.id.customer_btn_selfie_gallery :
-                openGallery(IMAGE_SELFIE_GALLERY_PREVIEW);
-                break;
+            //case R.id.customer_btn_selfie_gallery :
+            //    openGallery(IMAGE_SELFIE_GALLERY_PREVIEW);
+            //    break;
 
-            case R.id.customer_btn_selfie_takephoto :
-                openCamera(IMAGE_SELFIE_CAMERA_PREVIEW);
-                break;
+            //case R.id.customer_btn_selfie_takephoto :
+            //   openCamera(IMAGE_SELFIE_CAMERA_PREVIEW);
+            //    break;
             case R.id.customer_btn_confirm :
                 Bundle bundle = this.getArguments();
                 bundle.putString("customerIdPhoto",idImagePath);

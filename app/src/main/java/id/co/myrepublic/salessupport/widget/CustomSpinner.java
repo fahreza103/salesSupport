@@ -35,6 +35,7 @@ public class CustomSpinner extends AbstractWidget {
 
     private Spinner spinner;
     private ArrayAdapter adapter;
+    private TextView errorTextView;
 
     public CustomSpinner(Context context) {
         super(context);
@@ -48,12 +49,22 @@ public class CustomSpinner extends AbstractWidget {
     @Override
     protected void initCustomAttr(Context context, AttributeSet attrs) {
         spinner = (Spinner) this.widgetView;
+        errorTextView = (TextView) findViewById(R.id.custom_widget_error_text);
+        errorTextView.setVisibility(GONE);
 
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.appAttr);
 
         CharSequence[] entries = typedArray.getTextArray(R.styleable.appAttr_android_entries);
         int selectedItem = typedArray.getInteger(R.styleable.appAttr_selectedItem,0);
         typedArray.recycle();
+
+        spinner.setOnFocusChangeListener(new OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus)
+                    setError(null);
+            }
+        });
 
         setEntries(entries);
 
@@ -96,13 +107,14 @@ public class CustomSpinner extends AbstractWidget {
 
     @Override
     public void setError(String message, Drawable drawable) {
-        this.errorMsg = message;
-        TextView errorText = ((CommonRowAdapter)adapter).getMainTextView();
-        if(drawable != null) {
-            errorText.setError(message, drawable);
+        if(StringUtil.isEmpty(message)) {
+            errorTextView.setText("");
+            errorTextView.setVisibility(GONE);
         } else {
-            errorText.setError(message);
+            errorTextView.setText(message);
+            errorTextView.setVisibility(VISIBLE);
         }
+        this.errorMsg = message;
     }
 
     @Override
@@ -117,8 +129,9 @@ public class CustomSpinner extends AbstractWidget {
 
     public String getInputTextValue() {
         String value = null;
-        TextView textView = ((CommonRowAdapter)adapter).getMainTextView();
-        return textView.getText().toString();
+        int spinnerSelectedIndex = spinner.getSelectedItemPosition();
+        List<String> dataSet = ((CommonRowAdapter) adapter).getDataSet();
+        return dataSet.get(spinnerSelectedIndex);
     }
 
 

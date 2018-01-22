@@ -16,6 +16,8 @@ import org.w3c.dom.Text;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -33,7 +35,7 @@ import id.co.myrepublic.salessupport.util.StringUtil;
  */
 public class CommonRowAdapter<T> extends ArrayAdapter<T> {
 
-    private List<T> dataSet;
+    private List<String> dataSet;
     private Context mContext;
     private Integer widthText;
     private Integer rowHeight;
@@ -53,13 +55,13 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
 
     public CommonRowAdapter(List<T> data, Context context, int textViewResourceId) {
         super(context, R.layout.row_item_common,textViewResourceId, data);
-        this.dataSet = data;
+        this.dataSet = Arrays.asList(new String[data.size()]);
         this.mContext=context;
     }
 
     public CommonRowAdapter(List<T> data, Context context) {
         super(context, R.layout.row_item_common, data);
-        this.dataSet = data;
+        this.dataSet = Arrays.asList(new String[data.size()]);
         this.mContext=context;
     }
 
@@ -127,6 +129,7 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
 
                         if (RowItem.MAINTEXT1 == annotationValue) {
                             viewHolder.mainText1.setText(!StringUtil.isEmpty(fieldValue) ? prefix + fieldValue + postfix : "");
+                            dataSet.set(position,viewHolder.mainText1.getText().toString());
                         }
                         if (RowItem.MAINTEXT2 == annotationValue) {
                             viewHolder.mainText2.setText(!StringUtil.isEmpty(fieldValue) ? prefix + fieldValue + postfix : "");
@@ -239,9 +242,11 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
         isSpinner = spinner;
     }
 
-    public TextView getMainTextView() {
-        if(viewHolder != null)
-            return viewHolder.mainText1;
-        return null;
+    public List<String> getDataSet() {
+        return dataSet;
+    }
+
+    public void setDataSet(List<String> dataSet) {
+        this.dataSet = dataSet;
     }
 }
