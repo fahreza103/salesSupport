@@ -26,6 +26,8 @@
         <item name="android:windowExitAnimation">@anim/expand_out</item>
     </style>
 
-
+    <style name="SpinnerTheme" parent="android:Widget.Spinner">
+        <item name="android:background">@drawable/spinner_bg</item>
+    </style>
 
 </resources>

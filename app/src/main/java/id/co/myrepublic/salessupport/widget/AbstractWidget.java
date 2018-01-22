@@ -3,13 +3,11 @@ package id.co.myrepublic.salessupport.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.animation.Animation;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -17,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.co.myrepublic.salessupport.R;
-import id.co.myrepublic.salessupport.support.NewValidator;
+import id.co.myrepublic.salessupport.support.Validator;
 import id.co.myrepublic.salessupport.util.StringUtil;
 
 import static id.co.myrepublic.salessupport.support.Validator.VALIDATION_DATE;
@@ -137,7 +135,7 @@ public abstract class AbstractWidget extends LinearLayout {
      * @return
      */
     public Boolean validate() {
-        return NewValidator.validateSingleComponent(this);
+        return Validator.validateSingleComponent(this);
     }
 
 
@@ -150,6 +148,10 @@ public abstract class AbstractWidget extends LinearLayout {
             text+="*";
         }
         labelText.setText(text);
+    }
+
+    public String getLabelText() {
+        return labelText.getText().toString();
     }
 
     /**

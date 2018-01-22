@@ -12,23 +12,7 @@
         android:gravity="center"
         android:orientation="vertical">
 
-        <id.co.myrepublic.salessupport.widget.CustomSpinner
-            android:id="@+id/test_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:entries="@array/customer_class_arrays"
-            app:validator="required"
-            app:labelText="@string/fragment_sales_agent_code" />
 
-        <Button
-            android:id="@+id/btn_test"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:layout_gravity="center"
-            android:textColor="@color/white"
-            android:background="@drawable/button_blue"
-            android:text="@string/button_confirm" />
 
         <ImageView
             android:id="@+id/content_main_image_logo"

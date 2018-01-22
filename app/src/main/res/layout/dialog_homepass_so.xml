@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <RelativeLayout
@@ -66,30 +68,14 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
-
-
-                    <TextView
-                        android:id="@+id/dialogitem_txt_customer"
+                    <id.co.myrepublic.salessupport.widget.CustomSpinner
+                        android:id="@+id/dialogitem_spinner_customer_class"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:textStyle="bold"
-                        android:layout_marginTop="5dp"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@android:color/black"
-                        android:text="@string/dialog_homepass_customer" />
-
-                    <Spinner
-                        android:id="@+id/dialogitem_spinner_customer_class"
-                        android:layout_width="300dp"
-                        android:spinnerMode="dropdown"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="10dp"
-                        android:paddingBottom="10dp"
                         android:entries="@array/customer_class_arrays"
-                        android:layout_height="wrap_content" />
+                        app:validator="required"
+                        app:labelText="@string/dialog_homepass_customer" />
+
                 </LinearLayout>
 
                 <LinearLayout

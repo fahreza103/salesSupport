@@ -12,7 +12,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -82,8 +81,8 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
                 if (!hasFocus) {
-                    editTextSalesName.setInputValue(editTextsalesCode.getInputValue());
-                    editTextSalesName.setInputAnimation(GlobalVariables.getInstance().getFadeInAnim());
+                    editTextSalesName.setInputValue(editTextsalesCode.getInputValue()+"");
+                    editTextSalesName.setInputAnimation(GlobalVariables.getInstance().getFadeInAnim(),500);
                 }
             }
         });

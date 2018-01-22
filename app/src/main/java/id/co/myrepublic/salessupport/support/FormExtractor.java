@@ -5,14 +5,11 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.HashMap;
 
-import id.co.myrepublic.salessupport.model.Channels;
 import id.co.myrepublic.salessupport.widget.AbstractWidget;
-import id.co.myrepublic.salessupport.widget.CustomEditText;
 
 /**
  * Used to extract values for input form
@@ -21,6 +18,7 @@ import id.co.myrepublic.salessupport.widget.CustomEditText;
  */
 
 public class FormExtractor {
+
 
     /**
      * Extract all values from input form inside ViewGroup child
@@ -31,54 +29,9 @@ public class FormExtractor {
      */
     public static HashMap<String,Object> extractValues(Context context, ViewGroup v, Boolean validate) {
         HashMap<String,Object> resultMap = new HashMap<String,Object>();
-        // default should be true
-        resultMap.put(Validator.VALIDATION_KEY_RESULT, true);
-        int numOfFailed = 0;
-        for(int i=0;i<v.getChildCount();i++) {
-            Object child = v.getChildAt(i);
-            if (child instanceof CustomEditText) {
-                CustomEditText editText = (CustomEditText)child;
-                resultMap.put(context.getResources().getResourceEntryName(editText.getId()),editText.getInputValue());
-
-                if(validate) {
-                    numOfFailed += Validator.validate(context,editText) ? 0 : 1;
-                }
-            } else if(child instanceof Spinner) {
-                Spinner spinner = (Spinner) child;
-                Object item = spinner.getSelectedItem();
-                resultMap.put(context.getResources().getResourceEntryName(spinner.getId()), item);
-            } else if(child instanceof CheckBox) {
-                CheckBox checkBox = (CheckBox) child;
-                resultMap.put(context.getResources().getResourceEntryName(checkBox.getId()), checkBox.isChecked());
-            } else if(child instanceof LinearLayout) {
-                // Another layout viewGroup with a child, do recursive call
-                LinearLayout linearLayout = (LinearLayout) child;
-                resultMap.putAll(extractValues(context,linearLayout,validate));
-            } else if(child instanceof RelativeLayout) {
-                // Another layout viewGroup with a child, do recursive call
-                RelativeLayout relativeLayout = (RelativeLayout) child;
-                resultMap.putAll(extractValues(context,relativeLayout,validate));
-            }
-        }
-
-        if(numOfFailed > 0) {
-            resultMap.put(Validator.VALIDATION_KEY_RESULT, false);
-        }
-        return resultMap;
-    }
-
-    /**
-     * Extract all values from input form inside ViewGroup child
-     * @param context
-     * @param v
-     * @param validate extract and validate
-     * @return HashMap with key from id component and it's value
-     */
-    public static HashMap<String,Object> extractValue(Context context, ViewGroup v, Boolean validate) {
-        HashMap<String,Object> resultMap = new HashMap<String,Object>();
         AbstractWidget focusInvalidWidget = null;
         // default should be true
-        resultMap.put(NewValidator.VALIDATION_KEY_RESULT, true);
+        resultMap.put(Validator.VALIDATION_KEY_RESULT, true);
         int numOfFailed = 0;
         for(int i=0;i<v.getChildCount();i++) {
             Object child = v.getChildAt(i);
@@ -87,7 +40,7 @@ public class FormExtractor {
                 resultMap.put(context.getResources().getResourceEntryName(abstractWidget.getId()),abstractWidget.getInputValue());
 
                 if(validate) {
-                    int failed = NewValidator.validate(abstractWidget);
+                    int failed = Validator.validate(abstractWidget);
                     if(failed > 0) {
                         numOfFailed+= failed;
                         focusInvalidWidget = abstractWidget;
@@ -109,7 +62,7 @@ public class FormExtractor {
 
         if(numOfFailed > 0) {
             resultMap.put(Validator.VALIDATION_KEY_RESULT, false);
-            Toast.makeText(context, NewValidator.VALIDATION_MSG_FAILED,
+            Toast.makeText(context, Validator.VALIDATION_MSG_FAILED,
                     Toast.LENGTH_SHORT).show();
             focusInvalidWidget.requestFocus();
         }

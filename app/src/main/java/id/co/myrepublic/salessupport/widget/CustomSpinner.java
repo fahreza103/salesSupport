@@ -2,22 +2,17 @@ package id.co.myrepublic.salessupport.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v7.widget.AppCompatSpinner;
 import android.util.AttributeSet;
-
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import id.co.myrepublic.salessupport.R;
@@ -87,12 +82,16 @@ public class CustomSpinner extends AbstractWidget {
         this.adapter = adapter;
     }
 
-    public void setSelectedItem(Integer index) {
+    public void setSelectedIndex(Integer index) {
         spinner.setSelection(index);
     }
 
     public Object getSelectedItem() {
         return spinner.getSelectedItem();
+    }
+
+    public int getSelectedIndex() {
+        return spinner.getSelectedItemPosition();
     }
 
     public void setOnItemSelectedListener(AdapterView.OnItemSelectedListener listener){
@@ -127,11 +126,42 @@ public class CustomSpinner extends AbstractWidget {
         return spinner.getSelectedItem();
     }
 
+    /**
+     * Get text inside spinner selected item
+     * @return String text
+     */
     public String getInputTextValue() {
         String value = null;
-        int spinnerSelectedIndex = spinner.getSelectedItemPosition();
+        int spinnerSelectedIndex = getSelectedIndex();
         List<String> dataSet = ((CommonRowAdapter) adapter).getDataSet();
         return dataSet.get(spinnerSelectedIndex);
+    }
+
+    /**
+     *  This is to save the current state of this component after going into the next fragment / activity
+     *
+     */
+    @Override
+    public Parcelable onSaveInstanceState() {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("superState", super.onSaveInstanceState());
+        bundle.putInt("selectedIndex",getSelectedIndex());
+        return bundle;
+    }
+
+    /**
+     * Restore the state of this component, so the value will be restored and not losing after back from other fragment / activity
+     * @param state
+     */
+    @Override
+    public void onRestoreInstanceState(Parcelable state) {
+        if (state instanceof Bundle) {
+            Bundle bundle = (Bundle) state;
+            int selectedIndex = bundle.getInt("selectedIndex");
+            setSelectedIndex(selectedIndex);
+            state = bundle.getParcelable("superState");
+        }
+        super.onRestoreInstanceState(state);
     }
 
 

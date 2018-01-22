@@ -2,21 +2,16 @@ package id.co.myrepublic.salessupport.adapter;
 
 import android.content.Context;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -182,12 +177,13 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
 
         // Spinner animation only animate the text, not the entire layout because it will stacked when changing item selected
         GlobalVariables gvar = GlobalVariables.getInstance();
-        if(isSpinner) {
-            viewHolder.mainText1.startAnimation((position > lastPosition) ? gvar.getTopDownAnim() : gvar.getDownTopAnim());
-        } else {
-            result.startAnimation((position > lastPosition) ? gvar.getTopDownAnim() : gvar.getDownTopAnim());
+        if(gvar.getTopDownAnim() != null) {
+            if (isSpinner) {
+                viewHolder.mainText1.startAnimation((position > lastPosition) ? gvar.getTopDownAnim() : gvar.getDownTopAnim());
+            } else {
+                result.startAnimation((position > lastPosition) ? gvar.getTopDownAnim() : gvar.getDownTopAnim());
+            }
         }
-
         lastPosition = position;
         // Return the completed view to render on screen
         return convertView;

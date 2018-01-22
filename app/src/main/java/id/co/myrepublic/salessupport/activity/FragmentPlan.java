@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +31,8 @@ import id.co.myrepublic.salessupport.support.FormExtractor;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.UrlParam;
+import id.co.myrepublic.salessupport.widget.AbstractWidget;
+import id.co.myrepublic.salessupport.widget.CustomSpinner;
 
 
 public class FragmentPlan extends Fragment implements View.OnClickListener, AsyncTaskListener {
@@ -39,10 +40,10 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
     private Button btnConfirm;
     private LinearLayout scrollContentLayout;
     private Boolean isAlreadyLoaded = false;
-    private Spinner spinnerInternet;
-    private Spinner spinnerTv;
-    private Spinner spinnerStb;
-    private Spinner spinnerPromotion;
+    private CustomSpinner spinnerInternet;
+    private CustomSpinner spinnerTv;
+    private CustomSpinner spinnerStb;
+    private CustomSpinner spinnerPromotion;
 
     private List<CatalogItem> internetItems = new ArrayList<CatalogItem>();
     private List<CatalogItem> tvItems = new ArrayList<CatalogItem>();
@@ -68,10 +69,10 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
         btnConfirm = (Button) getActivity().findViewById(R.id.plan_btn_confirm);
         btnConfirm.setOnClickListener(this);
 
-        spinnerInternet = (Spinner) getActivity().findViewById(R.id.plan_spinner_internet_package);
-        spinnerTv = (Spinner) getActivity().findViewById(R.id.plan_spinner_tv_package);
-        spinnerStb = (Spinner) getActivity().findViewById(R.id.plan_spinner_stb_package);
-        spinnerPromotion = (Spinner) getActivity().findViewById(R.id.plan_spinner_promotion);
+        spinnerInternet = (CustomSpinner) getActivity().findViewById(R.id.plan_spinner_internet_package);
+        spinnerTv = (CustomSpinner) getActivity().findViewById(R.id.plan_spinner_tv_package);
+        spinnerStb = (CustomSpinner) getActivity().findViewById(R.id.plan_spinner_stb_package);
+        spinnerPromotion = (CustomSpinner) getActivity().findViewById(R.id.plan_spinner_promotion);
 
         if(!isAlreadyLoaded) {
             isAlreadyLoaded = true;
@@ -137,10 +138,10 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
         }
     }
 
-    private void populateSpinner(Spinner spinner,List<CatalogItem> catalogList) {
+    private void populateSpinner(CustomSpinner spinner,List<CatalogItem> catalogList) {
         catalogList = new ArrayList<>(catalogList);
         CatalogItem catalogItem = new CatalogItem();
-        catalogItem.setName("[Select]");
+        catalogItem.setName(AbstractWidget.EMPTY_SPINNER_TEXT);
         catalogList.add(0,catalogItem);
 
         CommonRowAdapter adapter = new CommonRowAdapter(catalogList,getContext(),R.id.rowitem_maintext);

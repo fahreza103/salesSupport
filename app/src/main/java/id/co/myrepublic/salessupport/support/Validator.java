@@ -13,8 +13,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import id.co.myrepublic.salessupport.util.StringUtil;
+import id.co.myrepublic.salessupport.widget.AbstractWidget;
 import id.co.myrepublic.salessupport.widget.CustomEditText;
+import id.co.myrepublic.salessupport.widget.CustomSpinner;
 
+import static id.co.myrepublic.salessupport.widget.AbstractWidget.EMPTY_SPINNER_TEXT;
 
 
 /**
@@ -77,41 +80,50 @@ public class Validator {
 
     /**
      * perform validation, private call
-     * @param editText
+     * @param view
      * @return
      */
-    private static Boolean validate (String validator, CustomEditText editText) {
+    private static Boolean validate (String validator, AbstractWidget view) {
         boolean result = true;
-        String errorMsg = editText.getError()== null ? "": editText.getError();
+        String errorMsg = view.getError()== null ? "": view.getError();
         String newErrorMsg = "";
-        if(validator.equals(VALIDATION_REQUIRED) && !validateRequired(editText.getInputValue())) {
+        String inputValue  = view.getInputValue().toString();
+        // Spinner if empty value selected
+        if(view instanceof CustomSpinner) {
+            inputValue = ((CustomSpinner) view).getInputTextValue();
+            if(EMPTY_SPINNER_TEXT.equals(inputValue)) {
+                inputValue = "";
+            }
+        }
+
+        if(validator.equals(VALIDATION_REQUIRED) && !validateRequired(inputValue)) {
             result = false;
             newErrorMsg += VALIDATION_MSG_REQUIRED;
-        } else if(validator.equals(VALIDATION_EMAIL) && !validateEmail(editText.getInputValue())) {
+        } else if(validator.equals(VALIDATION_EMAIL) && !validateEmail(inputValue)) {
             result = false;
             newErrorMsg += VALIDATION_MSG_EMAIL;
-        } else if(validator.equals(VALIDATION_DATE) && !validateDate(editText.getInputValue(),editText.getDateFormat())) {
+        } else if(validator.equals(VALIDATION_DATE) && !validateDate(inputValue,view.getDateFormat())) {
             result = false;
             newErrorMsg += VALIDATION_MSG_DATE;
         }
         if(!StringUtil.isEmpty(newErrorMsg)) {
             errorMsg += StringUtil.isEmpty(errorMsg) ? newErrorMsg : "\n"+newErrorMsg;
-            editText.setError(errorMsg);
+            view.setError(errorMsg);
         }
         return result;
     }
 
     /**
-     * perform validation by specified dynamic array of CustomEditText
-     * @param editTexts
+     * perform validation by specified dynamic array of Abstract widget
+     * @param views
      * @return number of failed validation
      */
-    public static int validate (CustomEditText... editTexts) {
+    public static int validate (AbstractWidget... views) {
         int numOfFailed = 0;
-        for(CustomEditText editText : editTexts) {
-            editText.setError(null);
-            for(String validator : editText.getValidators()) {
-                boolean valid = validate(validator,editText);
+        for(AbstractWidget view : views) {
+            view.setError(null);
+            for(String validator : view.getValidators()) {
+                boolean valid = validate(validator,view);
                 if(!valid) {
                     numOfFailed++;
                 }
@@ -122,37 +134,34 @@ public class Validator {
     }
 
     /**
-     * perform validation by find the CustomEditText in child of the specified layout
+     * Validate single component
+     * @param view
+     * @return
+     */
+    public static Boolean validateSingleComponent(AbstractWidget view) {
+        String inputValue = view.getInputValue().toString();
+        int numOfFailed = validate(view);
+        return numOfFailed == 0 ? true : false;
+    }
+
+    /**
+     * perform validation by find the AbstractWidget in child of the specified layout
      * @param v
      * @return true if validation success, otherwise false
      */
-    public static Boolean validate (Context context,ViewGroup v) {
+    public static Boolean validateGroup (Context context,ViewGroup v) {
         int numOfFailedTotal = 0;
-        CustomEditText focusInvalidEditText = null;
-        // Single component
-        if(v instanceof CustomEditText) {
-            CustomEditText editText = (CustomEditText) v;
-            int numOfFailed = validate(editText);
-            focusInvalidEditText = numOfFailed > 0 ? editText : focusInvalidEditText;
-            numOfFailedTotal += numOfFailed;
-        } else {
             // Inside some layout with child
-            for (int i = 0; i < v.getChildCount(); i++) {
-                Object child = v.getChildAt(i);
-                if (child instanceof CustomEditText) {
-                    CustomEditText editText = (CustomEditText) child;
-                    int numOfFailed = validate(editText);
-                    focusInvalidEditText = numOfFailed > 0 ? editText : focusInvalidEditText;
-                    numOfFailedTotal += numOfFailed;
-                }
+        for (int i = 0; i < v.getChildCount(); i++) {
+            Object child = v.getChildAt(i);
+            if (child instanceof AbstractWidget) {
+                AbstractWidget abstractWidget = (AbstractWidget) child;
+               int numOfFailed = validate(abstractWidget);
+               numOfFailedTotal += numOfFailed;
             }
         }
+
         if(numOfFailedTotal > 0) {
-            if(context!= null) {
-                focusInvalidEditText.requestFocus();
-                Toast.makeText(context, VALIDATION_MSG_FAILED,
-                        Toast.LENGTH_SHORT).show();
-            }
             return false;
         }
         return true;

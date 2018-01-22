@@ -34,90 +34,30 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <LinearLayout
+            <id.co.myrepublic.salessupport.widget.CustomSpinner
+                android:id="@+id/plan_spinner_internet_package"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:validator="required"
+                app:labelText="@string/fragment_plan_internet_package" />
 
-                <TextView
-                    android:id="@+id/plan_txt_internet_package"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight=".50"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginLeft="10dp"
-                    android:text="@string/fragment_plan_internet_package"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/black" />
 
-                <Spinner
-                    android:id="@+id/plan_spinner_internet_package"
-                    android:layout_width="match_parent"
-                    android:spinnerMode="dropdown"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginTop="5dp"
-                    android:background="@drawable/spinner_bg"
-                    android:layout_weight=".50"
-                    android:paddingBottom="10dp"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-
-            <LinearLayout
+            <id.co.myrepublic.salessupport.widget.CustomSpinner
+                android:id="@+id/plan_spinner_tv_package"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:labelText="@string/fragment_plan_tv_package" />
 
-                <TextView
-                    android:id="@+id/plan_txt_tv_package"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight=".50"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginLeft="10dp"
-                    android:text="@string/fragment_plan_tv_package"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/black" />
-
-                <Spinner
-                    android:id="@+id/plan_spinner_tv_package"
-                    android:layout_width="match_parent"
-                    android:spinnerMode="dropdown"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginTop="5dp"
-                    android:background="@drawable/spinner_bg"
-                    android:layout_weight=".50"
-                    android:paddingBottom="10dp"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-
-
-            <LinearLayout
+            <id.co.myrepublic.salessupport.widget.CustomSpinner
+                android:id="@+id/plan_spinner_stb_package"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:labelText="@string/fragment_plan_stb" />
 
-                <TextView
-                    android:id="@+id/plan_txt_stb_package"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight=".50"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginLeft="10dp"
-                    android:text="@string/fragment_plan_stb"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/black" />
 
-                <Spinner
-                    android:id="@+id/plan_spinner_stb_package"
-                    android:layout_width="match_parent"
-                    android:spinnerMode="dropdown"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginTop="5dp"
-                    android:background="@drawable/spinner_bg"
-                    android:layout_weight=".50"
-                    android:paddingBottom="10dp"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -168,33 +108,13 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout
+            <id.co.myrepublic.salessupport.widget.CustomSpinner
+                android:id="@+id/plan_spinner_promotion"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:labelText="@string/fragment_plan_promotion" />
 
-                <TextView
-                    android:id="@+id/plan_txt_promotion"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight=".50"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginLeft="10dp"
-                    android:text="@string/fragment_plan_promotion"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/black" />
-
-                <Spinner
-                    android:id="@+id/plan_spinner_promotion"
-                    android:layout_width="match_parent"
-                    android:spinnerMode="dropdown"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginTop="5dp"
-                    android:background="@drawable/spinner_bg"
-                    android:layout_weight=".50"
-                    android:paddingBottom="10dp"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
 
             <id.co.myrepublic.salessupport.widget.CustomEditText
                 android:id="@+id/plan_editText_remarks"

@@ -11,11 +11,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TextView;
 
@@ -36,6 +36,7 @@ import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.UrlParam;
+import id.co.myrepublic.salessupport.widget.CustomSpinner;
 
 /**
  * Created by myrepublicid on 28/11/17.
@@ -97,11 +98,11 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
 
         // custom dialog
         dialog = new Dialog(getContext());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_homepass_so);
 
-
         // set the custom dialog components - text, spinner
-        final Spinner spinnerCustomerClass = (Spinner) dialog.findViewById(R.id.dialogitem_spinner_customer_class);
+        final CustomSpinner spinnerCustomerClass = (CustomSpinner) dialog.findViewById(R.id.dialogitem_spinner_customer_class);
 
         final TextView txtHomepassName = (TextView) dialog.findViewById(R.id.dialogitem_txt_homepass_value);
         txtHomepassName.setText(homepass.getHomepassAddressView());
