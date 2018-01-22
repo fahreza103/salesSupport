@@ -89,8 +89,11 @@ public class NewValidator {
         String newErrorMsg = "";
         String inputValue  = view.getInputValue().toString();
         // Spinner if empty value selected
-        if(view instanceof CustomSpinner && EMPTY_SPINNER_TEXT.equals(inputValue)) {
-            inputValue = "";
+        if(view instanceof CustomSpinner) {
+            inputValue = ((CustomSpinner) view).getInputTextValue();
+            if(EMPTY_SPINNER_TEXT.equals(inputValue)) {
+                inputValue = "";
+            }
         }
 
         if(validator.equals(VALIDATION_REQUIRED) && !validateRequired(inputValue)) {

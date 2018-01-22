@@ -9,8 +9,10 @@ import android.os.Parcelable;
 import android.support.v7.widget.AppCompatSpinner;
 import android.util.AttributeSet;
 
+import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -32,6 +34,7 @@ import id.co.myrepublic.salessupport.util.StringUtil;
 public class CustomSpinner extends AbstractWidget {
 
     private Spinner spinner;
+    private ArrayAdapter adapter;
 
     public CustomSpinner(Context context) {
         super(context);
@@ -63,12 +66,14 @@ public class CustomSpinner extends AbstractWidget {
                 dataList.add(entry != null ? entry.toString():"");
             }
             CommonRowAdapter<String> adapter = new CommonRowAdapter<String>(dataList,this.context);
+            adapter.setSpinner(true);
             setAdapter(adapter);
         }
     }
 
     public void setAdapter(ArrayAdapter adapter) {
         spinner.setAdapter(adapter);
+        this.adapter = adapter;
     }
 
     public void setSelectedItem(Integer index) {
@@ -92,13 +97,12 @@ public class CustomSpinner extends AbstractWidget {
     @Override
     public void setError(String message, Drawable drawable) {
         this.errorMsg = message;
-        TextView errorText = (TextView)spinner.getSelectedView();
+        TextView errorText = ((CommonRowAdapter)adapter).getMainTextView();
         if(drawable != null) {
             errorText.setError(message, drawable);
         } else {
             errorText.setError(message);
         }
-        errorText.setTextColor(Color.RED);
     }
 
     @Override
@@ -108,9 +112,13 @@ public class CustomSpinner extends AbstractWidget {
 
     @Override
     public Object getInputValue() {
-        TextView textView = (TextView)spinner.getSelectedView();
-        String result = textView.getText().toString();
-        return result;
+        return spinner.getSelectedItem();
+    }
+
+    public String getInputTextValue() {
+        String value = null;
+        TextView textView = ((CommonRowAdapter)adapter).getMainTextView();
+        return textView.getText().toString();
     }
 
 

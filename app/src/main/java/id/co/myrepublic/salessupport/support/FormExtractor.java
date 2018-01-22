@@ -87,8 +87,11 @@ public class FormExtractor {
                 resultMap.put(context.getResources().getResourceEntryName(abstractWidget.getId()),abstractWidget.getInputValue());
 
                 if(validate) {
-                    focusInvalidWidget = abstractWidget;
-                    numOfFailed += NewValidator.validate(abstractWidget);
+                    int failed = NewValidator.validate(abstractWidget);
+                    if(failed > 0) {
+                        numOfFailed+= failed;
+                        focusInvalidWidget = abstractWidget;
+                    }
                 }
             } else if(child instanceof CheckBox) {
                 CheckBox checkBox = (CheckBox) child;

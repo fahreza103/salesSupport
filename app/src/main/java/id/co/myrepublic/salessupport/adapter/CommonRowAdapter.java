@@ -11,6 +11,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
@@ -38,6 +40,7 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
     private Integer textGravity;
     private CommonRowAdapter.ViewHolder viewHolder;
     private Boolean isSpinner = false;
+
 
     // View lookup cache
     private static class ViewHolder {
@@ -234,5 +237,11 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
 
     public void setSpinner(Boolean spinner) {
         isSpinner = spinner;
+    }
+
+    public TextView getMainTextView() {
+        if(viewHolder != null)
+            return viewHolder.mainText1;
+        return null;
     }
 }
