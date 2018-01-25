@@ -10,7 +10,9 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
@@ -26,6 +28,7 @@ import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
 import id.co.myrepublic.salessupport.model.Catalog;
 import id.co.myrepublic.salessupport.model.CatalogItem;
 import id.co.myrepublic.salessupport.model.MainModel;
+import id.co.myrepublic.salessupport.model.Particulars;
 import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
 import id.co.myrepublic.salessupport.support.FormExtractor;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
@@ -35,7 +38,7 @@ import id.co.myrepublic.salessupport.widget.AbstractWidget;
 import id.co.myrepublic.salessupport.widget.CustomSpinner;
 
 
-public class FragmentPlan extends Fragment implements View.OnClickListener, AsyncTaskListener {
+public class FragmentPlan extends Fragment implements View.OnClickListener, AsyncTaskListener, AdapterView.OnItemSelectedListener {
 
     private Button btnConfirm;
     private LinearLayout scrollContentLayout;
@@ -44,6 +47,10 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
     private CustomSpinner spinnerTv;
     private CustomSpinner spinnerStb;
     private CustomSpinner spinnerPromotion;
+    private CheckBox checkBoxMovies;
+    private CheckBox checkBoxSport;
+    private CheckBox checkBoxExtras;
+    private CheckBox checkBoxIpPublic;
 
     private List<CatalogItem> internetItems = new ArrayList<CatalogItem>();
     private List<CatalogItem> tvItems = new ArrayList<CatalogItem>();
@@ -73,6 +80,13 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
         spinnerTv = (CustomSpinner) getActivity().findViewById(R.id.plan_spinner_tv_package);
         spinnerStb = (CustomSpinner) getActivity().findViewById(R.id.plan_spinner_stb_package);
         spinnerPromotion = (CustomSpinner) getActivity().findViewById(R.id.plan_spinner_promotion);
+        checkBoxMovies = (CheckBox) getActivity().findViewById(R.id.plan_checkbox_movies);
+        checkBoxExtras = (CheckBox) getActivity().findViewById(R.id.plan_checkbox_extras);
+        checkBoxSport  = (CheckBox) getActivity().findViewById(R.id.plan_checkbox_sport);
+        checkBoxIpPublic = (CheckBox) getActivity().findViewById(R.id.plan_checkbox_ip_public);
+
+        spinnerTv.setOnItemSelectedListener(this);
+
 
         if(!isAlreadyLoaded) {
             isAlreadyLoaded = true;
@@ -98,6 +112,21 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
             asop.setDialogMsg("Load Plan Data");
             asop.setListener(this);
             asop.execute(urlParam);
+        }
+        checkSelectedItem();
+
+    }
+
+    private void checkSelectedItem() {
+        CatalogItem catalogItem = (CatalogItem)spinnerTv.getSelectedItem();
+        if(catalogItem != null) {
+            if (StringUtil.isEmpty(catalogItem.getName()) || AbstractWidget.EMPTY_SPINNER_TEXT.equals(catalogItem.getName())) {
+                toggleAlaCarte(false);
+            } else {
+                toggleAlaCarte(true);
+            }
+        }  else {
+            toggleAlaCarte(false);
         }
     }
 
@@ -151,5 +180,30 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
         spinner.setAdapter(adapter);
         //spinner.setSelection(1);
 
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        checkSelectedItem();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {}
+
+    private void toggleAlaCarte(Boolean active) {
+        spinnerStb.setInputEnabled(active);
+        checkBoxExtras.setEnabled(active);
+        checkBoxMovies.setEnabled(active);
+        checkBoxSport.setEnabled(active);
+
+        if(!active) {
+            spinnerStb.setSelectedIndex(0);
+            if(checkBoxExtras.isChecked())
+                checkBoxExtras.toggle();
+            if(checkBoxMovies.isChecked())
+                checkBoxMovies.toggle();
+            if(checkBoxSport.isChecked())
+                checkBoxSport.toggle();
+        }
     }
 }

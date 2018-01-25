@@ -280,7 +280,7 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
             centerTextView.setVisibility(View.VISIBLE);
             centerProgressLogo.setVisibility(View.VISIBLE);
             browser.setVisibility(View.GONE);
-            ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation("checkSession",AsyncUiDisplayType.SCREEN);
+            ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation("checkSession",AsyncUiDisplayType.NONE);
             asop.setListener(this);
             asop.execute(UrlParam.createParamCheckSession(sessionId));
         } else {
@@ -310,6 +310,7 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
         Animation downTop = AnimationUtils.loadAnimation(this,R.anim.down_from_top);
         Animation upBottom = AnimationUtils.loadAnimation(this,R.anim.up_from_bottom);
         Animation expandIn = AnimationUtils.loadAnimation(this, R.anim.expand_in);
+        Animation leftRight = AnimationUtils.loadAnimation(this,R.anim.left_from_right);
 
         gvar.setDownTopAnim(downTop);
         gvar.setFadeInAnim(fadeIn);
@@ -317,5 +318,6 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
         gvar.setPopupAnim(popIn);
         gvar.setTopDownAnim(upBottom);
         gvar.setExpandAnim(expandIn);
+        gvar.setLeftRightAnim(leftRight);
     }
 }

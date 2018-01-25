@@ -3,24 +3,33 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/verification_txt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="10dp"
-        android:paddingBottom="5dp"
-        android:text="@string/fragment_verification"
-        android:textStyle="bold"
-        android:textSize="33dp"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@android:color/black" />
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:id="@+id/homepass_list_header"
+        android:background="@color/white"
+        android:layout_height="45dp">
 
-    <View
-        android:layout_height="2dp"
-        android:layout_marginTop="5dp"
-        android:background="@color/colorLogo"
-        android:layout_width="match_parent" />
+        <TextView
+            android:id="@+id/customer_txt_verification"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="10dp"
+            android:paddingBottom="5dp"
+            android:text="@string/fragment_verification"
+            android:textStyle="bold"
+            android:textSize="22dp"
+            android:textColor="@color/colorLogo4" />
+
+        <View
+            android:layout_height="2dp"
+            android:layout_below="@id/customer_txt_verification"
+            android:layout_marginTop="5dp"
+            android:background="@color/colorLogo"
+            android:layout_width="match_parent" />
+
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/verification_txt_desc"

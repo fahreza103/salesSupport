@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.view.View;
+import android.view.animation.Animation;
 
 import java.util.Map;
 
@@ -60,19 +61,13 @@ public abstract class AbstractAsyncOperation extends AsyncTask<Object, Integer, 
         if(uiType == AsyncUiDisplayType.SCREEN) {
             // Hide all item inside main layout and show progressbar
             // Should be set in ActivityMain
-            if (ActivityMain.txtLoading != null) {
-                ActivityMain.txtLoading.setVisibility(View.VISIBLE);
+            if (ActivityMain.loadingFrame != null) {
+                ActivityMain.loadingFrame.setVisibility(View.VISIBLE);
+                Animation fadeIn = gvar.getFadeInAnim();
+                fadeIn.setDuration(500);
+                ActivityMain.loadingFrame.startAnimation(gvar.getFadeInAnim());
             }
 
-            if (ActivityMain.progressBar != null) {
-                ActivityMain.progressBar.setVisibility(View.VISIBLE);
-                ActivityMain.progressBar.startAnimation(gvar.getPopupAnim());
-            }
-
-            if (ActivityMain.progressIcon != null) {
-                ActivityMain.progressIcon.setVisibility(View.VISIBLE);
-                ActivityMain.progressIcon.startAnimation(gvar.getPopupAnim());
-            }
         } else if(uiType == AsyncUiDisplayType.DIALOG) {
             // Show progress dialog
             progressDialog = DialogBuilder.getInstance().createProgressDialog(this.context,this.dialogMsg);
@@ -90,29 +85,38 @@ public abstract class AbstractAsyncOperation extends AsyncTask<Object, Integer, 
 
     protected void onProgressUpdate(Integer... progress) {}
 
-    protected void onPostExecute(Map<String,String> result) {
+    protected void onPostExecute(final Map<String,String> result) {
         // Hide everything that shows progress UI
-        if(ActivityMain.txtLoading!= null) {
-            ActivityMain.txtLoading.setVisibility(View.GONE);
-        }
-
-        if(ActivityMain.progressBar != null) {
-            ActivityMain.progressBar.setVisibility(View.GONE);
-        }
-
-        if(ActivityMain.progressIcon != null) {
-            ActivityMain.progressIcon.setVisibility(View.GONE);
-        }
-
         if(this.progressDialog != null) {
             this.progressDialog.dismiss();
         }
 
-        // if listener defined , do callback
-        if(listener != null) {
-            listener.onAsyncTaskComplete(result, this.taskName);
-        }
+        GlobalVariables gvar = GlobalVariables.getInstance();
+        if(ActivityMain.loadingFrame!= null && ActivityMain.loadingFrame.getVisibility() == View.VISIBLE) {
+            Animation fadeOut = gvar.getFadeOutAnim();
+            fadeOut.setDuration(500);
+            ActivityMain.loadingFrame.startAnimation(fadeOut);
 
+            fadeOut.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {}
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    ActivityMain.loadingFrame.setVisibility(View.GONE);
+                    // if listener defined , do callback
+                    if(listener != null) {
+                        listener.onAsyncTaskComplete(result, taskName);
+                    }
+                }
+                @Override
+                public void onAnimationRepeat(Animation animation) {}
+            });
+        } else {
+            // if listener defined , do callback
+            if(listener != null) {
+                listener.onAsyncTaskComplete(result, this.taskName);
+            }
+        }
 
     }
 

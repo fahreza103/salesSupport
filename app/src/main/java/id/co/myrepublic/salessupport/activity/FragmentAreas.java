@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import id.co.myrepublic.salessupport.adapter.CommonRowAdapter;
 import id.co.myrepublic.salessupport.listener.DialogListener;
 import id.co.myrepublic.salessupport.model.Area;
 import id.co.myrepublic.salessupport.support.DialogBuilder;
+import id.co.myrepublic.salessupport.util.GlobalVariables;
 
 
 /**
@@ -35,7 +37,7 @@ public class FragmentAreas extends Fragment implements View.OnClickListener, Dia
     private CommonRowAdapter<Area> areaAdapter;
     private List<Area> dataModels = new ArrayList<Area>();
     private List<Area> dataSearchResult = new ArrayList<Area>();
-
+    private LinearLayout footerBar;
 
     private FloatingActionButton fabSearch;
     private FloatingActionButton fabRefresh;
@@ -58,12 +60,19 @@ public class FragmentAreas extends Fragment implements View.OnClickListener, Dia
         //you can set the title for your toolbar here for different fragments different titles
         getActivity().setTitle(getActivity().getString(R.string.fragment_view_city));
 
+        GlobalVariables gVar = GlobalVariables.getInstance();
+
         listViewCity=(ListView)getActivity().findViewById(R.id.listData);
         fabRefresh = (FloatingActionButton)getActivity().findViewById(R.id.fab_areaRefresh);
         fabSearch = (FloatingActionButton)getActivity().findViewById(R.id.fab_areaSearch);
+        footerBar = (LinearLayout) getActivity().findViewById(R.id.footer_bar);
+        footerBar.setVisibility(View.VISIBLE);
+        footerBar.setAnimation(gVar.getTopDownAnim());
 
         fabRefresh.setOnClickListener(this);
+        fabRefresh.startAnimation(gVar.getLeftRightAnim());
         fabSearch.setOnClickListener(this);
+        fabSearch.startAnimation(gVar.getLeftRightAnim());
 
         dataModels = Area.createDataDummy();
         createAreas(dataModels);

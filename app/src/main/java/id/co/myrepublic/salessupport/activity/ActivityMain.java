@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -26,11 +27,8 @@ public class ActivityMain extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     public static TextView txtUser;
-    public static TextView txtLoading;
-    public static ProgressBar progressBar;
-    public static ImageView progressIcon;
 
-
+    public static FrameLayout loadingFrame;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +59,7 @@ public class ActivityMain extends AppCompatActivity
         txtUser = (TextView) headerView.findViewById(R.id.nav_header_txt_status_value);
         txtUser.setText(userName);
 
-        this.txtLoading = (TextView) findViewById(R.id.content_main_progressbar_text);
-        this.progressBar = (ProgressBar) findViewById(R.id.content_main_progressbar);
-        this.progressIcon = (ImageView) findViewById(R.id.content_main_progressbar_icon);
+        this.loadingFrame = (FrameLayout) findViewById(R.id.content_main_loading_screen);
 
         // Call main fragment
         Fragment fragment = new FragmentMain();

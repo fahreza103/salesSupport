@@ -69,6 +69,7 @@
                     android:orientation="vertical">
 
                     <id.co.myrepublic.salessupport.widget.CustomSpinner
+                        android:layout_marginTop="15dp"
                         android:id="@+id/dialogitem_spinner_customer_class"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

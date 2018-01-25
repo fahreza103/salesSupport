@@ -73,7 +73,7 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
         super.onViewCreated(view, savedInstanceState);
         //you can set the title for your toolbar here for different fragments different titles
         getActivity().setTitle(getActivity().getString(R.string.fragment_view_cluster_detail));
-
+        GlobalVariables gVar = GlobalVariables.getInstance();
 
         // Floating Button
         fabCompetitor = (FloatingActionButton) getActivity().findViewById(R.id.fab_addcompetitor);
@@ -81,6 +81,7 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
 
         fabSearch = (FloatingActionButton) getActivity().findViewById(R.id.fab_homepassSearch);
         fabSearch.setOnClickListener(this);
+
 
         toggleViewFloatingButton(View.GONE);
 
@@ -90,8 +91,8 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
 
 
         // get citylist from API
-        GlobalVariables sm = GlobalVariables.getInstance();
-        String sessionId = sm.getSessionKey();
+
+        String sessionId = gVar.getSessionKey();
 
         Map<Object,Object> paramMap = new HashMap<Object,Object>();
         paramMap.put("session_id",sessionId);
@@ -172,10 +173,13 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
 
     @Override
     public void onAsyncTaskComplete(Object result, String taskName) {
+        GlobalVariables gVar = GlobalVariables.getInstance();
         Map<String,String> resultMap = (Map<String,String>) result;
         String jsonResult = resultMap.get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
         if("getClusterDetail".equals(taskName)) {
             toggleViewFloatingButton(View.VISIBLE);
+            fabSearch.startAnimation(gVar.getLeftRightAnim());
+            fabCompetitor.startAnimation(gVar.getLeftRightAnim());
             if(jsonResult != null) {
                 MainModel<ResponseClusterInformation> model = StringUtil.convertStringToObject(jsonResult, ResponseClusterInformation.class);
                 if(model.getSuccess()) {

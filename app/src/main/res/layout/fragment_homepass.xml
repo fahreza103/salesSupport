@@ -9,7 +9,8 @@
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:id="@+id/homepass_list_header"
-        android:layout_height="40dp">
+        android:background="@color/white"
+        android:layout_height="35dp">
 
 
        <TextView
@@ -19,7 +20,8 @@
             android:layout_gravity="center"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="10dp"
-            android:textColor="@color/colorLogo"
+            android:textColor="@color/colorLogo4"
+            android:textStyle="bold"
             android:textSize="18dp"
             android:text="No." />
 
@@ -31,15 +33,16 @@
             android:layout_gravity="center"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="80dp"
-            android:textColor="@color/colorLogo"
+            android:textColor="@color/colorLogo4"
             android:textSize="18dp"
+            android:textStyle="bold"
             android:text="Homepass Detail" />
 
         <View
-            android:layout_below="@id/homepass_txt_no"
             android:layout_height="2dp"
+            android:layout_below="@id/homepass_txt_no"
             android:layout_marginTop="5dp"
-            android:background="@color/colorLogo"
+            android:background="@color/colorLogo2"
             android:layout_width="match_parent" />
 
     </RelativeLayout>
@@ -57,7 +60,7 @@
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:id="@+id/homepass_list_footer"
-        android:background="@drawable/side_nav_bar"
+        android:background="@color/darkBlack"
         android:layout_alignParentBottom="true"
         android:layout_height="40dp">
 

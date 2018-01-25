@@ -52,15 +52,6 @@ public class CustomSpinner extends AbstractWidget {
         CharSequence[] entries = typedArray.getTextArray(R.styleable.appAttr_android_entries);
         int selectedItem = typedArray.getInteger(R.styleable.appAttr_selectedItem,0);
         typedArray.recycle();
-
-        spinner.setOnFocusChangeListener(new OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus)
-                    setError(null);
-            }
-        });
-
         setEntries(entries);
 
     }

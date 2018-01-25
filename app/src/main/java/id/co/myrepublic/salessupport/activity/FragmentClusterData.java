@@ -1,6 +1,7 @@
 package id.co.myrepublic.salessupport.activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -70,8 +71,8 @@ public class FragmentClusterData extends Fragment implements AsyncTaskListener, 
         String areaCode = bundle.getString("areaCode", null);
 
         // get citylist from API
-        GlobalVariables sm = GlobalVariables.getInstance();
-        String sessionId = sm.getSessionKey();
+        GlobalVariables gVar = GlobalVariables.getInstance();
+        String sessionId = gVar.getSessionKey();
 
         Map<Object,Object> paramMap = new HashMap<Object,Object>();
         paramMap.put("session_id",sessionId);
@@ -99,6 +100,7 @@ public class FragmentClusterData extends Fragment implements AsyncTaskListener, 
 
         fabRefresh.setOnClickListener(this);
         fabSearch.setOnClickListener(this);
+
 
         dataSearchResult.clear();
         listViewCluster.setOnItemClickListener(this);
@@ -136,16 +138,25 @@ public class FragmentClusterData extends Fragment implements AsyncTaskListener, 
 
     @Override
     public void onAsyncTaskComplete(Object result, String taskName) {
+        GlobalVariables gVar = GlobalVariables.getInstance();
+
         Map<String,String> resultMap = (Map<String,String>) result;
         String jsonResult = resultMap.get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
         fabLayout.setVisibility(View.VISIBLE);
+        fabRefresh.startAnimation(gVar.getLeftRightAnim());
+        fabSearch.startAnimation(gVar.getLeftRightAnim());
         // Convert to Object
         if(jsonResult != null) {
             MainModel<Cluster> model = StringUtil.convertStringToObject(jsonResult, Cluster[].class);
             if(model.getSuccess()) {
                 dataModels = model.getListObject();
+                createCluster(dataModels);
+            } else {
+                Intent intent = new Intent(getContext(), ActivityLogin.class);
+                startActivity(intent);
+                getActivity().finish();
             }
-            createCluster(dataModels);
+
         } else {
             DialogBuilder db = DialogBuilder.getInstance();
             db.createAlertDialog(getContext(), getString(R.string.dialog_title_error),

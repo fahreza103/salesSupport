@@ -5,24 +5,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/sales_txt_salesrefferal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="10dp"
-        android:paddingBottom="5dp"
-        android:text="@string/fragment_plan_create"
-        android:textStyle="bold"
-        android:textSize="33dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@android:color/black" />
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:id="@+id/homepass_list_header"
+        android:background="@color/white"
+        android:layout_height="45dp">
 
-    <View
-        android:layout_height="2dp"
-        android:layout_marginTop="5dp"
-        android:background="@color/colorLogo"
-        android:layout_width="match_parent" />
+        <TextView
+            android:id="@+id/customer_txt_create_plan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="10dp"
+            android:paddingBottom="5dp"
+            android:text="@string/fragment_plan_create"
+            android:textStyle="bold"
+            android:textSize="22dp"
+            android:textColor="@color/colorLogo4" />
+
+        <View
+            android:layout_height="2dp"
+            android:layout_below="@id/customer_txt_create_plan"
+            android:layout_marginTop="5dp"
+            android:background="@color/colorLogo"
+            android:layout_width="match_parent" />
+
+    </RelativeLayout>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -80,6 +89,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight=".50"
                     android:orientation="vertical">
+
+
 
                     <CheckBox
                         android:id="@+id/plan_checkbox_movies"

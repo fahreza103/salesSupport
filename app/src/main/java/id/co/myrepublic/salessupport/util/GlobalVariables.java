@@ -17,6 +17,7 @@ public class GlobalVariables {
     private Animation downTopAnim;
     private Animation TopDownAnim;
     private Animation expandAnim;
+    private Animation LeftRightAnim;
 
     protected GlobalVariables() {}
 
@@ -101,5 +102,13 @@ public class GlobalVariables {
 
     public void setExpandAnim(Animation expandAnim) {
         this.expandAnim = expandAnim;
+    }
+
+    public Animation getLeftRightAnim() {
+        return LeftRightAnim;
+    }
+
+    public void setLeftRightAnim(Animation leftRightAnim) {
+        LeftRightAnim = leftRightAnim;
     }
 }
