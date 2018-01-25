@@ -75,6 +75,10 @@ public class FragmentCustomerUpload extends Fragment implements View.OnClickList
         btnCameraId.setOnClickListener(this);
         //btnCameraSelfie.setOnClickListener(this);
         btnConfirm.setOnClickListener(this);
+
+        if(cameraImageUri != null) {
+            showImageFromUri(cameraImageUri);
+        }
     }
 
     @Override
@@ -167,29 +171,39 @@ public class FragmentCustomerUpload extends Fragment implements View.OnClickList
         // If the result is OK (user finished the action)
         // and the request code is our code,
         // then this is our request and we can process the result
-        try {
-            if (resultCode == RESULT_OK) {
-                Uri imageUri = data.getData();
-                if (requestCode == IMAGE_ID_GALLERY_PREVIEW) {
-                    imageViewPreviewId.setImageURI(imageUri);
-                    imageViewPreviewId.setVisibility(View.VISIBLE);
-                    idImagePath = StringUtil.getPath(getContext(),imageUri);
-                } else if (requestCode == IMAGE_SELFIE_GALLERY_PREVIEW) {
-                    imageViewPreviewSelfie.setImageURI(imageUri);
-                    imageViewPreviewSelfie.setVisibility(View.VISIBLE);
-                    selfieImagePath = StringUtil.getPath(getContext(),imageUri);
-                } else if (requestCode == IMAGE_ID_CAMERA_PREVIEW) {
-                    Bitmap bmp = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), cameraImageUri);
-                    imageViewPreviewId.setImageBitmap(bmp);
-                    imageViewPreviewId.setVisibility(View.VISIBLE);
-                    idImagePath = imagePath;
-                } else if (requestCode == IMAGE_SELFIE_CAMERA_PREVIEW) {
-                    Bitmap bmp = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), cameraImageUri);
-                    imageViewPreviewSelfie.setImageBitmap(bmp);
-                    imageViewPreviewSelfie.setVisibility(View.VISIBLE);
-                    selfieImagePath = imagePath;
-                }
+
+        if (resultCode == RESULT_OK) {
+            Uri imageUri = null;
+            if(data != null) {
+                imageUri = data.getData();
+            } else {
+                imageUri = cameraImageUri;
             }
+            if (requestCode == IMAGE_ID_GALLERY_PREVIEW) {
+                imageViewPreviewId.setImageURI(imageUri);
+                imageViewPreviewId.setVisibility(View.VISIBLE);
+                idImagePath = StringUtil.getPath(getContext(),imageUri);
+            } else if (requestCode == IMAGE_SELFIE_GALLERY_PREVIEW) {
+                imageViewPreviewSelfie.setImageURI(imageUri);
+                imageViewPreviewSelfie.setVisibility(View.VISIBLE);
+                selfieImagePath = StringUtil.getPath(getContext(),imageUri);
+            } else if (requestCode == IMAGE_ID_CAMERA_PREVIEW) {
+                showImageFromUri(cameraImageUri);
+                idImagePath = imagePath;
+            } else if (requestCode == IMAGE_SELFIE_CAMERA_PREVIEW) {
+                showImageFromUri(cameraImageUri);
+                selfieImagePath = imagePath;
+            }
+        }
+
+    }
+
+    private void showImageFromUri(Uri uri) {
+        Bitmap bmp = null;
+        try {
+            bmp = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
+            imageViewPreviewId.setImageBitmap(bmp);
+            imageViewPreviewId.setVisibility(View.VISIBLE);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -12,8 +12,17 @@
         android:background="@color/white"
         android:layout_height="45dp">
 
+        <ImageView
+            android:id="@+id/icon_title"
+            android:layout_marginTop="2dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            app:srcCompat="@mipmap/icon_plan" />
+
         <TextView
             android:id="@+id/customer_txt_create_plan"
+            android:layout_toRightOf="@id/icon_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
@@ -27,7 +36,6 @@
         <View
             android:layout_height="2dp"
             android:layout_below="@id/customer_txt_create_plan"
-            android:layout_marginTop="5dp"
             android:background="@color/colorLogo"
             android:layout_width="match_parent" />
 

@@ -12,6 +12,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -126,6 +127,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
     private void showAddressDialog() {
         // custom dialog
         dialog = new Dialog(getContext());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_address_confirmation);
 
         // Get address info from previous fragment

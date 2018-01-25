@@ -12,7 +12,6 @@ import id.co.myrepublic.salessupport.activity.ActivityMain;
 import id.co.myrepublic.salessupport.constant.AsyncUiDisplayType;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
-import id.co.myrepublic.salessupport.util.UrlParam;
 
 /**
  * Abstract class for async operation, standard operation is show loading spinner on preExecute, and hide them after done
@@ -84,6 +83,10 @@ public abstract class AbstractAsyncOperation extends AsyncTask<Object, Integer, 
 
 
     protected void onProgressUpdate(Integer... progress) {}
+
+    protected void onCancelled(){
+        // Do something when async task is cancelled
+    }
 
     protected void onPostExecute(final Map<String,String> result) {
         // Hide everything that shows progress UI

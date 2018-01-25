@@ -36,8 +36,8 @@ import id.co.myrepublic.salessupport.model.CommonItem;
 import id.co.myrepublic.salessupport.model.MainModel;
 import id.co.myrepublic.salessupport.model.ResponseClusterInformation;
 import id.co.myrepublic.salessupport.support.AbstractAsyncOperation;
-import id.co.myrepublic.salessupport.support.DialogBuilder;
 import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
+import id.co.myrepublic.salessupport.support.DialogBuilder;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.UrlParam;
@@ -59,6 +59,7 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
     private List<String> competitorList = new ArrayList<String>();
     private Dialog dialog;
     private String clusterName;
+    private ApiConnectorAsyncOperation asop;
 
     @Nullable
     @Override
@@ -107,7 +108,7 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
 
         String caller = getCallerFragment();
         if(dataModels.size() == 0) {
-            ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation("getClusterDetail", AsyncUiDisplayType.SCREEN);
+            asop = new ApiConnectorAsyncOperation("getClusterDetail", AsyncUiDisplayType.SCREEN);
             asop.setListener(this);
             asop.execute(urlParam);
         } else {
@@ -322,4 +323,13 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
 
     @Override
     public void onDialogCancelPressed(DialogInterface dialog, int which) {}
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if(asop != null && !asop.isCancelled()) {
+            asop.cancel(true);
+            ActivityMain.loadingFrame.setVisibility(View.GONE);
+        }
+    }
 }

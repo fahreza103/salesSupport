@@ -49,6 +49,7 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
     private TabHost host;
     private List<Homepass> homePassList = new ArrayList<Homepass>();
     private Boolean isAlreadyLoaded = false;
+    private ApiConnectorAsyncOperation asop;
 
     @Nullable
     @Override
@@ -84,7 +85,7 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
             urlParam.setUrl(AppConstant.GET_HOMEPASS_API_URL);
             urlParam.setParamMap(paramMap);
 
-            ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(getContext(), "homepassSearch", AsyncUiDisplayType.DIALOG);
+            asop = new ApiConnectorAsyncOperation(getContext(), "homepassSearch", AsyncUiDisplayType.SCREEN);
             asop.setDialogMsg("Fetch Homepass Data");
             asop.setListener(this);
             asop.execute(urlParam);
@@ -221,5 +222,14 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
                 showOrderDialog(homepass);
             }
         });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if(asop != null && !asop.isCancelled()) {
+            asop.cancel(true);
+            ActivityMain.loadingFrame.setVisibility(View.GONE);
+        }
     }
 }

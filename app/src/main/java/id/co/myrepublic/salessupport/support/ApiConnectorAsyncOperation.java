@@ -41,6 +41,7 @@ public class ApiConnectorAsyncOperation extends AbstractAsyncOperation {
                     resultMap.put(DEFAULT_RESULT_KEY, result);
                 }
             }
+
         }
 
         return resultMap;

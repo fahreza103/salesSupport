@@ -51,6 +51,7 @@ public class FragmentClusterData extends Fragment implements AsyncTaskListener, 
     private LinearLayout fabLayout;
     private FloatingActionButton fabSearch;
     private FloatingActionButton fabRefresh;
+    private ApiConnectorAsyncOperation asop;
 
     @Nullable
     @Override
@@ -89,7 +90,7 @@ public class FragmentClusterData extends Fragment implements AsyncTaskListener, 
 
         fabLayout.setVisibility(View.GONE);
         if(dataModels.size() ==0) {
-            ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation("getCluster", AsyncUiDisplayType.SCREEN);
+            asop = new ApiConnectorAsyncOperation("getCluster", AsyncUiDisplayType.SCREEN);
             asop.setListener(this);
             asop.execute(urlParam);
         } else {
@@ -200,4 +201,13 @@ public class FragmentClusterData extends Fragment implements AsyncTaskListener, 
 
     @Override
     public void onDialogCancelPressed(DialogInterface dialog, int which) {}
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if(asop != null && !asop.isCancelled()) {
+            asop.cancel(true);
+            ActivityMain.loadingFrame.setVisibility(View.GONE);
+        }
+    }
 }
