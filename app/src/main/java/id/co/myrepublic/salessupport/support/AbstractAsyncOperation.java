@@ -1,17 +1,30 @@
 package id.co.myrepublic.salessupport.support;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.view.View;
 import android.view.animation.Animation;
 
+import com.bumptech.glide.Glide;
+
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import id.co.myrepublic.salessupport.R;
+import id.co.myrepublic.salessupport.activity.ActivityLogin;
 import id.co.myrepublic.salessupport.activity.ActivityMain;
 import id.co.myrepublic.salessupport.constant.AsyncUiDisplayType;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
+import id.co.myrepublic.salessupport.listener.DialogListener;
+import id.co.myrepublic.salessupport.model.MainModel;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
+import id.co.myrepublic.salessupport.util.StringUtil;
+import id.co.myrepublic.salessupport.util.UrlResponse;
 
 /**
  * Abstract class for async operation, standard operation is show loading spinner on preExecute, and hide them after done
@@ -20,12 +33,12 @@ import id.co.myrepublic.salessupport.util.GlobalVariables;
  * Description for the 3 Objects :
  * Object => Any object  to supply the background process
  * Integer => Used to update progress
- * Map<String,String> , used to map taskKey per URL if this asyncTask performed more than one connection, and returned multiple result
+ * List<UrlResponse> , used to map taskKey per URL if this asyncTask performed more than one connection, and returned multiple result
  *
  * @author Fahreza Tamara
  */
 
-public abstract class AbstractAsyncOperation extends AsyncTask<Object, Integer, Map<String,String>> {
+public abstract class AbstractAsyncOperation extends AsyncTask<Object, Integer, List<UrlResponse>> {
 
     public static final String DEFAULT_RESULT_KEY = "defaultKey";
 
@@ -36,6 +49,7 @@ public abstract class AbstractAsyncOperation extends AsyncTask<Object, Integer, 
     private String dialogMsg;
     private AsyncTaskListener listener;
     private ProgressDialog progressDialog;
+    private Boolean isInLoginActivity = false;
 
 
     public AsyncTaskListener getListener() {
@@ -62,9 +76,16 @@ public abstract class AbstractAsyncOperation extends AsyncTask<Object, Integer, 
             // Should be set in ActivityMain
             if (ActivityMain.loadingFrame != null) {
                 ActivityMain.loadingFrame.setVisibility(View.VISIBLE);
+
                 Animation fadeIn = gvar.getFadeInAnim();
                 fadeIn.setDuration(500);
                 ActivityMain.loadingFrame.startAnimation(gvar.getFadeInAnim());
+            }
+
+            if(ActivityMain.loadingRocket != null && context != null) {
+                Glide.with(context)
+                        .load(R.mipmap.loading_rocket)
+                        .into(ActivityMain.loadingRocket);
             }
 
         } else if(uiType == AsyncUiDisplayType.DIALOG) {
@@ -75,10 +96,7 @@ public abstract class AbstractAsyncOperation extends AsyncTask<Object, Integer, 
             // No action
         }
 
-        // For custom UI Modification
-        if(listener != null) {
-            listener.onAsynTaskStart(this.taskName);
-        }
+
     }
 
 
@@ -88,14 +106,63 @@ public abstract class AbstractAsyncOperation extends AsyncTask<Object, Integer, 
         // Do something when async task is cancelled
     }
 
-    protected void onPostExecute(final Map<String,String> result) {
+    /**
+     * Invoked when asyncTask complete the operation, after doInBackground process
+     * @param urlResponseList, result list for each response
+     */
+    protected void onPostExecute(final List<UrlResponse> urlResponseList) {
+        final Map<String, MainModel> result = new HashMap<String,MainModel>();
+        int i = 2;
+        String errorMsg = null;
+        // Convert result into MainModel
+        for(UrlResponse urlResponse : urlResponseList) {
+            // Actual response value for result in API call will be converted in each activity, so null will be set here, because
+            // only success flag and error message returned from API will be used here
+            MainModel model = StringUtil.convertStringToObject(urlResponse.getResultValue(),null);
+            if(model != null) {
+                // if resultKey has same value for each response, add the postfix number into the key, so the map will store the response in different key (not replacing)
+                // it can happen when resultKey not defined so all response will using defaultKey, or you purposely set the resultKey with same value
+                if(result.get(urlResponse.getResultKey()) == null) {
+                    result.put(urlResponse.getResultKey(), model);
+                } else {
+                    result.put(urlResponse.getResultKey()+"_"+i, model);
+                }
+                // if success = false and error contains expired, will be show error dialog
+                if(!model.getSuccess() && !StringUtil.isEmpty(model.getError()) && model.getError().toLowerCase().contains("session")) {
+                    // break the process, session expired means other connection will be failed too
+                    //showErrorDialog(model.getError(),UrlResponse.RESULT_ERR_SESSION_EXPIRED);
+                    errorMsg = null;
+
+                    // Redirect to LoginActivity, only if not in LoginActivity, otherwise it just cause endless loop
+                    if(!isInLoginActivity) {
+                        Intent intent = new Intent(this.context, ActivityLogin.class);
+                        this.context.startActivity(intent);
+                        Activity activity = (Activity) this.context;
+                        activity.finish();
+                    }
+
+                    break;
+                }
+            } else {
+                // Error in connection, not getting response from API, append the error message, because only 1 dialog will shown
+                errorMsg += urlResponse.getErrorMessage()+"\n";
+            }
+            i++;
+        }
+
+        // has error, show error dialog
+        if(errorMsg != null) {
+            showErrorDialog(errorMsg,UrlResponse.RESULT_ERR_FATAL);
+        }
+
         // Hide everything that shows progress UI
         if(this.progressDialog != null) {
             this.progressDialog.dismiss();
         }
 
         GlobalVariables gvar = GlobalVariables.getInstance();
-        if(ActivityMain.loadingFrame!= null && ActivityMain.loadingFrame.getVisibility() == View.VISIBLE) {
+        if(ActivityMain.loadingFrame!= null &&
+                ActivityMain.loadingFrame.getVisibility() == View.VISIBLE && ActivityMain.loadingFrame.isShown()) {
             Animation fadeOut = gvar.getFadeOutAnim();
             fadeOut.setDuration(500);
             ActivityMain.loadingFrame.startAnimation(fadeOut);
@@ -123,11 +190,32 @@ public abstract class AbstractAsyncOperation extends AsyncTask<Object, Integer, 
 
     }
 
+    private void showErrorDialog(String message ,final int errorCode) {
+        DialogBuilder builder = DialogBuilder.getInstance();
+        builder.setDialogListener(new DialogListener() {
+            @Override
+            public void onDialogOkPressed(DialogInterface dialog, int which, Object... result) {
+
+            }
+            @Override
+            public void onDialogCancelPressed(DialogInterface dialog, int which) {}
+        });
+        builder.createInputDialog(this.context,"ERROR", message);
+    }
+
     public String getDialogMsg() {
         return dialogMsg;
     }
 
     public void setDialogMsg(String dialogMsg) {
         this.dialogMsg = dialogMsg;
+    }
+
+    public Boolean getInLoginActivity() {
+        return isInLoginActivity;
+    }
+
+    public void setInLoginActivity(Boolean inLoginActivity) {
+        isInLoginActivity = inLoginActivity;
     }
 }

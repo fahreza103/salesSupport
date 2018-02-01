@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
 
@@ -44,11 +45,15 @@ import id.co.myrepublic.salessupport.widget.CustomSpinner;
 
 public class FragmentHomepass extends Fragment implements AsyncTaskListener {
 
+    private static final String RESULT_KEY_HOMEPASS = "homepass";
+    private static final String RESULT_KEY_CUSTOMER_CLASS = "customerClass";
+
     private ListView listViewHomepass;
     private Dialog dialog;
     private TabHost host;
     private List<Homepass> homePassList = new ArrayList<Homepass>();
     private Boolean isAlreadyLoaded = false;
+    private RelativeLayout footerLayout;
     private ApiConnectorAsyncOperation asop;
 
     @Nullable
@@ -65,6 +70,8 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
         getActivity().setTitle(getActivity().getString(R.string.fragment_view_homepass));
 
         listViewHomepass = (ListView) getActivity().findViewById(R.id.listHompass);
+        footerLayout = (RelativeLayout) getActivity().findViewById(R.id.homepass_list_footer);
+        footerLayout.setVisibility(View.GONE);
 
         if(!isAlreadyLoaded) {
             isAlreadyLoaded = true;
@@ -81,14 +88,20 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
             paramMap.put("cluster_id", clusterId);
             paramMap.put("address", address);
 
-            UrlParam urlParam = new UrlParam();
-            urlParam.setUrl(AppConstant.GET_HOMEPASS_API_URL);
-            urlParam.setParamMap(paramMap);
+            UrlParam urlParamHomepass = new UrlParam();
+            urlParamHomepass.setUrl(AppConstant.GET_HOMEPASS_API_URL);
+            urlParamHomepass.setParamMap(paramMap);
+            urlParamHomepass.setResultKey(RESULT_KEY_HOMEPASS);
+
+            UrlParam urlParamCustomerClass = new UrlParam();
+            urlParamCustomerClass.setUrl(AppConstant.GET_CUSTOMER_TYPE_API_URL);
+            urlParamCustomerClass.setParamMap(paramMap);
+            urlParamHomepass.setResultKey(RESULT_KEY_CUSTOMER_CLASS);
 
             asop = new ApiConnectorAsyncOperation(getContext(), "homepassSearch", AsyncUiDisplayType.SCREEN);
             asop.setDialogMsg("Fetch Homepass Data");
             asop.setListener(this);
-            asop.execute(urlParam);
+            asop.execute(urlParamHomepass,urlParamCustomerClass);
         } else {
             populateItem(homePassList);
         }
@@ -177,10 +190,8 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
 
 
     @Override
-    public void onAsynTaskStart(String taskName) {}
-
-    @Override
     public void onAsyncTaskComplete(Object result, String taskName) {
+        GlobalVariables gVar = GlobalVariables.getInstance();
         Map<String,String> resultMap = (Map<String,String>) result;
         String jsonResult = resultMap.get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
         if("homepassSearch".equals(taskName)) {
@@ -199,6 +210,8 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
                         i++;
                     }
                     populateItem(model.getListObject());
+                    footerLayout.startAnimation(gVar.getTopDownAnim());
+                    footerLayout.setVisibility(View.VISIBLE);
                 } else {
                     // Error on session (expired or invalid)
                     if(AppConstant.SESSION_VALIDATION.equals(model.getAction())) {

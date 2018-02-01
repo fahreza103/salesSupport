@@ -14,6 +14,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -108,7 +109,7 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
 
         String caller = getCallerFragment();
         if(dataModels.size() == 0) {
-            asop = new ApiConnectorAsyncOperation("getClusterDetail", AsyncUiDisplayType.SCREEN);
+            asop = new ApiConnectorAsyncOperation(getContext(),"getClusterDetail", AsyncUiDisplayType.SCREEN);
             asop.setListener(this);
             asop.execute(urlParam);
         } else {
@@ -168,10 +169,6 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
         }
     }
 
-
-    @Override
-    public void onAsynTaskStart(String taskName) {}
-
     @Override
     public void onAsyncTaskComplete(Object result, String taskName) {
         GlobalVariables gVar = GlobalVariables.getInstance();
@@ -230,6 +227,7 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
 
         // custom dialog
         dialog = new Dialog(getContext());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_addcompetitor);
         dialog.setTitle(getString(R.string.dialog_addcompetitor));
 
@@ -295,7 +293,7 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
         Toast.makeText(getActivity(), "Insert Cluster Information...",
                 Toast.LENGTH_LONG).show();
 
-        ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation("insertCompetitor", AsyncUiDisplayType.SCREEN);
+        ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(getContext(),"insertCompetitor", AsyncUiDisplayType.SCREEN);
         asop.setListener(this);
         asop.execute(urlParam);
 

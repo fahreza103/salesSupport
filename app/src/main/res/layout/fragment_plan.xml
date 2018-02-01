@@ -56,7 +56,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                app:validator="required"
                 app:labelText="@string/fragment_plan_internet_package" />
 
 
@@ -74,58 +73,15 @@
                 android:layout_marginTop="10dp"
                 app:labelText="@string/fragment_plan_stb" />
 
-
-
-            <LinearLayout
+            <id.co.myrepublic.salessupport.widget.Checkboxes
+                android:id="@+id/plan_checkboxes_alacarte"
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:visibility="visible"
+                android:entries="@array/alacarte_arrays"
+                app:labelText="@string/fragment_plan_alacarte" />
 
-                <TextView
-                    android:id="@+id/plan_txt_alacarte"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight=".50"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginLeft="10dp"
-                    android:text="@string/fragment_plan_alacarte"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/black" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".50"
-                    android:orientation="vertical">
-
-
-
-                    <CheckBox
-                        android:id="@+id/plan_checkbox_movies"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/fragment_plan_movies" />
-
-                    <CheckBox
-                        android:id="@+id/plan_checkbox_sport"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/fragment_plan_sport" />
-
-                    <CheckBox
-                        android:id="@+id/plan_checkbox_extras"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/fragment_plan_xtras" />
-
-                    <CheckBox
-                        android:id="@+id/plan_checkbox_ip_public"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/fragment_plan_ip_public" />
-
-                </LinearLayout>
-            </LinearLayout>
 
             <id.co.myrepublic.salessupport.widget.CustomSpinner
                 android:id="@+id/plan_spinner_promotion"

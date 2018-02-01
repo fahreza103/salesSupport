@@ -39,12 +39,15 @@ public class DialogBuilder {
      * @param title
      * @param message
      */
-    public void createAlertDialog(Context context, String title, String message) {
+    public void createAlertDialog(Context context, String title, final String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title)
                 .setMessage(message)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        if(dialogListener != null ) {
+                            dialogListener.onDialogOkPressed(dialog,which,message.toLowerCase());
+                        }
                         dialog.dismiss();
                     }
                 })

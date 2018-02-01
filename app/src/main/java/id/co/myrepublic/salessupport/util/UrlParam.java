@@ -6,7 +6,9 @@ import java.util.Map;
 import id.co.myrepublic.salessupport.constant.AppConstant;
 
 /**
- * Created by myrepublicid on 28/9/17.
+ * Url Parameter for requesting API
+ *
+ * @author Fahreza Tamara
  */
 
 public class UrlParam {

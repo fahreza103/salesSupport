@@ -2,15 +2,12 @@ package id.co.myrepublic.salessupport.listener;
 
 /**
  * Callback operation when asynctask is performed
+ *
+ * @author Fahreza Tamara
  */
 
 public interface AsyncTaskListener<T> {
 
-    /**
-     * Invoked before aysncTask is performed
-     * @param taskName
-     */
-    public void onAsynTaskStart(String taskName);
 
     /**
      * Invoked when asynctask is complete

@@ -40,6 +40,7 @@ import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.UrlParam;
 import id.co.myrepublic.salessupport.widget.CustomEditText;
+import id.co.myrepublic.salessupport.widget.CustomSpinner;
 
 /**
  * Created by myrepublicid on 30/11/17.
@@ -52,7 +53,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
     private LinearLayout scrollContentLayout;
     private CustomEditText editTextsalesCode;
     private CustomEditText editTextSalesName;
-    private Spinner spinnerKnowUs;
+    private CustomSpinner spinnerKnowUs;
 
     private HashMap<String,Object> formValues = new HashMap<String,Object>();
     List<Channels> channelsList = new ArrayList<Channels>();
@@ -75,7 +76,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
         btnConfirm = (Button) getActivity().findViewById(R.id.sales_btn_confirm);
         btnConfirm.setOnClickListener(this);
 
-        spinnerKnowUs = (Spinner) getActivity().findViewById(R.id.sales_spinner_know_us);
+        spinnerKnowUs = (CustomSpinner) getActivity().findViewById(R.id.sales_spinner_know_us);
         editTextsalesCode = (CustomEditText) getActivity().findViewById(R.id.sales_editText_sales_agent_code);
         editTextSalesName = (CustomEditText) getActivity().findViewById(R.id.sales_editText_sales_agent_name);
         editTextsalesCode.setInputOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -105,11 +106,13 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
             urlParam.setParamMap(paramMap);
             urlParam.setResultKey("fetchKnowUs");
 
-            ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(getContext(), "salesFormData", AsyncUiDisplayType.DIALOG);
+            ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(getContext(), "salesFormData", AsyncUiDisplayType.NONE);
             asop.setDialogMsg("Load Form Data");
             asop.setListener(this);
             asop.execute(urlParam);
 
+            spinnerKnowUs.runProgress();
+            btnConfirm.setEnabled(false);
 
         } else {
             populateKnowUsSpinner(channelsList);
@@ -201,8 +204,6 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
         dialog.dismiss();
     }
 
-    @Override
-    public void onAsynTaskStart(String taskName) {}
 
     @Override
     public void onAsyncTaskComplete(Object result, String taskName) {
@@ -212,6 +213,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
             if(knowUsJsonResult != null) {
                 MainModel<Channels> model = StringUtil.convertStringToObject(knowUsJsonResult, Channels[].class);
                 channelsList = model.getListObject();
+                btnConfirm.setEnabled(true);
                 populateKnowUsSpinner(channelsList);
             }
         }

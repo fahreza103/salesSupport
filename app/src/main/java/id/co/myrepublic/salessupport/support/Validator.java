@@ -1,23 +1,19 @@
 package id.co.myrepublic.salessupport.support;
 
 import android.content.Context;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.widget.AbstractWidget;
-import id.co.myrepublic.salessupport.widget.CustomEditText;
 import id.co.myrepublic.salessupport.widget.CustomSpinner;
 
-import static id.co.myrepublic.salessupport.widget.AbstractWidget.EMPTY_SPINNER_TEXT;
+import static id.co.myrepublic.salessupport.widget.AbstractWidget.SPINNER_EMPTY_TEXT;
 
 
 /**
@@ -91,7 +87,7 @@ public class Validator {
         // Spinner if empty value selected
         if(view instanceof CustomSpinner) {
             inputValue = ((CustomSpinner) view).getInputTextValue();
-            if(EMPTY_SPINNER_TEXT.equals(inputValue)) {
+            if(SPINNER_EMPTY_TEXT.equals(inputValue)) {
                 inputValue = "";
             }
         }

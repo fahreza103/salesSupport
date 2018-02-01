@@ -10,6 +10,7 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.type.TypeFactory;
@@ -23,6 +24,8 @@ import id.co.myrepublic.salessupport.model.MainModel;
 
 /**
  * Util class for String operations
+ *
+ * @author Fahreza Tamara
  */
 public class StringUtil {
 
@@ -54,8 +57,9 @@ public class StringUtil {
     /**
      * using jackson, convert json string into java object
      * @param jsonString, must be json format string
-     * @param clazz, if response is array, please defined the class with array type, example Cluster[].class
-     * @return java object
+     * @param clazz, if response is array, please defined the class with array type, example Cluster[].class, this clazz can be null
+     *               resulting unconverted JsonNode so you can convert this later using convertJsonNodeIntoObject
+     * @return java object MainModel
      */
     public static MainModel convertStringToObject (String jsonString, Class<?> clazz) {
         if (jsonString == null) return null;
@@ -63,15 +67,7 @@ public class StringUtil {
             ObjectMapper mapper = new ObjectMapper();
             TypeFactory t = TypeFactory.defaultInstance();
             MainModel model = mapper.readValue(jsonString,MainModel.class);
-            if(model != null && clazz != null) {
-                if(model.getResponse() instanceof ArrayNode) {
-                    Object[] response = (Object[])mapper.convertValue(model.getResponse(), clazz);
-                    model.setListObject(Arrays.asList(response));
-                } else {
-                    Object response = mapper.convertValue(model.getResponse(), clazz);
-                    model.setObject(response);
-                }
-            }
+            model = convertJsonNodeIntoObject(model,clazz);
 
             System.out.print(model);
             return model;
@@ -79,6 +75,26 @@ public class StringUtil {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * Convert jsonNode object into specific object defined by the class in argument
+     * @param model, if jsonNode inside this object has value, convert into specified object
+     * @param clazz, if response is array, please defined the class with array type, example Cluster[].class
+     */
+    public static MainModel convertJsonNodeIntoObject(MainModel model , Class<?> clazz) {
+        JsonNode jsonNode = model.getResponse();
+        if(jsonNode != null && clazz != null) {
+            ObjectMapper mapper = new ObjectMapper();
+            if(jsonNode instanceof ArrayNode) {
+                Object[] response = (Object[])mapper.convertValue(jsonNode, clazz);
+                model.setListObject(Arrays.asList(response));
+            } else {
+                Object response = mapper.convertValue(jsonNode, clazz);
+                model.setObject(response);
+            }
+        }
+        return model;
     }
 
     /**

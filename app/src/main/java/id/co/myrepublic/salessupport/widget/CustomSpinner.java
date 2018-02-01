@@ -6,7 +6,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -127,6 +126,22 @@ public class CustomSpinner extends AbstractWidget {
         List<String> dataSet = ((CommonRowAdapter) adapter).getDataSet();
         return dataSet.get(spinnerSelectedIndex);
     }
+
+    /**
+     * Show loading view item for the spinner while waiting fetching data,
+     * please note, this will eliminate the items inside the spinner
+     */
+    public void runProgress() {
+        List<String> loadingItem = new ArrayList<String>();
+        loadingItem.add(AbstractWidget.SPINNER_LOADING_TEXT);
+
+        CommonRowAdapter<String> adapter = new CommonRowAdapter<String>(loadingItem,this.context);
+        adapter.setSpinner(true);
+        adapter.setProgress(true);
+        setAdapter(adapter);
+
+    }
+
 
     /**
      *  This is to save the current state of this component after going into the next fragment / activity

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -37,6 +38,7 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
     private Integer textGravity;
     private CommonRowAdapter.ViewHolder viewHolder;
     private Boolean isSpinner = false;
+    private Boolean isProgress = false;
 
 
     // View lookup cache
@@ -46,6 +48,7 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
         private TextView mainText2;
         private TextView subText1;
         private TextView subText2;
+        private ProgressBar progressBar;
     }
 
     public CommonRowAdapter(List<T> data, Context context, int textViewResourceId) {
@@ -93,6 +96,7 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
             viewHolder.mainText2= (TextView) convertView.findViewById(R.id.rowitem_maintext2);
             viewHolder.subText1 = (TextView) convertView.findViewById(R.id.rowitem_subtext);
             viewHolder.subText2 = (TextView) convertView.findViewById(R.id.rowitem_subtext2);
+            viewHolder.progressBar = (ProgressBar) convertView.findViewById(R.id.rowitem_progressbar);
 
             result=convertView;
 
@@ -144,6 +148,9 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
                 e.printStackTrace();
             }
         }
+
+
+
         // Make gone so it not using any space
         if(!hasSubText) {
             viewHolder.subText1.setVisibility(View.GONE);
@@ -184,6 +191,12 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
                 result.startAnimation((position > lastPosition) ? gvar.getTopDownAnim() : gvar.getDownTopAnim());
             }
         }
+
+        // Show progressbar
+        if(isProgress) {
+            viewHolder.progressBar.setVisibility(View.VISIBLE);
+        }
+
         lastPosition = position;
         // Return the completed view to render on screen
         return convertView;
@@ -244,5 +257,17 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
 
     public void setDataSet(List<String> dataSet) {
         this.dataSet = dataSet;
+    }
+
+    public ProgressBar getProgressBar() {
+        return viewHolder.progressBar;
+    }
+
+    public Boolean getProgress() {
+        return isProgress;
+    }
+
+    public void setProgress(Boolean progress) {
+        isProgress = progress;
     }
 }

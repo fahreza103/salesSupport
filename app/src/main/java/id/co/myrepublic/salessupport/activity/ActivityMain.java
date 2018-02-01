@@ -29,6 +29,7 @@ public class ActivityMain extends AppCompatActivity
     public static TextView txtUser;
 
     public static FrameLayout loadingFrame;
+    public static ImageView loadingRocket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +61,8 @@ public class ActivityMain extends AppCompatActivity
         txtUser.setText(userName);
 
         this.loadingFrame = (FrameLayout) findViewById(R.id.content_main_loading_screen);
+        this.loadingRocket = (ImageView) findViewById(R.id.content_main_progressbar_icon);
+
 
         // Call main fragment
         Fragment fragment = new FragmentMain();
@@ -89,6 +92,7 @@ public class ActivityMain extends AppCompatActivity
             fm.popBackStack();
         } else if (fm.getBackStackEntryCount() == 1) {
             finish();
+            android.os.Process.killProcess(android.os.Process.myPid());
         } else {
             super.onBackPressed();
         }

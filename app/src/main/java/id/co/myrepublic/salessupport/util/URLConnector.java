@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.HashMap;
@@ -26,7 +27,8 @@ public class URLConnector {
      * @param paramMap
      * @return
      */
-    public static String doConnect(String request, Map<Object,Object> paramMap) {
+    public static UrlResponse doConnect(String request, Map<Object,Object> paramMap) {
+        UrlResponse urlResponse = new UrlResponse();
         String urlParameters = "";
         int i = 0;
         for (Map.Entry<Object, Object> entry : paramMap.entrySet()) {
@@ -62,8 +64,8 @@ public class URLConnector {
             InputStream inputStream = conn.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
-            Map<String,List<String>> headers = conn.getHeaderFields();
-            List headerValues  = conn.getHeaderFields().get("Content-Length");
+            Map<String, List<String>> headers = conn.getHeaderFields();
+            List headerValues = conn.getHeaderFields().get("Content-Length");
             int length = conn.getContentLength();
 
 
@@ -74,30 +76,39 @@ public class URLConnector {
             }
             bufferedReader.close();
 
-            int code =conn.getResponseCode();
+            int code = conn.getResponseCode();
             System.out.println(code);
 
             conn.disconnect();
-            return stringBuilder.toString();
+
+            urlResponse.setResultValue(stringBuilder.toString());
+            urlResponse.setResultCode(UrlResponse.RESULT_SUCCESS);
+            return urlResponse;
+        } catch (SocketTimeoutException e) {
+            urlResponse.setResultCode(UrlResponse.RESULT_ERR_TIMEOUT);
+            urlResponse.setErrorMessage("Connection Time out, server not responding");
+            e.printStackTrace();
         } catch (Exception e) {
+            urlResponse.setResultCode(UrlResponse.RESULT_ERR_FATAL);
+            urlResponse.setErrorMessage("Connection error, please check your internet connection");
             e.printStackTrace();
         }
 
-        return null;
+        return urlResponse;
     }
 
     public static void main (String[] args) {
-        //String URL = "https://boss-st.myrepublic.co.id/api/auth/check_session";
-        String URL = "https://boss-st.myrepublic.co.id/api/user/select";
-        Map<Object,Object> paramMap = new HashMap<>();
-
-        paramMap.put("session_id","3614ca48-794a-4ddc-9aa2-3052f18cf76b");
-        //paramMap.put("cluster_name","AMERICA");
-        paramMap.put("user_id","168489");
-
-        String json = URLConnector.doConnect(URL, paramMap);
-        MainModel<ResponseUserSelect> model = StringUtil.convertStringToObject(json,ResponseUserSelect.class);
-        ResponseUserSelect sr =  model.getObject();
+//        //String URL = "https://boss-st.myrepublic.co.id/api/auth/check_session";
+//        String URL = "https://boss-st.myrepublic.co.id/api/user/select";
+//        Map<Object,Object> paramMap = new HashMap<>();
+//
+//        paramMap.put("session_id","3614ca48-794a-4ddc-9aa2-3052f18cf76b");
+//        //paramMap.put("cluster_name","AMERICA");
+//        paramMap.put("user_id","168489");
+//
+//        String json = URLConnector.doConnect(URL, paramMap);
+//        MainModel<ResponseUserSelect> model = StringUtil.convertStringToObject(json,ResponseUserSelect.class);
+//        ResponseUserSelect sr =  model.getObject();
 
     }
 

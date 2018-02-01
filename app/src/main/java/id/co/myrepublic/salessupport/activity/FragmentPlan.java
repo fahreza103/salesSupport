@@ -16,6 +16,7 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,13 +29,14 @@ import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
 import id.co.myrepublic.salessupport.model.Catalog;
 import id.co.myrepublic.salessupport.model.CatalogItem;
 import id.co.myrepublic.salessupport.model.MainModel;
-import id.co.myrepublic.salessupport.model.Particulars;
 import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
 import id.co.myrepublic.salessupport.support.FormExtractor;
+import id.co.myrepublic.salessupport.support.Validator;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.UrlParam;
 import id.co.myrepublic.salessupport.widget.AbstractWidget;
+import id.co.myrepublic.salessupport.widget.Checkboxes;
 import id.co.myrepublic.salessupport.widget.CustomSpinner;
 
 
@@ -47,15 +49,10 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
     private CustomSpinner spinnerTv;
     private CustomSpinner spinnerStb;
     private CustomSpinner spinnerPromotion;
-    private CheckBox checkBoxMovies;
-    private CheckBox checkBoxSport;
-    private CheckBox checkBoxExtras;
-    private CheckBox checkBoxIpPublic;
+    private Checkboxes  checkBoxesAlaCarte;
+    private Catalog catalog;
 
-    private List<CatalogItem> internetItems = new ArrayList<CatalogItem>();
-    private List<CatalogItem> tvItems = new ArrayList<CatalogItem>();
-    private List<CatalogItem> stbItems = new ArrayList<CatalogItem>();
-    private List<CatalogItem> promotionItems = new ArrayList<CatalogItem>();
+    private String[] checkboxesTag;
 
     @Nullable
     @Override
@@ -80,10 +77,7 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
         spinnerTv = (CustomSpinner) getActivity().findViewById(R.id.plan_spinner_tv_package);
         spinnerStb = (CustomSpinner) getActivity().findViewById(R.id.plan_spinner_stb_package);
         spinnerPromotion = (CustomSpinner) getActivity().findViewById(R.id.plan_spinner_promotion);
-        checkBoxMovies = (CheckBox) getActivity().findViewById(R.id.plan_checkbox_movies);
-        checkBoxExtras = (CheckBox) getActivity().findViewById(R.id.plan_checkbox_extras);
-        checkBoxSport  = (CheckBox) getActivity().findViewById(R.id.plan_checkbox_sport);
-        checkBoxIpPublic = (CheckBox) getActivity().findViewById(R.id.plan_checkbox_ip_public);
+        checkBoxesAlaCarte = (Checkboxes) getActivity().findViewById(R.id.plan_checkboxes_alacarte);
 
         spinnerTv.setOnItemSelectedListener(this);
 
@@ -108,48 +102,68 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
             urlParam.setParamMap(paramMap);
             urlParam.setResultKey("fetchCatalog");
 
-            ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(getContext(), "planFormData", AsyncUiDisplayType.DIALOG);
+            ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(getContext(), "planFormData", AsyncUiDisplayType.NONE);
             asop.setDialogMsg("Load Plan Data");
             asop.setListener(this);
             asop.execute(urlParam);
+
+            spinnerStb.runProgress();
+            spinnerInternet.runProgress();
+            spinnerPromotion.runProgress();
+            spinnerTv.runProgress();
+            btnConfirm.setEnabled(false);
+
+            // Get tag, but remove public IP since it's not part of TV Package Bundle
+            checkboxesTag = getContext().getResources().getStringArray(R.array.alacarte_arrays);
+            checkboxesTag = Arrays.copyOf(checkboxesTag, checkboxesTag.length-1);
+        } else {
+            populateSpinner(spinnerInternet,catalog.getInternetItems());
+            populateSpinner(spinnerTv,catalog.getTvItems());
+            populateSpinner(spinnerStb,catalog.getStbItems());
+            populateSpinner(spinnerPromotion,catalog.getPromotions());
         }
         checkSelectedItem();
 
     }
 
     private void checkSelectedItem() {
-        CatalogItem catalogItem = (CatalogItem)spinnerTv.getSelectedItem();
-        if(catalogItem != null) {
-            if (StringUtil.isEmpty(catalogItem.getName()) || AbstractWidget.EMPTY_SPINNER_TEXT.equals(catalogItem.getName())) {
-                toggleAlaCarte(false);
+        // To avoid classCast Exception, because the spinner using runProgress that will generate 1 item with String
+        // so before the spinner generate catalogItem from API, the item is one string
+        if(spinnerTv.getSelectedItem() instanceof CatalogItem) {
+            CatalogItem catalogItem = (CatalogItem) spinnerTv.getSelectedItem();
+            if (catalogItem != null) {
+                if (StringUtil.isEmpty(catalogItem.getName()) || AbstractWidget.SPINNER_EMPTY_TEXT.equals(catalogItem.getName())) {
+                    toggleAlaCarte(false);
+                } else {
+                    toggleAlaCarte(true);
+                }
             } else {
-                toggleAlaCarte(true);
+                toggleAlaCarte(false);
             }
-        }  else {
-            toggleAlaCarte(false);
         }
     }
 
     @Override
     public void onClick(View v) {
         HashMap<String,Object> planData = FormExtractor.extractValues(getContext(),scrollContentLayout,true);
-        Bundle bundle = this.getArguments();
-        bundle.putSerializable("planData",planData);
+        boolean valid = (boolean) planData.get(Validator.VALIDATION_KEY_RESULT);
+        if(valid) {
+            Bundle bundle = this.getArguments();
+            bundle.putSerializable("planData", planData);
 
-        Fragment fragment = new FragmentVerification();
-        fragment.setArguments(bundle);
+            Fragment fragment = new FragmentVerification();
+            fragment.setArguments(bundle);
 
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.content_frame, fragment,fragment.getClass().getName());
-        ft.addToBackStack(fragment.getClass().getName());
-        ft.commit();
+            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.content_frame, fragment, fragment.getClass().getName());
+            ft.addToBackStack(fragment.getClass().getName());
+            ft.commit();
 
-        DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+            DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
+        }
     }
 
-    @Override
-    public void onAsynTaskStart(String taskName) {}
 
     @Override
     public void onAsyncTaskComplete(Object result, String taskName) {
@@ -158,11 +172,13 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
             String catalogJsonResult = resultMap.get("fetchCatalog");
             if(catalogJsonResult != null) {
                 MainModel<Catalog> model = StringUtil.convertStringToObject(catalogJsonResult, Catalog.class);
-                Catalog catalog = model.getObject();
+                catalog = model.getObject();
                 populateSpinner(spinnerInternet,catalog.getInternetItems());
                 populateSpinner(spinnerTv,catalog.getTvItems());
                 populateSpinner(spinnerStb,catalog.getStbItems());
                 populateSpinner(spinnerPromotion,catalog.getPromotions());
+
+                btnConfirm.setEnabled(true);
             }
         }
     }
@@ -170,7 +186,7 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
     private void populateSpinner(CustomSpinner spinner,List<CatalogItem> catalogList) {
         catalogList = new ArrayList<>(catalogList);
         CatalogItem catalogItem = new CatalogItem();
-        catalogItem.setName(AbstractWidget.EMPTY_SPINNER_TEXT);
+        catalogItem.setName(AbstractWidget.SPINNER_EMPTY_TEXT);
         catalogList.add(0,catalogItem);
 
         CommonRowAdapter adapter = new CommonRowAdapter(catalogList,getContext(),R.id.rowitem_maintext);
@@ -192,18 +208,11 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
 
     private void toggleAlaCarte(Boolean active) {
         spinnerStb.setInputEnabled(active);
-        checkBoxExtras.setEnabled(active);
-        checkBoxMovies.setEnabled(active);
-        checkBoxSport.setEnabled(active);
+        checkBoxesAlaCarte.setCheckEnabled(active,checkboxesTag);
 
         if(!active) {
             spinnerStb.setSelectedIndex(0);
-            if(checkBoxExtras.isChecked())
-                checkBoxExtras.toggle();
-            if(checkBoxMovies.isChecked())
-                checkBoxMovies.toggle();
-            if(checkBoxSport.isChecked())
-                checkBoxSport.toggle();
+            checkBoxesAlaCarte.setChecked(active,checkboxesTag);
         }
     }
 }

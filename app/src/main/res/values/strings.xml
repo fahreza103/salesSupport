@@ -137,4 +137,12 @@
         <item>Female</item>
     </string-array>
 
+    <string-array name="alacarte_arrays">
+        <item>Movies</item>
+        <item>Sport</item>
+        <item>Xtras</item>
+        <item>IP Public</item>
+    </string-array>
+
+
 </resources>

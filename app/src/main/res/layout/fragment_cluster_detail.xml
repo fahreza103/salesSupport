@@ -26,10 +26,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:useCompatPadding="true"
-                    app:backgroundTint="@color/colorLogo2"
+                    app:backgroundTint="@color/lightBlue"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentRight="true"
-                    app:srcCompat="@android:drawable/ic_menu_search" />
+                    app:srcCompat="@mipmap/icon_search" />
 
                 <android.support.design.widget.FloatingActionButton
                     android:id="@+id/fab_addcompetitor"
@@ -38,8 +38,8 @@
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentRight="true"
                     app:useCompatPadding="true"
-                    app:backgroundTint="@color/colorLogo2"
-                    app:srcCompat="@mipmap/add_icon" />
+                    app:backgroundTint="@color/lightBlue"
+                    app:srcCompat="@mipmap/icon_add_competitor" />
 
         </LinearLayout>
 

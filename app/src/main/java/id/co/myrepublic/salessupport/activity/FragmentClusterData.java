@@ -88,9 +88,9 @@ public class FragmentClusterData extends Fragment implements AsyncTaskListener, 
         fabSearch = (FloatingActionButton)getActivity().findViewById(R.id.fab_clusterSearch);
         listViewCluster =(ListView)getActivity().findViewById(R.id.listCluster);
 
-        fabLayout.setVisibility(View.GONE);
         if(dataModels.size() ==0) {
-            asop = new ApiConnectorAsyncOperation("getCluster", AsyncUiDisplayType.SCREEN);
+            fabLayout.setVisibility(View.GONE);
+            asop = new ApiConnectorAsyncOperation(getContext(),"getCluster", AsyncUiDisplayType.SCREEN);
             asop.setListener(this);
             asop.execute(urlParam);
         } else {
@@ -134,35 +134,19 @@ public class FragmentClusterData extends Fragment implements AsyncTaskListener, 
     }
 
 
-    @Override
-    public void onAsynTaskStart(String taskName) {}
 
     @Override
     public void onAsyncTaskComplete(Object result, String taskName) {
         GlobalVariables gVar = GlobalVariables.getInstance();
 
-        Map<String,String> resultMap = (Map<String,String>) result;
-        String jsonResult = resultMap.get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
+        Map<String,MainModel> resultMap = (Map<String,MainModel>) result;
+        MainModel<Cluster> model = resultMap.get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
         fabLayout.setVisibility(View.VISIBLE);
-        fabRefresh.startAnimation(gVar.getLeftRightAnim());
-        fabSearch.startAnimation(gVar.getLeftRightAnim());
-        // Convert to Object
-        if(jsonResult != null) {
-            MainModel<Cluster> model = StringUtil.convertStringToObject(jsonResult, Cluster[].class);
-            if(model.getSuccess()) {
-                dataModels = model.getListObject();
-                createCluster(dataModels);
-            } else {
-                Intent intent = new Intent(getContext(), ActivityLogin.class);
-                startActivity(intent);
-                getActivity().finish();
-            }
+        fabLayout.startAnimation(gVar.getLeftRightAnim());
 
-        } else {
-            DialogBuilder db = DialogBuilder.getInstance();
-            db.createAlertDialog(getContext(), getString(R.string.dialog_title_error),
-                    getString(R.string.dialog_content_failedconnect));
-        }
+        model = StringUtil.convertJsonNodeIntoObject(model, Cluster[].class);
+        dataModels = model.getListObject();
+        createCluster(dataModels);
 
     }
 

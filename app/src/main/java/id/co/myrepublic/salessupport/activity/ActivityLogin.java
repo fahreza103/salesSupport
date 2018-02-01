@@ -64,7 +64,6 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-
         setGlobalValue();
 
         centerProgressBar = (ProgressBar) findViewById(R.id.login_center_progressbar);
@@ -129,7 +128,8 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
                     urlParam.setUrl(AppConstant.CHECK_PERMISSION);
                     urlParam.setParamMap(paramMap);
 
-                    ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation("checkPermission", AsyncUiDisplayType.SCREEN);
+                    ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(ActivityLogin.this,"checkPermission", AsyncUiDisplayType.SCREEN);
+                    asop.setInLoginActivity(true);
                     asop.setListener(ActivityLogin.this);
                     asop.execute(urlParam);
 
@@ -167,17 +167,15 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
 
     }
 
-    @Override
-    public void onAsynTaskStart(String taskName) {}
 
     @Override
     public void onAsyncTaskComplete(Object result, String taskName) {
-        Map<String,String> resultMap = (Map<String,String>) result;
-        String jsonResult = resultMap.get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
+        Map<String,MainModel> resultMap = (Map<String,MainModel>) result;
         if("checkPermission".equals(taskName)) {
             boolean isPermitted = true;
-            if(jsonResult != null) {
-                MainModel<Map<Object,Object>> model = StringUtil.convertStringToObject(jsonResult, Map.class);
+            MainModel<Map<Object,Object>> model = ((Map<String, MainModel>) result).get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
+            if(model != null) {
+                model = StringUtil.convertJsonNodeIntoObject(model, Map.class);
                 Map<Object,Object> mapResponse = model.getObject();
                 // Search for mobile app permission
                 for (Map.Entry<Object, Object> entry : mapResponse.entrySet()) {
@@ -199,16 +197,18 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
                 urlParam.setUrl(AppConstant.GET_USER_INFO);
                 urlParam.setParamMap(paramMap);
 
-                ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation("getUserInfo",AsyncUiDisplayType.SCREEN);
+                ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(this,"getUserInfo",AsyncUiDisplayType.SCREEN);
                 asop.setListener(ActivityLogin.this);
+                asop.setInLoginActivity(true);
                 asop.execute(urlParam);
             } else {
                 showErrorWebView(401,"Unauthorized",getString(R.string.activity_login_failed_permission));
             }
 
         } else if("getUserInfo".equals(taskName)) {
-            if(jsonResult != null) {
-                MainModel<ResponseUserSelect> model = StringUtil.convertStringToObject(jsonResult, ResponseUserSelect.class);
+            MainModel<ResponseUserSelect> model = ((Map<String, MainModel>) result).get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
+            if(model != null) {
+                model = StringUtil.convertJsonNodeIntoObject(model,ResponseUserSelect.class);
 
                 Particulars particulars = model.getObject().getParticulars();
                 // save to session
@@ -225,8 +225,8 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
             centerTextView.setVisibility(View.GONE);
             centerProgressLogo.setVisibility(View.GONE);
 
-            if (jsonResult != null) {
-                MainModel model = StringUtil.convertStringToObject(jsonResult, null);
+            MainModel model = ((Map<String, MainModel>) result).get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
+            if (model != null) {
                 // Success, session valid go to main, otherwise show login form, to authenticate
                 if (model.getSuccess()) {
                     Intent intent = new Intent(context, ActivityMain.class);
@@ -236,12 +236,6 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
                     browser.loadUrl(AppConstant.LOGIN_URL,headerMap);
                     browser.setVisibility(View.VISIBLE);
                 }
-            } else {
-                DialogBuilder db = DialogBuilder.getInstance();
-                db.createAlertDialog(this, getString(R.string.dialog_title_error),
-                        getString(R.string.dialog_content_failedconnect));
-                btnRetry.setVisibility(View.VISIBLE);
-
             }
         }
     }
@@ -280,8 +274,9 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
             centerTextView.setVisibility(View.VISIBLE);
             centerProgressLogo.setVisibility(View.VISIBLE);
             browser.setVisibility(View.GONE);
-            ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation("checkSession",AsyncUiDisplayType.NONE);
+            ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(this,"checkSession",AsyncUiDisplayType.NONE);
             asop.setListener(this);
+            asop.setInLoginActivity(true);
             asop.execute(UrlParam.createParamCheckSession(sessionId));
         } else {
             browser.setVisibility(View.VISIBLE);
@@ -319,5 +314,15 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
         gvar.setTopDownAnim(upBottom);
         gvar.setExpandAnim(expandIn);
         gvar.setLeftRightAnim(leftRight);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        android.os.Process.killProcess(android.os.Process.myPid());
     }
 }

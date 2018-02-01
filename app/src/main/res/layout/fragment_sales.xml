@@ -86,34 +86,13 @@
                 app:inputType="text"
                 app:labelText="@string/fragment_sales_customer_ref_id" />
 
-
-            <LinearLayout
+            <id.co.myrepublic.salessupport.widget.CustomSpinner
+                android:id="@+id/sales_spinner_know_us"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:orientation="horizontal">
+                app:labelText="@string/fragment_sales_know_us" />
 
-                <TextView
-                    android:id="@+id/sales_txt_know_us"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".50"
-                    android:layout_marginLeft="10dp"
-                    android:text="@string/fragment_sales_know_us"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/black" />
-
-                <Spinner
-                    android:id="@+id/sales_spinner_know_us"
-                    android:layout_width="match_parent"
-                    android:spinnerMode="dropdown"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/spinner_bg"
-                    android:layout_weight=".50"
-                    android:paddingBottom="10dp"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
 
             <id.co.myrepublic.salessupport.widget.CustomEditText
                 android:id="@+id/sales_editText_promo_code"

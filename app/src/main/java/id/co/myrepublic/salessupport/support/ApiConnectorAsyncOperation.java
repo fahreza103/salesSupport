@@ -2,13 +2,16 @@ package id.co.myrepublic.salessupport.support;
 
 import android.content.Context;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import id.co.myrepublic.salessupport.constant.AsyncUiDisplayType;
 import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.URLConnector;
 import id.co.myrepublic.salessupport.util.UrlParam;
+import id.co.myrepublic.salessupport.util.UrlResponse;
 
 /**
  * Download operation with async operation
@@ -16,10 +19,6 @@ import id.co.myrepublic.salessupport.util.UrlParam;
 
 public class ApiConnectorAsyncOperation extends AbstractAsyncOperation {
 
-    public ApiConnectorAsyncOperation(String taskName, AsyncUiDisplayType uiType) {
-        this.uiType = uiType;
-        this.taskName = taskName;
-    }
 
     public ApiConnectorAsyncOperation(Context context, String taskName, AsyncUiDisplayType uiType) {
         this.uiType = uiType;
@@ -27,23 +26,28 @@ public class ApiConnectorAsyncOperation extends AbstractAsyncOperation {
         this.context  = context;
     }
 
-    protected Map<String,String> doInBackground(Object... objects) {
-        Map<String,String> resultMap = new HashMap<String,String>();
+    protected List<UrlResponse> doInBackground(Object... objects) {
+        List<UrlResponse> responseList = new ArrayList<UrlResponse>();
         for(Object object : objects) {
             UrlParam urlParam = (UrlParam) object;
-            String result = URLConnector.doConnect(urlParam.getUrl(),urlParam.getParamMap());
+            UrlResponse urlResponse = URLConnector.doConnect(urlParam.getUrl(),urlParam.getParamMap());
+            String result = urlResponse.getResultValue();
 
-            // if resultKey not defined , the map will only store defaultKey, so only one size will be stored no matter how much you supply the URLParam
             if(result != null) {
+                // if resultKey not defined , the Object will only store defaultKey
+                String resultKey = DEFAULT_RESULT_KEY;
                 if (!StringUtil.isEmpty(urlParam.getResultKey())) {
-                    resultMap.put(urlParam.getResultKey(), result);
-                } else {
-                    resultMap.put(DEFAULT_RESULT_KEY, result);
+                    resultKey = urlParam.getResultKey();
                 }
+                urlResponse.setResultKey(resultKey);
+            }
+            responseList.add(urlResponse);
+            if(isCancelled()) {
+                break;
             }
 
         }
 
-        return resultMap;
+        return responseList;
     }
 }

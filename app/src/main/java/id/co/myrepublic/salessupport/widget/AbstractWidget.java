@@ -30,7 +30,13 @@ import static id.co.myrepublic.salessupport.support.Validator.VALIDATION_REQUIRE
 
 public abstract class AbstractWidget extends LinearLayout {
 
-    public static final String EMPTY_SPINNER_TEXT = "[select]";
+    /** tag for checkboxes, used to get single view by tag */
+    public static final String CHECKBOX_TAG = "checkbox";
+    /** text for empty spinner value */
+    public static final String SPINNER_EMPTY_TEXT = "[select]";
+    /** text to show then spinner item is in load */
+    public static final String SPINNER_LOADING_TEXT = "Loading Item...";
+
 
     protected Context context;
     protected List<String> validators = new ArrayList<String>();
@@ -46,16 +52,25 @@ public abstract class AbstractWidget extends LinearLayout {
         this.context = context;
     }
 
-    public AbstractWidget(Context context, AttributeSet attrs, int layout, int inputId) {
+    public AbstractWidget(Context context, AttributeSet attrs, Integer layout) {
         super(context, attrs);
+        init(context,attrs,layout,null);
+    }
+
+    public AbstractWidget(Context context, AttributeSet attrs, Integer layout, Integer inputId) {
+        super(context, attrs);
+        init(context,attrs,layout,inputId);
+    }
+
+    private void init(Context context, AttributeSet attrs, Integer layout, Integer inputId) {
         inflate(context,layout,this);
 
         this.context = context;
-        this.widgetView = findViewById(inputId);
+        if(inputId != null)
+            this.widgetView = findViewById(inputId);
 
         initBaseAttr(context, attrs);
         initCustomAttr(context,attrs);
-        
     }
 
 

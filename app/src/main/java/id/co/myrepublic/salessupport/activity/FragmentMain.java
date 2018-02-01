@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 
@@ -22,6 +23,8 @@ public class FragmentMain extends Fragment {
 
     private LinearLayout layoutLogo;
     private LinearLayout footerBar;
+    private CustomSpinner customSpinner;
+    private Button btn;
 
     @Nullable
     @Override
@@ -43,6 +46,15 @@ public class FragmentMain extends Fragment {
         this.footerBar = (LinearLayout) getActivity().findViewById(R.id.footer_bar);
         this.footerBar.setVisibility(View.GONE);
 
+        customSpinner = (CustomSpinner) getActivity().findViewById(R.id.test_spinner);
+        btn = (Button) getActivity().findViewById(R.id.test_button);
+
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                customSpinner.runProgress();
+            }
+        });
 
     }
 }
