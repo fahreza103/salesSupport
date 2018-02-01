@@ -12,8 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import id.co.myrepublic.salessupport.constant.AppConstant;
 import id.co.myrepublic.salessupport.model.MainModel;
-import id.co.myrepublic.salessupport.model.ResponseUserSelect;
 
 /**
  * Utility to connect this app to specified URL location, and return the response
@@ -98,17 +98,17 @@ public class URLConnector {
     }
 
     public static void main (String[] args) {
-//        //String URL = "https://boss-st.myrepublic.co.id/api/auth/check_session";
-//        String URL = "https://boss-st.myrepublic.co.id/api/user/select";
-//        Map<Object,Object> paramMap = new HashMap<>();
-//
-//        paramMap.put("session_id","3614ca48-794a-4ddc-9aa2-3052f18cf76b");
-//        //paramMap.put("cluster_name","AMERICA");
-//        paramMap.put("user_id","168489");
-//
-//        String json = URLConnector.doConnect(URL, paramMap);
-//        MainModel<ResponseUserSelect> model = StringUtil.convertStringToObject(json,ResponseUserSelect.class);
-//        ResponseUserSelect sr =  model.getObject();
+        //String URL = "https://boss-st.myrepublic.co.id/api/auth/check_session";
+        String URL = AppConstant.GET_CUSTOMER_TYPE_API_URL;
+        Map<Object,Object> paramMap = new HashMap<>();
+
+        paramMap.put("session_id","e07af3a1-261e-4bea-8136-dc12a5309f3e");
+        //paramMap.put("cluster_name","AMERICA");
+        //paramMap.put("user_id","168489");
+
+        UrlResponse response = URLConnector.doConnect(URL, paramMap);
+        MainModel<Map> model = StringUtil.convertStringToObject(response.getResultValue(),Map[].class);
+        List<Map> map = model.getListObject();
 
     }
 

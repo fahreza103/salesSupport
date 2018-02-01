@@ -30,7 +30,6 @@ import id.co.myrepublic.salessupport.model.MainModel;
 import id.co.myrepublic.salessupport.model.Particulars;
 import id.co.myrepublic.salessupport.model.ResponseUserSelect;
 import id.co.myrepublic.salessupport.support.AbstractAsyncOperation;
-import id.co.myrepublic.salessupport.support.DialogBuilder;
 import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
@@ -236,6 +235,8 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
                     browser.loadUrl(AppConstant.LOGIN_URL,headerMap);
                     browser.setVisibility(View.VISIBLE);
                 }
+            } else {
+                btnRetry.setVisibility(View.VISIBLE);
             }
         }
     }

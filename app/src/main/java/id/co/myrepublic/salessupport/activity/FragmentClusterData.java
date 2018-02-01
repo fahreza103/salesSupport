@@ -1,7 +1,6 @@
 package id.co.myrepublic.salessupport.activity;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -30,8 +29,8 @@ import id.co.myrepublic.salessupport.listener.DialogListener;
 import id.co.myrepublic.salessupport.model.Cluster;
 import id.co.myrepublic.salessupport.model.MainModel;
 import id.co.myrepublic.salessupport.support.AbstractAsyncOperation;
-import id.co.myrepublic.salessupport.support.DialogBuilder;
 import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
+import id.co.myrepublic.salessupport.support.DialogBuilder;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.UrlParam;
@@ -141,12 +140,14 @@ public class FragmentClusterData extends Fragment implements AsyncTaskListener, 
 
         Map<String,MainModel> resultMap = (Map<String,MainModel>) result;
         MainModel<Cluster> model = resultMap.get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
-        fabLayout.setVisibility(View.VISIBLE);
-        fabLayout.startAnimation(gVar.getLeftRightAnim());
+        if(model != null) {
+            fabLayout.setVisibility(View.VISIBLE);
+            fabLayout.startAnimation(gVar.getLeftRightAnim());
 
-        model = StringUtil.convertJsonNodeIntoObject(model, Cluster[].class);
-        dataModels = model.getListObject();
-        createCluster(dataModels);
+            model = StringUtil.convertJsonNodeIntoObject(model, Cluster[].class);
+            dataModels = model.getListObject();
+            createCluster(dataModels);
+        }
 
     }
 

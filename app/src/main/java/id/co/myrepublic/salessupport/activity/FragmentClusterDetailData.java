@@ -2,7 +2,6 @@ package id.co.myrepublic.salessupport.activity;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -17,6 +16,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -52,6 +52,7 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
 
     private ListView listViewClusterDetail;
     private CommonRowAdapter<CommonItem> clusterDetailAdapter;
+    private LinearLayout fabLayout;
     private FloatingActionButton fabCompetitor;
     private FloatingActionButton fabSearch;
 
@@ -78,6 +79,7 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
         GlobalVariables gVar = GlobalVariables.getInstance();
 
         // Floating Button
+        fabLayout = (LinearLayout) getActivity().findViewById(R.id.cluster_layout_floating);
         fabCompetitor = (FloatingActionButton) getActivity().findViewById(R.id.fab_addcompetitor);
         fabCompetitor.setOnClickListener(this);
 
@@ -85,7 +87,7 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
         fabSearch.setOnClickListener(this);
 
 
-        toggleViewFloatingButton(View.GONE);
+
 
         // Get Bundle data from previous fragment
         Bundle bundle = this.getArguments();
@@ -93,7 +95,6 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
 
 
         // get citylist from API
-
         String sessionId = gVar.getSessionKey();
 
         Map<Object,Object> paramMap = new HashMap<Object,Object>();
@@ -109,6 +110,7 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
 
         String caller = getCallerFragment();
         if(dataModels.size() == 0) {
+            toggleViewFloatingButton(View.GONE);
             asop = new ApiConnectorAsyncOperation(getContext(),"getClusterDetail", AsyncUiDisplayType.SCREEN);
             asop.setListener(this);
             asop.execute(urlParam);
@@ -142,8 +144,11 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
     }
 
     private void toggleViewFloatingButton(int visible) {
-        fabCompetitor.setVisibility(visible);
-        fabSearch.setVisibility(visible);
+        fabLayout.setVisibility(visible);
+        if(visible == View.VISIBLE) {
+            GlobalVariables gVar = GlobalVariables.getInstance();
+            fabLayout.startAnimation(gVar.getLeftRightAnim());
+        }
     }
 
     private void populateItem(ResponseClusterInformation rci) {
@@ -171,46 +176,29 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
 
     @Override
     public void onAsyncTaskComplete(Object result, String taskName) {
-        GlobalVariables gVar = GlobalVariables.getInstance();
-        Map<String,String> resultMap = (Map<String,String>) result;
-        String jsonResult = resultMap.get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
+
+        Map<String,MainModel> resultMap = (Map<String,MainModel>) result;
+        MainModel<ResponseClusterInformation> model = resultMap.get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
         if("getClusterDetail".equals(taskName)) {
             toggleViewFloatingButton(View.VISIBLE);
-            fabSearch.startAnimation(gVar.getLeftRightAnim());
-            fabCompetitor.startAnimation(gVar.getLeftRightAnim());
-            if(jsonResult != null) {
-                MainModel<ResponseClusterInformation> model = StringUtil.convertStringToObject(jsonResult, ResponseClusterInformation.class);
-                if(model.getSuccess()) {
-                    ResponseClusterInformation rci = model.getObject();
-                    populateItem(rci);
-                } else {
-                    // Error on session (expired or invalid)
-                    if(AppConstant.SESSION_VALIDATION.equals(model.getAction())) {
-                        Intent intent = new Intent(getContext(), ActivityLogin.class);
-                        startActivity(intent);
-                        getActivity().finish();
-                    }
-                }
 
+            if(model != null) {
+                model = StringUtil.convertJsonNodeIntoObject(model, ResponseClusterInformation.class);
+                ResponseClusterInformation rci = model.getObject();
+                populateItem(rci);
             }
         } else if ("insertCompetitor".equals(taskName)) {
             dialog.dismiss();
-            if(jsonResult != null) {
-                MainModel model = StringUtil.convertStringToObject(jsonResult, null);
+            if(model != null) {
                 Boolean success = model.getSuccess();
                 if(success) {
-                    Toast.makeText(getActivity(), "Insert Success",
+                    Toast.makeText(getActivity(), "Insert Competitor Success",
                             Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(getActivity(), "Insert Failed "+model.getError(),
+                    Toast.makeText(getActivity(), "Insert Competitor Failed "+model.getError(),
                             Toast.LENGTH_LONG).show();
                 }
-            } else {
-                DialogBuilder db = DialogBuilder.getInstance();
-                db.createAlertDialog(getContext(), getString(R.string.dialog_title_error),
-                        getString(R.string.dialog_content_failedconnect));
             }
-
         }
     }
 

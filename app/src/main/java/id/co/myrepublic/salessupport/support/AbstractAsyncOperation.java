@@ -1,11 +1,11 @@
 package id.co.myrepublic.salessupport.support;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.Animation;
 
@@ -27,7 +27,7 @@ import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.UrlResponse;
 
 /**
- * Abstract class for async operation, standard operation is show loading spinner on preExecute, and hide them after done
+ * Abstract class for async operation, standard operation is show loading UI on preExecute, and hide them after done
  * for implementation of doInBackground, extends this class
  *
  * Description for the 3 Objects :
@@ -113,7 +113,7 @@ public abstract class AbstractAsyncOperation extends AsyncTask<Object, Integer, 
     protected void onPostExecute(final List<UrlResponse> urlResponseList) {
         final Map<String, MainModel> result = new HashMap<String,MainModel>();
         int i = 2;
-        String errorMsg = null;
+        String errorMsg = "";
         // Convert result into MainModel
         for(UrlResponse urlResponse : urlResponseList) {
             // Actual response value for result in API call will be converted in each activity, so null will be set here, because
@@ -127,9 +127,8 @@ public abstract class AbstractAsyncOperation extends AsyncTask<Object, Integer, 
                 } else {
                     result.put(urlResponse.getResultKey()+"_"+i, model);
                 }
-                // if success = false and error contains expired, will be show error dialog
+                // if success = false and error contains expired, will be redirect to login
                 if(!model.getSuccess() && !StringUtil.isEmpty(model.getError()) && model.getError().toLowerCase().contains("session")) {
-                    // break the process, session expired means other connection will be failed too
                     //showErrorDialog(model.getError(),UrlResponse.RESULT_ERR_SESSION_EXPIRED);
                     errorMsg = null;
 
@@ -137,10 +136,10 @@ public abstract class AbstractAsyncOperation extends AsyncTask<Object, Integer, 
                     if(!isInLoginActivity) {
                         Intent intent = new Intent(this.context, ActivityLogin.class);
                         this.context.startActivity(intent);
-                        Activity activity = (Activity) this.context;
+                        AppCompatActivity activity = (AppCompatActivity) this.context;
                         activity.finish();
                     }
-
+                    // break the process, session expired means other connection will be failed too
                     break;
                 }
             } else {
@@ -151,7 +150,7 @@ public abstract class AbstractAsyncOperation extends AsyncTask<Object, Integer, 
         }
 
         // has error, show error dialog
-        if(errorMsg != null) {
+        if(!StringUtil.isEmpty(errorMsg)) {
             showErrorDialog(errorMsg,UrlResponse.RESULT_ERR_FATAL);
         }
 
@@ -200,7 +199,7 @@ public abstract class AbstractAsyncOperation extends AsyncTask<Object, Integer, 
             @Override
             public void onDialogCancelPressed(DialogInterface dialog, int which) {}
         });
-        builder.createInputDialog(this.context,"ERROR", message);
+        builder.createAlertDialog(this.context,"ERROR", message);
     }
 
     public String getDialogMsg() {

@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import id.co.myrepublic.salessupport.R;
 import id.co.myrepublic.salessupport.annotation.PositionItem;
@@ -112,6 +113,9 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
         if(dataModel instanceof String) {
             String value = (String) dataModel;
             viewHolder.mainText1.setText(!StringUtil.isEmpty(value) ? value : "");
+        } else if(dataModel instanceof Map) {
+            Map<Object,Object> value = (Map<Object,Object>) dataModel;
+            
         } else {
             // Read the annotation
             try {

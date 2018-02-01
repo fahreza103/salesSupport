@@ -1,7 +1,6 @@
 package id.co.myrepublic.salessupport.activity;
 
 import android.app.Dialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -32,7 +31,6 @@ import id.co.myrepublic.salessupport.constant.AsyncUiDisplayType;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
 import id.co.myrepublic.salessupport.model.Homepass;
 import id.co.myrepublic.salessupport.model.MainModel;
-import id.co.myrepublic.salessupport.support.AbstractAsyncOperation;
 import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
@@ -52,6 +50,7 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
     private Dialog dialog;
     private TabHost host;
     private List<Homepass> homePassList = new ArrayList<Homepass>();
+    private List<String> customerClassList = new ArrayList<String>();
     private Boolean isAlreadyLoaded = false;
     private RelativeLayout footerLayout;
     private ApiConnectorAsyncOperation asop;
@@ -96,10 +95,9 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
             UrlParam urlParamCustomerClass = new UrlParam();
             urlParamCustomerClass.setUrl(AppConstant.GET_CUSTOMER_TYPE_API_URL);
             urlParamCustomerClass.setParamMap(paramMap);
-            urlParamHomepass.setResultKey(RESULT_KEY_CUSTOMER_CLASS);
+            urlParamCustomerClass.setResultKey(RESULT_KEY_CUSTOMER_CLASS);
 
             asop = new ApiConnectorAsyncOperation(getContext(), "homepassSearch", AsyncUiDisplayType.SCREEN);
-            asop.setDialogMsg("Fetch Homepass Data");
             asop.setListener(this);
             asop.execute(urlParamHomepass,urlParamCustomerClass);
         } else {
@@ -117,6 +115,8 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
 
         // set the custom dialog components - text, spinner
         final CustomSpinner spinnerCustomerClass = (CustomSpinner) dialog.findViewById(R.id.dialogitem_spinner_customer_class);
+        CommonRowAdapter adapter = new CommonRowAdapter(customerClassList,getContext());
+        spinnerCustomerClass.setAdapter(adapter);
 
         final TextView txtHomepassName = (TextView) dialog.findViewById(R.id.dialogitem_txt_homepass_value);
         txtHomepassName.setText(homepass.getHomepassAddressView());
@@ -192,35 +192,36 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
     @Override
     public void onAsyncTaskComplete(Object result, String taskName) {
         GlobalVariables gVar = GlobalVariables.getInstance();
-        Map<String,String> resultMap = (Map<String,String>) result;
-        String jsonResult = resultMap.get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
+        Map<String,MainModel> resultMap = (Map<String,MainModel>) result;
         if("homepassSearch".equals(taskName)) {
-            if(jsonResult != null) {
-                MainModel<Homepass> model = StringUtil.convertStringToObject(jsonResult, Homepass[].class);
-                if(model.getSuccess()) {
-                    homePassList = model.getListObject();
-                    int i = 1;
-                    for(Homepass homepass : homePassList) {
-                        homepass.setHomepassAddressView(
-                                homepass.getStreet()+" Block "+
-                                homepass.getBlock()+" No. "+
-                                homepass.getHomeNumber()
-                        );
-                        homepass.setNo(i);
-                        i++;
-                    }
-                    populateItem(model.getListObject());
-                    footerLayout.startAnimation(gVar.getTopDownAnim());
-                    footerLayout.setVisibility(View.VISIBLE);
-                } else {
-                    // Error on session (expired or invalid)
-                    if(AppConstant.SESSION_VALIDATION.equals(model.getAction())) {
-                        Intent intent = new Intent(getContext(), ActivityLogin.class);
-                        startActivity(intent);
-                        getActivity().finish();
+            MainModel homepassModel = resultMap.get(RESULT_KEY_HOMEPASS);
+            if(homepassModel != null) {
+                homepassModel = StringUtil.convertJsonNodeIntoObject(homepassModel, Homepass[].class);
+                homePassList = homepassModel.getListObject();
+                int i = 1;
+                for(Homepass homepass : homePassList) {
+                    homepass.setHomepassAddressView(
+                               homepass.getStreet()+" Block "+
+                               homepass.getBlock()+" No. "+
+                               homepass.getHomeNumber()
+                    );
+                    homepass.setNo(i);
+                    i++;
+                }
+                populateItem(homepassModel.getListObject());
+                footerLayout.startAnimation(gVar.getTopDownAnim());
+                footerLayout.setVisibility(View.VISIBLE);
+            }
+
+            MainModel<Map<Object,Object>> customerClassModel = resultMap.get(RESULT_KEY_CUSTOMER_CLASS);
+            if(customerClassModel != null) {
+                customerClassModel = StringUtil.convertJsonNodeIntoObject(customerClassModel, Map[].class);
+                List<Map<Object,Object>> listMap = customerClassModel.getListObject();
+                if(listMap.size() > 0) {
+                    for(Map.Entry<Object,Object> entry : listMap.get(0).entrySet()) {
+                        customerClassList.add(entry.getKey()+"");
                     }
                 }
-
             }
         }
     }
