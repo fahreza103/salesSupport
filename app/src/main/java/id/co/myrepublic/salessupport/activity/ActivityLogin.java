@@ -28,7 +28,7 @@ import id.co.myrepublic.salessupport.constant.AsyncUiDisplayType;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
 import id.co.myrepublic.salessupport.model.MainModel;
 import id.co.myrepublic.salessupport.model.Particulars;
-import id.co.myrepublic.salessupport.model.ResponseUserSelect;
+import id.co.myrepublic.salessupport.model.UserSelect;
 import id.co.myrepublic.salessupport.support.AbstractAsyncOperation;
 import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
@@ -37,7 +37,9 @@ import id.co.myrepublic.salessupport.util.UrlParam;
 
 
 /**
- * Created by myrepublicid on 27/9/17.
+ * Login activity , contain authorization with BOSS
+ *
+ * @author Fahreza Tamara
  */
 
 public class ActivityLogin extends AppCompatActivity implements AsyncTaskListener, View.OnClickListener {
@@ -205,9 +207,9 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
             }
 
         } else if("getUserInfo".equals(taskName)) {
-            MainModel<ResponseUserSelect> model = ((Map<String, MainModel>) result).get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
+            MainModel<UserSelect> model = ((Map<String, MainModel>) result).get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
             if(model != null) {
-                model = StringUtil.convertJsonNodeIntoObject(model,ResponseUserSelect.class);
+                model = StringUtil.convertJsonNodeIntoObject(model,UserSelect.class);
 
                 Particulars particulars = model.getObject().getParticulars();
                 // save to session

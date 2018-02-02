@@ -35,7 +35,7 @@ import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
 import id.co.myrepublic.salessupport.listener.DialogListener;
 import id.co.myrepublic.salessupport.model.CommonItem;
 import id.co.myrepublic.salessupport.model.MainModel;
-import id.co.myrepublic.salessupport.model.ResponseClusterInformation;
+import id.co.myrepublic.salessupport.model.ClusterDetail;
 import id.co.myrepublic.salessupport.support.AbstractAsyncOperation;
 import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
 import id.co.myrepublic.salessupport.support.DialogBuilder;
@@ -151,7 +151,7 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
         }
     }
 
-    private void populateItem(ResponseClusterInformation rci) {
+    private void populateItem(ClusterDetail rci) {
         competitorList = rci.getCompetitorList();
         mapResponse = rci.getCluster();
         if(mapResponse != null && !mapResponse.isEmpty()) {
@@ -178,13 +178,13 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
     public void onAsyncTaskComplete(Object result, String taskName) {
 
         Map<String,MainModel> resultMap = (Map<String,MainModel>) result;
-        MainModel<ResponseClusterInformation> model = resultMap.get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
+        MainModel<ClusterDetail> model = resultMap.get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
         if("getClusterDetail".equals(taskName)) {
             toggleViewFloatingButton(View.VISIBLE);
 
             if(model != null) {
-                model = StringUtil.convertJsonNodeIntoObject(model, ResponseClusterInformation.class);
-                ResponseClusterInformation rci = model.getObject();
+                model = StringUtil.convertJsonNodeIntoObject(model, ClusterDetail.class);
+                ClusterDetail rci = model.getObject();
                 populateItem(rci);
             }
         } else if ("insertCompetitor".equals(taskName)) {

@@ -13,6 +13,7 @@ import android.widget.TextView;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -40,6 +41,7 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
     private CommonRowAdapter.ViewHolder viewHolder;
     private Boolean isSpinner = false;
     private Boolean isProgress = false;
+    private Boolean isMapData  = false;
 
 
     // View lookup cache
@@ -62,6 +64,14 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
         super(context, R.layout.row_item_common, data);
         this.dataSet = Arrays.asList(new String[data.size()]);
         this.mContext=context;
+    }
+
+    public CommonRowAdapter(Map<Object,Object> dataMap, Context context) {
+        // set map values as adapter list item value
+        super(context, R.layout.row_item_common, (List<T>) Arrays.asList(dataMap.values().toArray()));
+        // set map key as view item
+        this.dataSet =  Arrays.asList(dataMap.keySet().toArray(new String[dataMap.size()]));
+        this.isMapData = true;
     }
 
     private int lastPosition = -1;
@@ -111,10 +121,14 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
         boolean hasSubText = false;
 
         if(dataModel instanceof String) {
-            String value = (String) dataModel;
+            // if map is supplied in constructor
+            String value = "";
+            if(isMapData) {
+                value = dataSet.get(position);
+            } else {
+                value = (String) dataModel;
+            }
             viewHolder.mainText1.setText(!StringUtil.isEmpty(value) ? value : "");
-        } else if(dataModel instanceof Map) {
-            Map<Object,Object> value = (Map<Object,Object>) dataModel;
             
         } else {
             // Read the annotation

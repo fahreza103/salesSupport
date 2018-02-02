@@ -43,10 +43,14 @@ import id.co.myrepublic.salessupport.widget.CustomEditText;
 import id.co.myrepublic.salessupport.widget.CustomSpinner;
 
 /**
- * Created by myrepublicid on 30/11/17.
+ * App Sales fragment
+ *
+ * @author Fahreza Tamara
  */
 
 public class FragmentSales extends Fragment implements View.OnClickListener, AsyncTaskListener {
+
+    private static final String RESULT_KEY_KNOW_US = "fetchKnowUs";
 
     private Button btnConfirm;
     private Dialog dialog;
@@ -104,10 +108,9 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
             UrlParam urlParam = new UrlParam();
             urlParam.setUrl(AppConstant.GET_CHANNELS_API_URL);
             urlParam.setParamMap(paramMap);
-            urlParam.setResultKey("fetchKnowUs");
+            urlParam.setResultKey(RESULT_KEY_KNOW_US);
 
             ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(getContext(), "salesFormData", AsyncUiDisplayType.NONE);
-            asop.setDialogMsg("Load Form Data");
             asop.setListener(this);
             asop.execute(urlParam);
 
@@ -207,11 +210,11 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
 
     @Override
     public void onAsyncTaskComplete(Object result, String taskName) {
-        Map<String,String> resultMap = (Map<String,String>) result;
+        Map<String,MainModel> resultMap = (Map<String,MainModel>) result;
         if("salesFormData".equals(taskName)) {
-            String knowUsJsonResult = resultMap.get("fetchKnowUs");
-            if(knowUsJsonResult != null) {
-                MainModel<Channels> model = StringUtil.convertStringToObject(knowUsJsonResult, Channels[].class);
+            MainModel<Channels> model = resultMap.get(RESULT_KEY_KNOW_US);
+            if(model != null) {
+                model = StringUtil.convertJsonNodeIntoObject(model, Channels[].class);
                 channelsList = model.getListObject();
                 btnConfirm.setEnabled(true);
                 populateKnowUsSpinner(channelsList);

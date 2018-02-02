@@ -13,7 +13,7 @@ import java.util.Map;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ResponseClusterInformation<T> implements Serializable {
+public class ClusterDetail<T> implements Serializable {
 
     private static final long serialVersionUID = 7657663563933224754L;
 

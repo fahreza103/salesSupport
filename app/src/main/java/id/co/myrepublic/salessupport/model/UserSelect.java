@@ -8,7 +8,7 @@ import java.io.Serializable;
  * User Select Response API
  */
 
-public class ResponseUserSelect implements Serializable {
+public class UserSelect implements Serializable {
 
     private static final long serialVersionUID = 1221356393249153455L;
 

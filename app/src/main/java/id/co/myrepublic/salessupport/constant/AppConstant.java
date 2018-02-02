@@ -21,7 +21,7 @@ public interface AppConstant {
     public static final String GET_CHANNELS_API_URL = BASE_API_URL+"/misc/get_channels";
     public static final String GET_CUSTOMER_TYPE_API_URL = BASE_API_URL+"/misc/get_customer_types_mobile";
     public static final String GET_GENDER_API_URL = BASE_API_URL+"/misc/get_gender_code";
-    public static final String GET_SALUTATION_API_URL = BASE_API_URL+"/misc/get_salutation";
+    public static final String GET_SALUTATION_API_URL = BASE_API_URL+"/misc/get_salutations";
     public static final String GET_CUSTOMER_NATIONALITIES_API_URL = BASE_API_URL+"/misc/get_customer_nationalities";
     public static final String SESSION_KEY = "myrepublicid";
     public static final String COOKIE_SESSION_KEY = "mySessionId";

@@ -50,10 +50,11 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
     private Dialog dialog;
     private TabHost host;
     private List<Homepass> homePassList = new ArrayList<Homepass>();
-    private List<String> customerClassList = new ArrayList<String>();
     private Boolean isAlreadyLoaded = false;
     private RelativeLayout footerLayout;
     private ApiConnectorAsyncOperation asop;
+
+    private Map<Object,Object> customerClassMap;
 
     @Nullable
     @Override
@@ -115,7 +116,8 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
 
         // set the custom dialog components - text, spinner
         final CustomSpinner spinnerCustomerClass = (CustomSpinner) dialog.findViewById(R.id.dialogitem_spinner_customer_class);
-        CommonRowAdapter adapter = new CommonRowAdapter(customerClassList,getContext());
+        CommonRowAdapter adapter = new CommonRowAdapter(customerClassMap,getContext());
+        adapter.setSpinner(true);
         spinnerCustomerClass.setAdapter(adapter);
 
         final TextView txtHomepassName = (TextView) dialog.findViewById(R.id.dialogitem_txt_homepass_value);
@@ -138,9 +140,7 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
             @Override
             public void onClick(View v) {
                 String itemSelected = ""+spinnerCustomerClass.getSelectedItem();
-                if(!"RES".equals(itemSelected)) {
-                    itemSelected = "NON-RES";
-                }
+
                 bundle.putSerializable("homepassData",homepass);
                 bundle.putString("customerClassification",itemSelected);
 
@@ -218,9 +218,7 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
                 customerClassModel = StringUtil.convertJsonNodeIntoObject(customerClassModel, Map[].class);
                 List<Map<Object,Object>> listMap = customerClassModel.getListObject();
                 if(listMap.size() > 0) {
-                    for(Map.Entry<Object,Object> entry : listMap.get(0).entrySet()) {
-                        customerClassList.add(entry.getKey()+"");
-                    }
+                    customerClassMap = listMap.get(0);
                 }
             }
         }

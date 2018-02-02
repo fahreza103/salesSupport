@@ -129,11 +129,11 @@ public abstract class AbstractAsyncOperation extends AsyncTask<Object, Integer, 
                 }
                 // if success = false and error contains expired, will be redirect to login
                 if(!model.getSuccess() && !StringUtil.isEmpty(model.getError()) && model.getError().toLowerCase().contains("session")) {
-                    //showErrorDialog(model.getError(),UrlResponse.RESULT_ERR_SESSION_EXPIRED);
                     errorMsg = null;
 
                     // Redirect to LoginActivity, only if not in LoginActivity, otherwise it just cause endless loop
                     if(!isInLoginActivity) {
+                        showErrorDialog(model.getError(),UrlResponse.RESULT_ERR_SESSION_EXPIRED);
                         Intent intent = new Intent(this.context, ActivityLogin.class);
                         this.context.startActivity(intent);
                         AppCompatActivity activity = (AppCompatActivity) this.context;
