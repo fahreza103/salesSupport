@@ -291,7 +291,7 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
     public void onDialogOkPressed(DialogInterface dialog, int which, Object... result) {
         // pass homepass_id and search address value
 
-        Bundle bundle = new Bundle();
+        Bundle bundle = this.getArguments();
         bundle.putString("cluster_id",clusterName);
         bundle.putString("address", (String) result[0]);
 
@@ -299,6 +299,7 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
         fragment.setArguments(bundle);
 
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.setCustomAnimations(R.anim.left_from_right,R.anim.right_from_left, R.anim.left_from_right,R.anim.right_from_left);
         ft.replace(R.id.content_frame, fragment,fragment.getClass().getName());
         ft.addToBackStack(fragment.getClass().getName());
         ft.commit();

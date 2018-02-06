@@ -42,6 +42,7 @@ import id.co.myrepublic.salessupport.widget.CustomSpinner;
 
 public class FragmentPlan extends Fragment implements View.OnClickListener, AsyncTaskListener, AdapterView.OnItemSelectedListener {
 
+    private static final String RESULT_KEY_CATALOG = "fetchCatalog";
     private Button btnConfirm;
     private LinearLayout scrollContentLayout;
     private Boolean isAlreadyLoaded = false;
@@ -100,10 +101,9 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
             UrlParam urlParam = new UrlParam();
             urlParam.setUrl(AppConstant.GET_PRODUCT_CATALOG);
             urlParam.setParamMap(paramMap);
-            urlParam.setResultKey("fetchCatalog");
+            urlParam.setResultKey(RESULT_KEY_CATALOG);
 
             ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(getContext(), "planFormData", AsyncUiDisplayType.NONE);
-            asop.setDialogMsg("Load Plan Data");
             asop.setListener(this);
             asop.execute(urlParam);
 
@@ -156,6 +156,7 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
 
             FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.content_frame, fragment, fragment.getClass().getName());
+            ft.setCustomAnimations(R.anim.left_from_right,R.anim.right_from_left, R.anim.left_from_right,R.anim.right_from_left);
             ft.addToBackStack(fragment.getClass().getName());
             ft.commit();
 
@@ -167,11 +168,11 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
 
     @Override
     public void onAsyncTaskComplete(Object result, String taskName) {
-        Map<String,String> resultMap = (Map<String,String>) result;
+        Map<String,MainModel> resultMap = (Map<String,MainModel>) result;
         if("planFormData".equals(taskName)) {
-            String catalogJsonResult = resultMap.get("fetchCatalog");
-            if(catalogJsonResult != null) {
-                MainModel<Catalog> model = StringUtil.convertStringToObject(catalogJsonResult, Catalog.class);
+            MainModel<Catalog> model = resultMap.get(RESULT_KEY_CATALOG);
+            if(model != null) {
+                model = StringUtil.convertJsonNodeIntoObject(model, Catalog.class);
                 catalog = model.getObject();
                 populateSpinner(spinnerInternet,catalog.getInternetItems());
                 populateSpinner(spinnerTv,catalog.getTvItems());

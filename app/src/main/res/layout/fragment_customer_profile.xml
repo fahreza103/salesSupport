@@ -103,7 +103,7 @@
                 android:layout_marginTop="10dp"
                 app:inputType="calendar"
                 app:validator="date"
-                app:dateFormat="MM/dd/yyyy"
+                app:dateFormat="yyyy-MM-dd"
                 app:labelText="@string/fragment_customer_dob" />
 
             <id.co.myrepublic.salessupport.widget.CustomSpinner

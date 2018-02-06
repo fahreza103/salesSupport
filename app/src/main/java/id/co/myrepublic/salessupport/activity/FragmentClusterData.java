@@ -118,12 +118,14 @@ public class FragmentClusterData extends Fragment implements AsyncTaskListener, 
 
         Fragment fragment = new FragmentClusterDetailData();
 
-        Bundle bundle = new Bundle();
+        Bundle bundle = this.getArguments();
         bundle.putString("clusterName", dataModel.getClusterName());
+        bundle.putSerializable("cluster",dataModel);
         fragment.setArguments(bundle);
 
         String backStateName = fragment.getClass().getName();
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.setCustomAnimations(R.anim.left_from_right,R.anim.right_from_left, R.anim.left_from_right,R.anim.right_from_left);
         ft.replace(R.id.content_frame, fragment,backStateName);
         ft.addToBackStack(backStateName);
         ft.commit();

@@ -14,6 +14,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -23,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import id.co.myrepublic.salessupport.R;
+import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
 
 import static android.app.Activity.RESULT_OK;
@@ -106,6 +109,7 @@ public class FragmentCustomerUpload extends Fragment implements View.OnClickList
                 fragment.setArguments(bundle);
 
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                ft.setCustomAnimations(R.anim.left_from_right,R.anim.right_from_left, R.anim.left_from_right,R.anim.right_from_left);
                 ft.replace(R.id.content_frame, fragment,fragment.getClass().getName());
                 ft.addToBackStack(fragment.getClass().getName());
                 ft.commit();
@@ -200,9 +204,11 @@ public class FragmentCustomerUpload extends Fragment implements View.OnClickList
 
     private void showImageFromUri(Uri uri) {
         Bitmap bmp = null;
+        GlobalVariables gVar = GlobalVariables.getInstance();
         try {
             bmp = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
             imageViewPreviewId.setImageBitmap(bmp);
+            imageViewPreviewId.startAnimation(gVar.getFadeInAnim());
             imageViewPreviewId.setVisibility(View.VISIBLE);
         } catch (IOException e) {
             e.printStackTrace();

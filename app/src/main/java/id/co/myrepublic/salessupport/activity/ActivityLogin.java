@@ -309,6 +309,7 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
         Animation upBottom = AnimationUtils.loadAnimation(this,R.anim.up_from_bottom);
         Animation expandIn = AnimationUtils.loadAnimation(this, R.anim.expand_in);
         Animation leftRight = AnimationUtils.loadAnimation(this,R.anim.left_from_right);
+        Animation rightLeft = AnimationUtils.loadAnimation(this,R.anim.left_from_right);
 
         gvar.setDownTopAnim(downTop);
         gvar.setFadeInAnim(fadeIn);
@@ -317,6 +318,7 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
         gvar.setTopDownAnim(upBottom);
         gvar.setExpandAnim(expandIn);
         gvar.setLeftRightAnim(leftRight);
+        gvar.setRightLeftAnim(rightLeft);
     }
 
     @Override

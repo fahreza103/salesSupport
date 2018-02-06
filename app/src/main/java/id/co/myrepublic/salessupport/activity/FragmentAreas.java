@@ -95,12 +95,14 @@ public class FragmentAreas extends Fragment implements View.OnClickListener, Dia
                 Fragment fragment = new FragmentClusterData();
 
                 Bundle bundle = new Bundle();
+                bundle.putSerializable("area",dataModel);
                 bundle.putString("areaName", dataModel.getAreaName());
                 bundle.putString("areaId", dataModel.getAreaId());
                 bundle.putString("areaCode", dataModel.getAreaCode());
                 fragment.setArguments(bundle);
 
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                ft.setCustomAnimations(R.anim.left_from_right,R.anim.right_from_left, R.anim.left_from_right,R.anim.right_from_left);
                 ft.replace(R.id.content_frame, fragment,fragment.getClass().getName());
                 ft.addToBackStack(fragment.getClass().getName());
                 ft.commit();

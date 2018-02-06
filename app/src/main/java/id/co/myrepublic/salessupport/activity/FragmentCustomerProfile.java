@@ -124,6 +124,7 @@ public class FragmentCustomerProfile extends Fragment implements View.OnClickLis
             fragment.setArguments(bundle);
 
             FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+            ft.setCustomAnimations(R.anim.left_from_right,R.anim.right_from_left, R.anim.left_from_right,R.anim.right_from_left);
             ft.replace(R.id.content_frame, fragment, fragment.getClass().getName());
             ft.addToBackStack(fragment.getClass().getName());
             ft.commit();

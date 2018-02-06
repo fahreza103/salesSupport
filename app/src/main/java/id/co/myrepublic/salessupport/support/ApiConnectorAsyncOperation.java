@@ -34,7 +34,7 @@ public class ApiConnectorAsyncOperation extends AbstractAsyncOperation {
             String result = urlResponse.getResultValue();
 
             if(result != null) {
-                // if resultKey not defined , the Object will only store defaultKey
+                // if resultKey not defined , the Object will  store defaultKey
                 String resultKey = DEFAULT_RESULT_KEY;
                 if (!StringUtil.isEmpty(urlParam.getResultKey())) {
                     resultKey = urlParam.getResultKey();

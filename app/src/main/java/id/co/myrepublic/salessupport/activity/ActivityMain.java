@@ -149,12 +149,12 @@ public class ActivityMain extends AppCompatActivity
         }
 
         //replacing the fragment
-
         String backStateName = fragment.getClass().getName();
-
+        GlobalVariables gVar = GlobalVariables.getInstance();
 
         if (fragment != null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.setCustomAnimations(R.anim.left_from_right,R.anim.right_from_left, R.anim.left_from_right,R.anim.right_from_left);
             ft.replace(R.id.content_frame, fragment, backStateName);
             ft.addToBackStack(backStateName);
             ft.commit();

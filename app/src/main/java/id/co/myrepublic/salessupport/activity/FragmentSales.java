@@ -138,11 +138,14 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
 
         // Get address info from previous fragment
         Bundle bundle = this.getArguments();
-        Homepass homepass = (Homepass) bundle.getSerializable("homepassData");
+        final Homepass homepass = (Homepass) bundle.getSerializable("homepassDataService");
 
-        final String address = homepass.getHomepassAddressView()+"\n"
+        final String address = homepass.getHomepassAddressView()+" "+ homepass.getPostalcode()+"\n"
                 +homepass.getDistrict()+"\n"
-                +homepass.getComplex();
+                +homepass.getComplex()+"\n"
+                +"Block "+homepass.getBlock()+", "
+                +"homenumber "+homepass.getHomeNumber()+"\n"
+                +"RT "+homepass.getRt()+" / RW "+homepass.getRw();
 
         final TextView txtServiceAddress = (TextView) dialog.findViewById(R.id.dialogitem_txt_sales_service_address_value);
         txtServiceAddress.setText(address);
@@ -166,7 +169,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
                 builder.setDialogListener(new DialogListener() {
                     @Override
                     public void onDialogOkPressed(DialogInterface dialog, int which, Object... result) {
-                        nextFragment((String)result[0]);
+                        nextFragment((String)result[0],homepass);
                     }
                     @Override
                     public void onDialogCancelPressed(DialogInterface dialog, int which) {
@@ -180,7 +183,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                nextFragment(address);
+                nextFragment(address,homepass);
             }
         });
 
@@ -189,15 +192,17 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
         dialog.show();
     }
 
-    private void nextFragment(String address) {
+    private void nextFragment(String address, Homepass billingAddress) {
         Bundle bundle = this.getArguments();
         bundle.putSerializable("salesData",formValues);
         bundle.putString("BillingAddress",address);
+        bundle.putSerializable("homepassDataBilling",billingAddress);
 
         Fragment fragment = new FragmentCustomerProfile();
         fragment.setArguments(bundle);
 
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.setCustomAnimations(R.anim.left_from_right,R.anim.right_from_left, R.anim.left_from_right,R.anim.right_from_left);
         ft.replace(R.id.content_frame, fragment,fragment.getClass().getName());
         ft.addToBackStack(fragment.getClass().getName());
         ft.commit();

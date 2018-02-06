@@ -141,13 +141,14 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
             public void onClick(View v) {
                 String itemSelected = ""+spinnerCustomerClass.getSelectedItem();
 
-                bundle.putSerializable("homepassData",homepass);
+                bundle.putSerializable("homepassDataService",homepass);
                 bundle.putString("customerClassification",itemSelected);
 
                 Fragment fragment = new FragmentSales();
                 fragment.setArguments(bundle);
 
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                ft.setCustomAnimations(R.anim.left_from_right,R.anim.right_from_left, R.anim.left_from_right,R.anim.right_from_left);
                 ft.replace(R.id.content_frame, fragment,fragment.getClass().getName());
                 ft.addToBackStack(fragment.getClass().getName());
                 ft.commit();

@@ -133,11 +133,7 @@ public abstract class AbstractAsyncOperation extends AsyncTask<Object, Integer, 
 
                     // Redirect to LoginActivity, only if not in LoginActivity, otherwise it just cause endless loop
                     if(!isInLoginActivity) {
-                        showErrorDialog(model.getError(),UrlResponse.RESULT_ERR_SESSION_EXPIRED);
-                        Intent intent = new Intent(this.context, ActivityLogin.class);
-                        this.context.startActivity(intent);
-                        AppCompatActivity activity = (AppCompatActivity) this.context;
-                        activity.finish();
+                        showErrorDialog(model.getError()+"\n Press OK to re-login",UrlResponse.RESULT_ERR_SESSION_EXPIRED);
                     }
                     // break the process, session expired means other connection will be failed too
                     break;
@@ -194,7 +190,12 @@ public abstract class AbstractAsyncOperation extends AsyncTask<Object, Integer, 
         builder.setDialogListener(new DialogListener() {
             @Override
             public void onDialogOkPressed(DialogInterface dialog, int which, Object... result) {
-
+                if(errorCode == UrlResponse.RESULT_ERR_SESSION_EXPIRED) {
+                    Intent intent = new Intent(context, ActivityLogin.class);
+                    context.startActivity(intent);
+                    AppCompatActivity activity = (AppCompatActivity) context;
+                    activity.finish();
+                }
             }
             @Override
             public void onDialogCancelPressed(DialogInterface dialog, int which) {}
