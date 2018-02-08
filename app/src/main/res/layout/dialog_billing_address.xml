@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:background="@color/colorLogo"
+        android:id="@+id/sales_dialog_header"
+        android:paddingBottom="5dp"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/dialogitem_txt_sales_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/dialog_sales_billing_address"
+            android:textColor="@android:color/white" />
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/billing_address_scroll_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <id.co.myrepublic.salessupport.widget.CustomSpinner
+                android:id="@+id/billing_spinner_dwelling"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:entries="@array/dwelling_type_arrays"
+                app:labelText="@string/dialog_dwelling_type" />
+
+            <id.co.myrepublic.salessupport.widget.CustomEditText
+                android:id="@+id/billing_txt_dialog_province"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:inputType="text"
+                app:validator="required"
+                app:labelText="@string/dialog_province" />
+
+            <id.co.myrepublic.salessupport.widget.CustomEditText
+                android:id="@+id/billing_txt_dialog_city"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:inputType="text"
+                app:validator="required"
+                app:labelText="@string/dialog_city" />
+
+            <id.co.myrepublic.salessupport.widget.CustomEditText
+                android:id="@+id/billing_txt_dialog_cluster"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:inputType="text"
+                app:validator="required"
+                app:labelText="@string/dialog_cluster" />
+
+            <id.co.myrepublic.salessupport.widget.CustomEditText
+                android:id="@+id/billing_txt_dialog_district"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:inputType="text"
+                app:labelText="@string/dialog_district" />
+
+            <id.co.myrepublic.salessupport.widget.CustomEditText
+                android:id="@+id/billing_txt_dialog_village"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:inputType="text"
+                app:labelText="@string/dialog_village" />
+
+            <id.co.myrepublic.salessupport.widget.CustomEditText
+                android:id="@+id/billing_txt_dialog_block"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:inputHint="123"
+                app:inputType="text"
+                app:labelText="@string/dialog_block" />
+
+            <id.co.myrepublic.salessupport.widget.CustomEditText
+                android:id="@+id/billing_txt_dialog_home_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:inputType="text"
+                app:validator="required"
+                app:inputHint="45"
+                app:labelText="@string/dialog_home_number" />
+
+            <id.co.myrepublic.salessupport.widget.CustomEditText
+                android:id="@+id/billing_txt_dialog_main_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:inputType="text"
+                app:validator="required"
+                app:inputHint="Cik Ditiro"
+                app:labelText="@string/dialog_main_address" />
+
+            <id.co.myrepublic.salessupport.widget.CustomEditText
+                android:id="@+id/billing_txt_dialog_floor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:inputType="text"
+                app:inputHint="GRHA FIM"
+                app:labelText="@string/dialog_floor" />
+
+            <id.co.myrepublic.salessupport.widget.CustomEditText
+                android:id="@+id/billing_txt_dialog_unit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:inputType="text"
+                app:inputHint="GRHA FIM"
+                app:labelText="@string/dialog_unit" />
+
+            <id.co.myrepublic.salessupport.widget.CustomEditText
+                android:id="@+id/billing_txt_dialog_postal_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:inputType="phone"
+                app:validator="required"
+                app:inputHint="10310"
+                app:labelText="@string/dialog_postal_code" />
+
+            <id.co.myrepublic.salessupport.widget.CustomEditText
+                android:id="@+id/billing_txt_dialog_rt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:inputType="text"
+                app:labelText="@string/dialog_rt" />
+
+            <id.co.myrepublic.salessupport.widget.CustomEditText
+                android:id="@+id/billing_txt_dialog_rw"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:inputType="text"
+                app:labelText="@string/dialog_rw" />
+
+            <id.co.myrepublic.salessupport.widget.CustomSpinner
+                android:id="@+id/billing_spinner_address_prefix"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:entries="@array/address_prefix_arrays"
+                app:labelText="@string/dialog_address_prefix" />
+
+            <id.co.myrepublic.salessupport.widget.CustomEditText
+                android:id="@+id/billing_txt_dialog_building_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:inputType="text"
+                app:inputHint="GRHA FIM"
+                app:labelText="@string/dialog_building_name" />
+
+            <id.co.myrepublic.salessupport.widget.CustomEditText
+                android:id="@+id/billing_txt_dialog_developer_complex"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:inputType="text"
+                app:inputHint="GRHA FIM"
+                app:labelText="@string/dialog_developer_complex" />
+
+            <id.co.myrepublic.salessupport.widget.CustomEditText
+                android:id="@+id/billing_txt_dialog_developer_sector"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:inputType="text"
+                app:inputHint="GRHA FIM"
+                app:labelText="@string/dialog_developer_sector" />
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:layout_height="match_parent">
+
+
+                <Button
+                    android:id="@+id/dialogitem_btn_confirm"
+                    android:layout_width="100dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="5dp"
+                    android:textColor="@color/white"
+                    android:background="@drawable/button_blue"
+                    android:text="@string/button_confirm" />
+
+                <Button
+                    android:id="@+id/dialogitem_btn_cancel"
+                    android:layout_width="100dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="5dp"
+                    android:textColor="@color/white"
+                    android:background="@drawable/button_blue"
+                    android:text="@string/button_cancel" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

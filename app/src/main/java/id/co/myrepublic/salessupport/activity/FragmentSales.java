@@ -1,7 +1,6 @@
 package id.co.myrepublic.salessupport.activity;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,7 +14,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -28,13 +26,11 @@ import id.co.myrepublic.salessupport.adapter.CommonRowAdapter;
 import id.co.myrepublic.salessupport.constant.AppConstant;
 import id.co.myrepublic.salessupport.constant.AsyncUiDisplayType;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
-import id.co.myrepublic.salessupport.listener.DialogListener;
 import id.co.myrepublic.salessupport.model.Channels;
 import id.co.myrepublic.salessupport.model.Dealer;
 import id.co.myrepublic.salessupport.model.Homepass;
 import id.co.myrepublic.salessupport.model.MainModel;
 import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
-import id.co.myrepublic.salessupport.support.DialogBuilder;
 import id.co.myrepublic.salessupport.support.FormExtractor;
 import id.co.myrepublic.salessupport.support.Validator;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
@@ -55,7 +51,6 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
     private static final String RESULT_KEY_DEALER  = "fetchDealer";
 
     private Button btnConfirm;
-    private Dialog dialog;
     private LinearLayout scrollContentLayout;
     private CustomEditText editTextsalesCode;
     private CustomEditText editTextSalesName;
@@ -156,9 +151,61 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
             showAddressDialog();
     }
 
+    private void showBillingAddressDialog(final String address) {
+        // custom dialog
+        final Dialog dialog = new Dialog(getContext());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_billing_address);
+
+        Button btnConfirm = (Button) dialog.findViewById(R.id.dialogitem_btn_confirm);
+        Button btnCancel = (Button) dialog.findViewById(R.id.dialogitem_btn_cancel);
+        final LinearLayout billingAddressLayout = (LinearLayout) dialog.findViewById(R.id.billing_address_scroll_layout);
+        final Bundle bundle = this.getArguments();
+
+        btnConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                HashMap<String,Object> billingAddressValues = FormExtractor.extractValues(getContext(),billingAddressLayout,false);
+                boolean result = (boolean) billingAddressValues.get(Validator.VALIDATION_KEY_RESULT);
+                if(result) {
+
+                    Homepass billingAddress =  bundle.getSerializable("homepassDataService") == null ? new Homepass() : (Homepass) bundle.getSerializable("homepassDataService");
+                    billingAddress.setActive(true);
+                    billingAddress.setAddressPrefix(""+billingAddressValues.get("billing_spinner_address_prefix"));
+                    billingAddress.setBlock(""+billingAddressValues.get("billing_txt_dialog_block"));
+                    billingAddress.setDwellingType(""+billingAddressValues.get("billing_spinner_dwelling"));
+                    billingAddress.setProvince(""+billingAddressValues.get("billing_txt_dialog_province"));
+                    billingAddress.setCity(""+billingAddressValues.get("billing_txt_dialog_city"));
+                    billingAddress.setClusterName(""+billingAddressValues.get("billing_txt_dialog_cluster"));
+                    billingAddress.setDistrict(""+billingAddressValues.get("billing_txt_dialog_district"));
+                    billingAddress.setVillage(""+billingAddressValues.get("billing_txt_dialog_village"));
+                    billingAddress.setBlock(""+billingAddressValues.get("billing_txt_dialog_block"));
+                    billingAddress.setHomeNumber(""+billingAddressValues.get("billing_txt_dialog_home_number"));
+                    billingAddress.setMainAddress(""+billingAddressValues.get("billing_txt_dialog_main_address"));
+                    billingAddress.setFloor(""+billingAddressValues.get("billing_txt_dialog_floor"));
+                    billingAddress.setUnit(""+billingAddressValues.get("billing_txt_dialog_unit"));
+                    billingAddress.setPostalcode(""+billingAddressValues.get("billing_txt_dialog_postal_code"));
+                    billingAddress.setRt(""+billingAddressValues.get("billing_txt_dialog_rt"));
+                    billingAddress.setRw(""+billingAddressValues.get("billing_txt_dialog_rw"));
+                    billingAddress.setComplex(""+billingAddressValues.get("billing_txt_dialog_developer_complex"));
+                    billingAddress.setBuildingName(""+billingAddressValues.get("billing_txt_dialog_building_name"));
+                    billingAddress.setDeveloperSector(""+billingAddressValues.get("billing_txt_dialog_developer_sector"));
+                    nextFragment(address,billingAddress , false);
+                }
+            }
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+    }
+
     private void showAddressDialog() {
         // custom dialog
-        dialog = new Dialog(getContext());
+        final Dialog dialog = new Dialog(getContext());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_address_confirmation);
 
@@ -190,18 +237,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                DialogBuilder builder = DialogBuilder.getInstance();
-                builder.createInputDialog(getContext(),"Billing Address","Enter your billing address");
-                builder.setDialogListener(new DialogListener() {
-                    @Override
-                    public void onDialogOkPressed(DialogInterface dialog, int which, Object... result) {
-                        nextFragment((String)result[0],homepass);
-                    }
-                    @Override
-                    public void onDialogCancelPressed(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+                showBillingAddressDialog(address);
             }
         });
 
@@ -209,7 +245,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                nextFragment(address,homepass);
+                nextFragment(address,homepass,true);
             }
         });
 
@@ -218,10 +254,11 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
         dialog.show();
     }
 
-    private void nextFragment(String address, Homepass billingAddress) {
+    private void nextFragment(String address, Homepass billingAddress, boolean sameAddress) {
         Bundle bundle = this.getArguments();
         bundle.putSerializable("salesData",formValues);
         bundle.putString("BillingAddress",address);
+        bundle.putBoolean("identicalAddress",sameAddress);
         bundle.putSerializable("homepassDataBilling",billingAddress);
 
         Fragment fragment = new FragmentCustomerProfile();
@@ -235,7 +272,6 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
 
         DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
-        dialog.dismiss();
     }
 
 

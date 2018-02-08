@@ -103,6 +103,24 @@
     <string name="dialog_sales_billing_address">Billing Address</string>
     <string name="dialog_sales_billing_address_desc">Your Billing Address Same as Service Address?</string>
     <string name="dialog_sales_service_address">Service Address</string>
+    <string name="dialog_dwelling_type">Dwelling Type</string>
+    <string name="dialog_province">Province</string>
+    <string name="dialog_city">City</string>
+    <string name="dialog_cluster">Cluster</string>
+    <string name="dialog_district">District</string>
+    <string name="dialog_village">Village</string>
+    <string name="dialog_home_number">Home Number</string>
+    <string name="dialog_block">Block</string>
+    <string name="dialog_main_address">Main Address</string>
+    <string name="dialog_floor">Floor</string>
+    <string name="dialog_unit">Unit</string>
+    <string name="dialog_postal_code">Postal Code</string>
+    <string name="dialog_rt">Rukun Tetangga (RT)</string>
+    <string name="dialog_rw">Rukun Warga (RW)</string>
+    <string name="dialog_address_prefix">Address Prefix</string>
+    <string name="dialog_building_name">Building Name</string>
+    <string name="dialog_developer_complex">Developer Complex</string>
+    <string name="dialog_developer_sector">Deleoper Sector</string>
 
     <string name="tabhost_create_order">Create Order</string>
     <string name="tabhost_create_survey">Create Survey</string>
@@ -152,6 +170,42 @@
         <item>Sport</item>
         <item>Xtras</item>
         <item>IP Public</item>
+    </string-array>
+
+    <string-array name="dwelling_type_arrays">
+        <item>Single Dwelling Unit</item>
+        <item>Multiple Dwelling Unit</item>
+    </string-array>
+
+    <string-array name="address_prefix_arrays">
+        <item>Desa</item>
+        <item>Dukuh</item>
+        <item>Gang</item>
+        <item>Hotel</item>
+        <item>Jalan</item>
+        <item>Jorong</item>
+        <item>Kampung</item>
+        <item>Kantor Pemerintah</item>
+        <item>Kantor Pemerintah Swasta</item>
+        <item>Kawasan Industri</item>
+        <item>Kecamatan</item>
+        <item>Kelurahan</item>
+        <item>Kompleks Industri Kecil</item>
+        <item>Kompleks Militer</item>
+        <item>Kompleks Pertokoan</item>
+        <item>Kompleks Perumahan</item>
+        <item>Kompleks Perusahaan Besar</item>
+        <item>Kompleks Sekolah</item>
+        <item>Kota</item>
+        <item>Lingkungan</item>
+        <item>Lokasi Transmigrasi</item>
+        <item>Lorong</item>
+        <item>Pasar</item>
+        <item>Perwakilan Kecamatan</item>
+        <item>Pulau</item>
+        <item>Rumah Pos</item>
+        <item>Tempat Lainnya</item>
+        <item>None</item>
     </string-array>
 
 

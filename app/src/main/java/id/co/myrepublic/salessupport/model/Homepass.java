@@ -131,6 +131,14 @@ public class Homepass implements Serializable {
     private String homepassAddressView;
     @PositionItem(type= RowItem.MAINTEXT1)
     private int no;
+    @JsonIgnoreProperties
+    private String province;
+    @JsonIgnoreProperties
+    private String city;
+    @JsonIgnoreProperties
+    private String developerSector;
+    @JsonIgnoreProperties
+    private String village;
 
     public int getNo() {
         return no;
@@ -574,6 +582,38 @@ public class Homepass implements Serializable {
 
     public void setHomepassAddressView(String homepassAddressView) {
         this.homepassAddressView = homepassAddressView;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getDeveloperSector() {
+        return developerSector;
+    }
+
+    public void setDeveloperSector(String developerSector) {
+        this.developerSector = developerSector;
+    }
+
+    public String getVillage() {
+        return village;
+    }
+
+    public void setVillage(String village) {
+        this.village = village;
     }
 
     public String toString() {

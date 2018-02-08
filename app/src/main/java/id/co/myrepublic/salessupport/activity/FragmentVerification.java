@@ -18,7 +18,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import id.co.myrepublic.salessupport.R;
 import id.co.myrepublic.salessupport.constant.AppConstant;
@@ -236,7 +235,7 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
         paramMap.put("subscription[addresses][0][street]", homepassDataBilling.getStreet());
         paramMap.put("subscription[addresses][0][floor]", homepassDataBilling.getFloor());
         paramMap.put("subscription[addresses][0][unit]", homepassDataBilling.getUnit());
-        //paramMap.put("subscription[addresses][0][village]", homepassDataService.get);
+        paramMap.put("subscription[addresses][0][village]", homepassDataService.getVillage());
         paramMap.put("subscription[addresses][0][postal_code]", homepassDataBilling.getPostalcode());
         paramMap.put("subscription[addresses][0][rw]", homepassDataBilling.getRw());
         paramMap.put("subscription[addresses][0][rt]", homepassDataBilling.getRt());
@@ -244,7 +243,7 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
         paramMap.put("subscription[addresses][0][building_ready]", homepassDataBilling.getAvailability());
         paramMap.put("subscription[addresses][0][building_name]", homepassDataBilling.getBuildingName());
         paramMap.put("subscription[addresses][0][developer_complex]", homepassDataBilling.getComplex());
-        //paramMap.put("subscription[addresses][0][developer_sector]", homepassDataService.get);
+        paramMap.put("subscription[addresses][0][developer_sector]", homepassDataService.getDeveloperSector());
         paramMap.put("subscription[addresses][0][homepassdetailid]", homepassDataBilling.getHomepassDetailId());
         paramMap.put("subscription[addresses][0][country_code]", "IDN");
 
