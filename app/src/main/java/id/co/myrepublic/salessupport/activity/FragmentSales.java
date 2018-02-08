@@ -30,6 +30,7 @@ import id.co.myrepublic.salessupport.constant.AsyncUiDisplayType;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
 import id.co.myrepublic.salessupport.listener.DialogListener;
 import id.co.myrepublic.salessupport.model.Channels;
+import id.co.myrepublic.salessupport.model.Dealer;
 import id.co.myrepublic.salessupport.model.Homepass;
 import id.co.myrepublic.salessupport.model.MainModel;
 import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
@@ -51,6 +52,7 @@ import id.co.myrepublic.salessupport.widget.CustomSpinner;
 public class FragmentSales extends Fragment implements View.OnClickListener, AsyncTaskListener {
 
     private static final String RESULT_KEY_KNOW_US = "fetchKnowUs";
+    private static final String RESULT_KEY_DEALER  = "fetchDealer";
 
     private Button btnConfirm;
     private Dialog dialog;
@@ -60,8 +62,9 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
     private CustomSpinner spinnerKnowUs;
 
     private HashMap<String,Object> formValues = new HashMap<String,Object>();
-    List<Channels> channelsList = new ArrayList<Channels>();
-    Boolean isAlreadyLoaded = false;
+    private List<Channels> channelsList = new ArrayList<Channels>();
+    private Boolean isAlreadyLoaded = false;
+    private String salesCode;
 
     @Nullable
     @Override
@@ -82,13 +85,16 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
 
         spinnerKnowUs = (CustomSpinner) getActivity().findViewById(R.id.sales_spinner_know_us);
         editTextsalesCode = (CustomEditText) getActivity().findViewById(R.id.sales_editText_sales_agent_code);
+        salesCode = editTextsalesCode.getInputValue().toString();
         editTextSalesName = (CustomEditText) getActivity().findViewById(R.id.sales_editText_sales_agent_name);
         editTextsalesCode.setInputOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
-                if (!hasFocus) {
-                    editTextSalesName.setInputValue(editTextsalesCode.getInputValue()+"");
-                    editTextSalesName.setInputAnimation(GlobalVariables.getInstance().getFadeInAnim(),500);
+                // Lost focus and new input value not same with the old
+                if (!hasFocus && !editTextsalesCode.getInputValue().equals(salesCode)) {
+                    btnConfirm.setEnabled(false);
+                    salesCode = editTextsalesCode.getInputValue().toString();
+                    getDealer(salesCode);
                 }
             }
         });
@@ -111,6 +117,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
             urlParam.setResultKey(RESULT_KEY_KNOW_US);
 
             ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(getContext(), "salesFormData", AsyncUiDisplayType.NONE);
+            asop.setDialogMsg("Get Dealer");
             asop.setListener(this);
             asop.execute(urlParam);
 
@@ -120,6 +127,25 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
         } else {
             populateKnowUsSpinner(channelsList);
         }
+    }
+
+    private void getDealer(String repId) {
+        GlobalVariables gVar = GlobalVariables.getInstance();
+        String sessionId = gVar.getSessionKey();
+
+        Map<Object, Object> paramMap = new HashMap<Object, Object>();
+        paramMap.put("session_id", sessionId);
+        paramMap.put("rep_id",repId);
+
+        UrlParam urlParam = new UrlParam();
+        urlParam.setUrl(AppConstant.GET_DEALER_API_URL);
+        urlParam.setParamMap(paramMap);
+        urlParam.setResultKey(RESULT_KEY_DEALER);
+
+        ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(getContext(), "dealerData", AsyncUiDisplayType.DIALOG);
+        asop.setDialogMsg("Load Sales Agent...");
+        asop.setListener(this);
+        asop.execute(urlParam);
     }
 
     @Override
@@ -215,6 +241,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
 
     @Override
     public void onAsyncTaskComplete(Object result, String taskName) {
+        GlobalVariables gVar = GlobalVariables.getInstance();
         Map<String,MainModel> resultMap = (Map<String,MainModel>) result;
         if("salesFormData".equals(taskName)) {
             MainModel<Channels> model = resultMap.get(RESULT_KEY_KNOW_US);
@@ -223,6 +250,19 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
                 channelsList = model.getListObject();
                 btnConfirm.setEnabled(true);
                 populateKnowUsSpinner(channelsList);
+            }
+        } else if("dealerData".equals(taskName)) {
+            MainModel<Dealer> model = resultMap.get(RESULT_KEY_DEALER);
+            if(model != null) {
+                model = StringUtil.convertJsonNodeIntoObject(model, Dealer[].class);
+                List<Dealer> dealerList = model.getListObject();
+                if(dealerList.size() > 0) {
+                    editTextSalesName.setInputValue(dealerList.get(0).getCompanyName());
+                    btnConfirm.setEnabled(true);
+                } else {
+                    editTextSalesName.setInputValue("Sales Agent Not Found!");
+                }
+                editTextSalesName.startAnimation(gVar.getFadeInAnim());
             }
         }
     }

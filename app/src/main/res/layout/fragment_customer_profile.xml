@@ -104,6 +104,7 @@
                 app:inputType="calendar"
                 app:validator="date"
                 app:dateFormat="yyyy-MM-dd"
+                app:inputHint="yyyy-MM-dd"
                 app:labelText="@string/fragment_customer_dob" />
 
             <id.co.myrepublic.salessupport.widget.CustomSpinner
@@ -120,6 +121,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 app:inputType="text"
+                app:inputHint="youremail@example.com"
                 app:validator="required,email"
                 app:labelText="@string/fragment_customer_email" />
 
@@ -130,6 +132,7 @@
                 android:layout_marginTop="10dp"
                 app:inputType="phone"
                 app:validator="required"
+                app:inputHint="08157776565"
                 app:labelText="@string/fragment_customer_mobile_phone" />
 
 
@@ -139,6 +142,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 app:inputType="phone"
+                app:inputHint="0218765567"
                 app:labelText="@string/fragment_customer_home_phone" />
 
             <id.co.myrepublic.salessupport.widget.CustomEditText
@@ -147,6 +151,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 app:inputType="phone"
+                app:inputHint="0218765567"
                 app:labelText="@string/fragment_customer_work_phone" />
 
 

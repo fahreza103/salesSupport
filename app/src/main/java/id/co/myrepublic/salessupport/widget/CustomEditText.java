@@ -36,7 +36,7 @@ public class CustomEditText extends AbstractWidget {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.appAttr);
 
         String attrInputType = typedArray.getString(R.styleable.appAttr_inputType);
-        String attrInputHint = typedArray.getString(R.styleable.appAttr_dateFormat);
+        String attrInputHint = typedArray.getString(R.styleable.appAttr_inputHint);
         String attrInputValue = typedArray.getString(R.styleable.appAttr_value);
 
         typedArray.recycle();

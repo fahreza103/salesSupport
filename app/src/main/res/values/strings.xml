@@ -66,6 +66,13 @@
 
     <string name="fragment_verification">Customer Verification</string>
     <string name="fragment_verification_desc">Please enter the code that has been sent to :</string>
+    <string name="fragment_verification_status">Status</string>
+    <string name="fragment_verification_status_insert_order">Creating Order</string>
+    <string name="fragment_verification_status_upload_doc">Uploading Document</string>
+    <string name="fragment_verification_customer_id">Customer ID</string>
+    <string name="fragment_verification_subscription_id">Subscription ID</string>
+    <string name="fragment_verification_order_id">Order ID</string>
+    <string name="fragment_verification_order_success">Congratulation, your order has been created, the details is as follow :</string>
 
 
     <string name="activity_login_username">Username</string>
@@ -105,6 +112,9 @@
     <string name="button_no">No</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_resend">Resend</string>
+    <string name="status_progress">In Progress</string>
+    <string name="status_success">Success</string>
+    <string name="status_failed">Failed</string>
 
     <string-array name="competitor_arrays">
         <item>Firstmedia</item>

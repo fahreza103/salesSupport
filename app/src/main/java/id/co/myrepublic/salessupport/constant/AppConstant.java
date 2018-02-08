@@ -23,6 +23,9 @@ public interface AppConstant {
     public static final String GET_GENDER_API_URL = BASE_API_URL+"/misc/get_gender_code";
     public static final String GET_SALUTATION_API_URL = BASE_API_URL+"/misc/get_salutations";
     public static final String GET_CUSTOMER_NATIONALITIES_API_URL = BASE_API_URL+"/misc/get_customer_nationalities";
+    public static final String GET_DEALER_API_URL = BASE_API_URL+"/misc/get_dealer_info";
+    public static final String INSERT_ORDER_API_URL = BASE_API_URL+"/order/create_new_order";
+    public static final String GET_OTP_API_URL = BASE_API_URL+"/sms/send_otp";
     public static final String SESSION_KEY = "myrepublicid";
     public static final String COOKIE_SESSION_KEY = "mySessionId";
     public static final String COOKIE_USERID_KEY = "myUserId";
@@ -30,5 +33,9 @@ public interface AppConstant {
     public static final String COOKIE_USERNAME_KEY = "myUserName";
     public static final String SESSION_VALIDATION = "session_validation";
     public static final String PERMISSION_MOBILE_APP = "ux.homepass.mobile_sales_support";
+    public static final String ALACARTE_MOVIES_ID = "20025";
+    public static final String ALACARTE_SPORT_ID = "20026";
+    public static final String ALACARTE_XTRATV_ID = "20748";
+    public static final String ALACARTE_PUBLICIP_ID = "20209";
 
 }

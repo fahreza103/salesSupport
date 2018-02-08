@@ -71,10 +71,11 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
 
         listViewHomepass = (ListView) getActivity().findViewById(R.id.listHompass);
         footerLayout = (RelativeLayout) getActivity().findViewById(R.id.homepass_list_footer);
-        footerLayout.setVisibility(View.GONE);
+
 
         if(!isAlreadyLoaded) {
             isAlreadyLoaded = true;
+            footerLayout.setVisibility(View.GONE);
             GlobalVariables gVar = GlobalVariables.getInstance();
             String sessionId = gVar.getSessionKey();
 

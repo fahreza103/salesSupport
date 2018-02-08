@@ -13,5 +13,8 @@
     <color name="lightGray">#dcdcdc</color>
     <color name="darkBlack">#404040</color>
     <color name="btnColor">#ff8b33</color>
+    <color name="yellow">#e7d400</color>
+    <color name="red">#e70004</color>
+    <color name="green">#2fc900</color>
     <color name="borderColor">#8511b3</color>
 </resources>
