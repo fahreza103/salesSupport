@@ -165,11 +165,13 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
         btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                HashMap<String,Object> billingAddressValues = FormExtractor.extractValues(getContext(),billingAddressLayout,false);
+                HashMap<String,Object> billingAddressValues = FormExtractor.extractValues(getContext(),billingAddressLayout,true);
                 boolean result = (boolean) billingAddressValues.get(Validator.VALIDATION_KEY_RESULT);
                 if(result) {
 
-                    Homepass billingAddress =  bundle.getSerializable("homepassDataService") == null ? new Homepass() : (Homepass) bundle.getSerializable("homepassDataService");
+                    //Homepass serviceAddress =  bundle.getSerializable("homepassDataService") == null ? new Homepass() : (Homepass) bundle.getSerializable("homepassDataService");
+
+                    Homepass billingAddress = new Homepass();
                     billingAddress.setActive(true);
                     billingAddress.setAddressPrefix(""+billingAddressValues.get("billing_spinner_address_prefix"));
                     billingAddress.setBlock(""+billingAddressValues.get("billing_txt_dialog_block"));
@@ -190,6 +192,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
                     billingAddress.setComplex(""+billingAddressValues.get("billing_txt_dialog_developer_complex"));
                     billingAddress.setBuildingName(""+billingAddressValues.get("billing_txt_dialog_building_name"));
                     billingAddress.setDeveloperSector(""+billingAddressValues.get("billing_txt_dialog_developer_sector"));
+                    dialog.dismiss();
                     nextFragment(address,billingAddress , false);
                 }
             }
@@ -201,6 +204,8 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
                 dialog.dismiss();
             }
         });
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogTheme;
+        dialog.show();
     }
 
     private void showAddressDialog() {
@@ -245,6 +250,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dialog.dismiss();
                 nextFragment(address,homepass,true);
             }
         });

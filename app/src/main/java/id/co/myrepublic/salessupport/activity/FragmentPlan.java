@@ -115,7 +115,7 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
 
             // Get tag, but remove public IP since it's not part of TV Package Bundle
             checkboxesTag = getContext().getResources().getStringArray(R.array.alacarte_arrays);
-            checkboxesTag = Arrays.copyOf(checkboxesTag, checkboxesTag.length-1);
+            //checkboxesTag = Arrays.copyOf(checkboxesTag, checkboxesTag.length-1);
         } else {
             populateSpinner(spinnerInternet,catalog.getInternetItems());
             populateSpinner(spinnerTv,catalog.getTvItems());

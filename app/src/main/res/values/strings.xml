@@ -120,7 +120,7 @@
     <string name="dialog_address_prefix">Address Prefix</string>
     <string name="dialog_building_name">Building Name</string>
     <string name="dialog_developer_complex">Developer Complex</string>
-    <string name="dialog_developer_sector">Deleoper Sector</string>
+    <string name="dialog_developer_sector">Developer Sector</string>
 
     <string name="tabhost_create_order">Create Order</string>
     <string name="tabhost_create_survey">Create Survey</string>
@@ -169,7 +169,7 @@
         <item>Movies</item>
         <item>Sport</item>
         <item>Xtras</item>
-        <item>IP Public</item>
+        <!--<item>IP Public</item>-->
     </string-array>
 
     <string-array name="dwelling_type_arrays">

@@ -14,6 +14,11 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -149,7 +154,7 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
         GlobalVariables gVar = GlobalVariables.getInstance();
         String sessionId = gVar.getSessionKey();
 
-        Map<Object,Object> paramMap = createOrderParam();
+        Map<Object,Object> paramMap = new HashMap<Object,Object>();
         paramMap.put("session_id", sessionId);
         paramMap.put("mobile_number",mobileNumber);
 
@@ -226,8 +231,8 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
         paramMap.put("subscription[tp_status]", "30");
         paramMap.put("subscription[net_co]", "ON");
         paramMap.put("subscription[addresses][0][type]", "Billing");
-        paramMap.put("subscription[addresses][0][province]", area.getProvinceCode());
-        paramMap.put("subscription[addresses][0][city]", area.getAreaCode());
+        paramMap.put("subscription[addresses][0][province]",homepassDataBilling.getProvince());
+        paramMap.put("subscription[addresses][0][city]", homepassDataBilling.getCity());
         paramMap.put("subscription[addresses][0][developer_cluster]", homepassDataBilling.getClusterName());
         paramMap.put("subscription[addresses][0][dwelling_type]", homepassDataBilling.getDwellingType());
         paramMap.put("subscription[addresses][0][block]", homepassDataBilling.getBlock());
@@ -240,17 +245,16 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
         paramMap.put("subscription[addresses][0][rw]", homepassDataBilling.getRw());
         paramMap.put("subscription[addresses][0][rt]", homepassDataBilling.getRt());
         paramMap.put("subscription[addresses][0][address_prefix]", homepassDataBilling.getAddressPrefix());
-        paramMap.put("subscription[addresses][0][building_ready]", homepassDataBilling.getAvailability());
         paramMap.put("subscription[addresses][0][building_name]", homepassDataBilling.getBuildingName());
         paramMap.put("subscription[addresses][0][developer_complex]", homepassDataBilling.getComplex());
-        paramMap.put("subscription[addresses][0][developer_sector]", homepassDataService.getDeveloperSector());
-        paramMap.put("subscription[addresses][0][homepassdetailid]", homepassDataBilling.getHomepassDetailId());
+        paramMap.put("subscription[addresses][0][developer_sector]", homepassDataBilling.getDeveloperSector());
+        paramMap.put("subscription[addresses][0][homepassdetailid]", homepassDataService.getHomepassDetailId());
         paramMap.put("subscription[addresses][0][country_code]", "IDN");
 
         // SERVICE-ADDRESS
         paramMap.put("subscription[addresses][1][type]", "Service");
         paramMap.put("subscription[addresses][1][province]", area.getProvinceCode());
-        paramMap.put("subscription[addresses][1][city]", area.getAreaCode());
+        paramMap.put("subscription[addresses][1][city]", area.getAreaName());
         paramMap.put("subscription[addresses][1][developer_cluster]", homepassDataService.getClusterName());
         paramMap.put("subscription[addresses][1][dwelling_type]", homepassDataService.getDwellingType());
         paramMap.put("subscription[addresses][1][block]", homepassDataService.getBlock());
@@ -258,7 +262,7 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
         paramMap.put("subscription[addresses][1][street]", homepassDataService.getStreet());
         paramMap.put("subscription[addresses][1][floor]", homepassDataService.getFloor());
         paramMap.put("subscription[addresses][1][unit]", homepassDataService.getUnit());
-        //paramMap.put("subscription[addresses][0][village]", homepassDataService.get);
+        paramMap.put("subscription[addresses][1][village]", "");
         paramMap.put("subscription[addresses][1][postal_code]", homepassDataService.getPostalcode());
         paramMap.put("subscription[addresses][1][rw]", homepassDataService.getRw());
         paramMap.put("subscription[addresses][1][rt]", homepassDataService.getRt());
@@ -266,7 +270,7 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
         paramMap.put("subscription[addresses][1][building_ready]", homepassDataService.getAvailability());
         paramMap.put("subscription[addresses][1][building_name]", homepassDataService.getBuildingName());
         paramMap.put("subscription[addresses][1][developer_complex]", homepassDataService.getComplex());
-        //paramMap.put("subscription[addresses][0][developer_sector]", homepassDataService.get);
+        paramMap.put("subscription[addresses][1][developer_sector]", "");
         paramMap.put("subscription[addresses][1][homepassdetailid]", homepassDataService.getHomepassDetailId());
         paramMap.put("subscription[addresses][1][country_code]", "IDN");
 
@@ -328,16 +332,24 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
                 i++;
             }
 
-            Boolean ip = alaCarteMap.get(AbstractWidget.CHECKBOX_TAG+"_IP Public");
-            if(ip) {
-                CatalogItem item = new CatalogItem();
-                item.setId(AppConstant.ALACARTE_PUBLICIP_ID);
-                setOrderItem(paramMap,item,i);
-                i++;
-            }
+//            Boolean ip = alaCarteMap.get(AbstractWidget.CHECKBOX_TAG+"_IP Public");
+//            if(ip) {
+//                CatalogItem item = new CatalogItem();
+//                item.setId(AppConstant.ALACARTE_PUBLICIP_ID);
+//                setOrderItem(paramMap,item,i);
+//                i++;
+//            }
 
 
         }
+        String json = null;
+        try {
+            json = new ObjectMapper().writeValueAsString(paramMap);
+            Log.i( "JSON: %s", json );
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
 
         return paramMap;
     }
@@ -392,10 +404,12 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
             if(model != null) {
                 btnConfirm.setEnabled(true);
                 model = StringUtil.convertJsonNodeIntoObject(model,Otp.class);
-                otp = model.getObject();
-                Log.i("OTP Token",otp.getOtp());
-
-                editTextUserId.setText(otp.getUserId());
+                if(model.getSuccess()) {
+                    otp = model.getObject();
+                    Log.i("OTP Token", otp.getOtp());
+                    editTextOtp.setText(otp.getOtp());
+                    editTextUserId.setText(otp.getUserId());
+                }
             }
         }
     }
