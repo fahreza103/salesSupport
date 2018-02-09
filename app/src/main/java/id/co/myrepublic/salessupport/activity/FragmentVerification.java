@@ -241,6 +241,7 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
         paramMap.put("subscription[addresses][0][floor]", homepassDataBilling.getFloor());
         paramMap.put("subscription[addresses][0][unit]", homepassDataBilling.getUnit());
         paramMap.put("subscription[addresses][0][village]", homepassDataService.getVillage());
+        paramMap.put("subscription[addresses][0][district]", homepassDataBilling.getDistrict());
         paramMap.put("subscription[addresses][0][postal_code]", homepassDataBilling.getPostalcode());
         paramMap.put("subscription[addresses][0][rw]", homepassDataBilling.getRw());
         paramMap.put("subscription[addresses][0][rt]", homepassDataBilling.getRt());
@@ -263,6 +264,7 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
         paramMap.put("subscription[addresses][1][floor]", homepassDataService.getFloor());
         paramMap.put("subscription[addresses][1][unit]", homepassDataService.getUnit());
         paramMap.put("subscription[addresses][1][village]", "");
+        paramMap.put("subscription[addresses][0][district]", homepassDataService.getDistrict());
         paramMap.put("subscription[addresses][1][postal_code]", homepassDataService.getPostalcode());
         paramMap.put("subscription[addresses][1][rw]", homepassDataService.getRw());
         paramMap.put("subscription[addresses][1][rt]", homepassDataService.getRt());
