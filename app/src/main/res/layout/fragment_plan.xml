@@ -58,6 +58,13 @@
                 android:layout_marginTop="10dp"
                 app:labelText="@string/fragment_plan_internet_package" />
 
+            <id.co.myrepublic.salessupport.widget.CustomSpinner
+                android:id="@+id/plan_spinner_ont_package"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:labelText="@string/fragment_plan_ont_package" />
+
 
             <id.co.myrepublic.salessupport.widget.CustomSpinner
                 android:id="@+id/plan_spinner_tv_package"

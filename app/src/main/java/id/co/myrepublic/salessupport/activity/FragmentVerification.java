@@ -17,8 +17,6 @@ import android.widget.TextView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.json.JSONObject;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -40,6 +38,7 @@ import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.UrlParam;
 import id.co.myrepublic.salessupport.widget.AbstractWidget;
+import id.co.myrepublic.salessupport.widget.CheckboxParam;
 
 
 public class FragmentVerification extends Fragment implements AsyncTaskListener {
@@ -309,25 +308,25 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
         }
 
         if(planData.get("plan_checkboxes_alacarte") != null) {
-            Map<String,Boolean> alaCarteMap = (Map<String,Boolean>) planData.get("plan_checkboxes_alacarte");
-            Boolean movies = alaCarteMap.get(AbstractWidget.CHECKBOX_TAG+"_Movies");
-            if(movies) {
+            Map<String,CheckboxParam> alaCarteMap = (Map<String,CheckboxParam>) planData.get("plan_checkboxes_alacarte");
+            CheckboxParam checkboxMovies = alaCarteMap.get(AbstractWidget.CHECKBOX_TAG+"_Movies");
+            if(checkboxMovies.getChecked()) {
                 CatalogItem item = new CatalogItem();
                 item.setId(AppConstant.ALACARTE_MOVIES_ID);
                 setOrderItem(paramMap,item,i);
                 i++;
             }
 
-            Boolean sport = alaCarteMap.get(AbstractWidget.CHECKBOX_TAG+"_Sport");
-            if(sport) {
+            CheckboxParam checkboxSport = alaCarteMap.get(AbstractWidget.CHECKBOX_TAG+"_Sport");
+            if(checkboxSport.getChecked()) {
                 CatalogItem item = new CatalogItem();
                 item.setId(AppConstant.ALACARTE_SPORT_ID);
                 setOrderItem(paramMap,item,i);
                 i++;
             }
 
-            Boolean xtras = alaCarteMap.get(AbstractWidget.CHECKBOX_TAG+"_Xtras");
-            if(xtras) {
+            CheckboxParam checkboxXtras = alaCarteMap.get(AbstractWidget.CHECKBOX_TAG+"_Xtras");
+            if(checkboxXtras.getChecked()) {
                 CatalogItem item = new CatalogItem();
                 item.setId(AppConstant.ALACARTE_XTRATV_ID);
                 setOrderItem(paramMap,item,i);

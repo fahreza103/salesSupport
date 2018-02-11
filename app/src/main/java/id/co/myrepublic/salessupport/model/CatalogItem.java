@@ -4,13 +4,17 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import java.io.Serializable;
 
 import id.co.myrepublic.salessupport.annotation.PositionItem;
 import id.co.myrepublic.salessupport.constant.RowItem;
 
 /**
- * Catalog Internet Items Response API
+ * Catalog  Order Items Response API
+ *
+ * @author Fahreza Tamara
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -27,8 +31,28 @@ public class CatalogItem implements Serializable {
     private String name;
     @JsonProperty("description")
     private String description;
-    @JsonProperty("price_amount")
-    private String priceAmount;
+    @JsonProperty("code")
+    private String code;
+    @JsonProperty("created_date")
+    private String createDate;
+    @JsonProperty("status")
+    private String status;
+    @JsonProperty("cost")
+    private String cost;
+    @JsonProperty("start_date")
+    private String starDate;
+    @JsonProperty("end_date")
+    private String endDate;
+    @JsonProperty("tax_group_id")
+    private String taxGroupId;
+    @JsonProperty("modified_date")
+    private String modifiedDate;
+    @JsonProperty("modified_by")
+    private String modifiedBy;
+    @JsonProperty("display_name")
+    private String displayName;
+
+
 
     public String getId() {
         return id;
@@ -62,11 +86,87 @@ public class CatalogItem implements Serializable {
         this.description = description;
     }
 
-    public String getPriceAmount() {
-        return priceAmount;
+    public String getCode() {
+        return code;
     }
 
-    public void setPriceAmount(String priceAmount) {
-        this.priceAmount = priceAmount;
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(String createDate) {
+        this.createDate = createDate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getCost() {
+        return cost;
+    }
+
+    public void setCost(String cost) {
+        this.cost = cost;
+    }
+
+    public String getStarDate() {
+        return starDate;
+    }
+
+    public void setStarDate(String starDate) {
+        this.starDate = starDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
+    }
+
+    public String getTaxGroupId() {
+        return taxGroupId;
+    }
+
+    public void setTaxGroupId(String taxGroupId) {
+        this.taxGroupId = taxGroupId;
+    }
+
+    public String getModifiedDate() {
+        return modifiedDate;
+    }
+
+    public void setModifiedDate(String modifiedDate) {
+        this.modifiedDate = modifiedDate;
+    }
+
+    public String getModifiedBy() {
+        return modifiedBy;
+    }
+
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 }

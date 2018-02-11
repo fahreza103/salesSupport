@@ -74,12 +74,15 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
         //you can set the title for your toolbar here for different fragments different titles
         getActivity().setTitle(getActivity().getString(R.string.fragment_view_salesorder));
 
+        GlobalVariables gVar = GlobalVariables.getInstance();
+
         scrollContentLayout = (LinearLayout) getActivity().findViewById(R.id.sales_scroll_layout);
         btnConfirm = (Button) getActivity().findViewById(R.id.sales_btn_confirm);
         btnConfirm.setOnClickListener(this);
 
         spinnerKnowUs = (CustomSpinner) getActivity().findViewById(R.id.sales_spinner_know_us);
         editTextsalesCode = (CustomEditText) getActivity().findViewById(R.id.sales_editText_sales_agent_code);
+        editTextsalesCode.setInputValue(gVar.getString(AppConstant.COOKIE_LOGIN_NAME,"1"));
         salesCode = editTextsalesCode.getInputValue().toString();
         editTextSalesName = (CustomEditText) getActivity().findViewById(R.id.sales_editText_sales_agent_name);
         editTextsalesCode.setInputOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -96,7 +99,6 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
 
         if(!isAlreadyLoaded) {
             isAlreadyLoaded = true;
-            GlobalVariables gVar = GlobalVariables.getInstance();
             String sessionId = gVar.getSessionKey();
 
             Bundle bundle = this.getArguments();
@@ -112,12 +114,13 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
             urlParam.setResultKey(RESULT_KEY_KNOW_US);
 
             ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(getContext(), "salesFormData", AsyncUiDisplayType.NONE);
-            asop.setDialogMsg("Get Dealer");
             asop.setListener(this);
             asop.execute(urlParam);
 
             spinnerKnowUs.runProgress();
             btnConfirm.setEnabled(false);
+
+            getDealer(salesCode);
 
         } else {
             populateKnowUsSpinner(channelsList);
@@ -127,6 +130,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
     private void getDealer(String repId) {
         GlobalVariables gVar = GlobalVariables.getInstance();
         String sessionId = gVar.getSessionKey();
+        btnConfirm.setEnabled(false);
 
         Map<Object, Object> paramMap = new HashMap<Object, Object>();
         paramMap.put("session_id", sessionId);
@@ -290,7 +294,6 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
             if(model != null) {
                 model = StringUtil.convertJsonNodeIntoObject(model, Channels[].class);
                 channelsList = model.getListObject();
-                btnConfirm.setEnabled(true);
                 populateKnowUsSpinner(channelsList);
             }
         } else if("dealerData".equals(taskName)) {

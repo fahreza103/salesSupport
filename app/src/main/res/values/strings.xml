@@ -54,6 +54,7 @@
 
     <string name="fragment_plan_create">Create Plan</string>
     <string name="fragment_plan_internet_package">Internet Package</string>
+    <string name="fragment_plan_ont_package">ONT</string>
     <string name="fragment_plan_tv_package">TV Package</string>
     <string name="fragment_plan_stb">STB</string>
     <string name="fragment_plan_alacarte">Ala Carte</string>

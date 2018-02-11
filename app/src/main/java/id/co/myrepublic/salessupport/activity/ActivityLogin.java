@@ -20,6 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import id.co.myrepublic.salessupport.R;
@@ -27,8 +28,7 @@ import id.co.myrepublic.salessupport.constant.AppConstant;
 import id.co.myrepublic.salessupport.constant.AsyncUiDisplayType;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
 import id.co.myrepublic.salessupport.model.MainModel;
-import id.co.myrepublic.salessupport.model.Particulars;
-import id.co.myrepublic.salessupport.model.UserSelect;
+import id.co.myrepublic.salessupport.model.UserRep;
 import id.co.myrepublic.salessupport.support.AbstractAsyncOperation;
 import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
@@ -117,6 +117,7 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
                     cookieMap = StringUtil.extractCookie(cookies);
                     // Put to Session
                     GlobalVariables sm = GlobalVariables.getInstance();
+                    sm.putString(AppConstant.COOKIE_FULL_STRING,cookies);
                     sm.putString(AppConstant.COOKIE_SESSION_KEY,cookieMap.get(AppConstant.COOKIE_SESSION_KEY));
                     sm.putString(AppConstant.COOKIE_USERID_KEY,cookieMap.get(AppConstant.COOKIE_USERID_KEY));
                     sm.putString(AppConstant.COOKIE_USERTYPE_KEY,cookieMap.get(AppConstant.COOKIE_USERTYPE_KEY));
@@ -195,7 +196,7 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
                 paramMap.put("user_id",cookieMap.get(AppConstant.COOKIE_USERID_KEY));
 
                 UrlParam urlParam = new UrlParam();
-                urlParam.setUrl(AppConstant.GET_USER_INFO);
+                urlParam.setUrl(AppConstant.GET_USER_REP_API_URL);
                 urlParam.setParamMap(paramMap);
 
                 ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(this,"getUserInfo",AsyncUiDisplayType.SCREEN);
@@ -207,15 +208,18 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
             }
 
         } else if("getUserInfo".equals(taskName)) {
-            MainModel<UserSelect> model = ((Map<String, MainModel>) result).get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
+            MainModel<UserRep> model = ((Map<String, MainModel>) result).get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
             if(model != null) {
-                model = StringUtil.convertJsonNodeIntoObject(model,UserSelect.class);
-
-                Particulars particulars = model.getObject().getParticulars();
-                // save to session
-                GlobalVariables sm = GlobalVariables.getInstance();
-                sm.putString(AppConstant.COOKIE_USERNAME_KEY,particulars.getFirstName());
-
+                model = StringUtil.convertJsonNodeIntoObject(model,UserRep[].class);
+                List<UserRep> userRepList = model.getListObject();
+                if(userRepList.size() > 0) {
+                    UserRep userRep = userRepList.get(0);
+                    // save to session
+                    GlobalVariables sm = GlobalVariables.getInstance();
+                    sm.putString(AppConstant.COOKIE_USERNAME_KEY, userRep.getFirstName());
+                    sm.putString(AppConstant.COOKIE_REP_ID, userRep.getRepId());
+                    sm.putString(AppConstant.COOKIE_LOGIN_NAME, userRep.getLoginName());
+                }
                 Intent intent = new Intent(context, ActivityMain.class);
                 startActivity(intent);
                 finish();

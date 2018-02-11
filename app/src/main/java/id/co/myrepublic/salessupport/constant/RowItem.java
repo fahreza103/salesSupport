@@ -8,5 +8,6 @@ public enum RowItem {
     MAINTEXT1,
     MAINTEXT2,
     SUBTEXT1,
-    SUBTEXT2;
+    SUBTEXT2,
+    VALUE;
 }

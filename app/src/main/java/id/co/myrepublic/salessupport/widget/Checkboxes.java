@@ -26,6 +26,7 @@ public class Checkboxes extends AbstractWidget {
 
     private List<CheckBox> checkboxes;
     private LinearLayout checkboxParentLayout;
+    private Map<String,Object> mapValues ;
 
     public Checkboxes(Context context) {
         super(context);
@@ -37,6 +38,7 @@ public class Checkboxes extends AbstractWidget {
 
     @Override
     protected void initCustomAttr(Context context, AttributeSet attrs) {
+        this.checkboxParentLayout = (LinearLayout) this.widgetView;
         this.checkboxes = new ArrayList<CheckBox>();
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.appAttr);
 
@@ -44,6 +46,24 @@ public class Checkboxes extends AbstractWidget {
         int selectedItem = typedArray.getInteger(R.styleable.appAttr_selectedItem,0);
         typedArray.recycle();
         setEntries(entries);
+    }
+
+    /**
+     * Set checkbox entries with map values
+     * @param mapValues
+     */
+    public void setEntriesMap(Map<String,Object> mapValues) {
+        // Remove all checkbox view from previous
+        if(checkboxParentLayout != null) {
+            checkboxParentLayout.removeAllViews();
+            this.checkboxes.clear();
+        }
+
+        this.mapValues = mapValues;
+        for (Map.Entry<String, Object> entry : mapValues.entrySet()) {
+            addCheckbox(entry.getKey());
+        }
+
     }
 
     /**
@@ -91,7 +111,6 @@ public class Checkboxes extends AbstractWidget {
      * @return
      */
     public CheckBox addCheckbox(String entry) {
-        checkboxParentLayout = (LinearLayout) this.widgetView;
         CheckBox checkBox = new CheckBox(this.context);
         checkBox.setText(entry);
         checkBox.setTag(CHECKBOX_TAG+"_"+entry);
@@ -180,9 +199,13 @@ public class Checkboxes extends AbstractWidget {
 
     @Override
     public Object getInputValue() {
-        Map<String,Boolean> result = new HashMap<String,Boolean>();
+        Map<String,CheckboxParam> result = new HashMap<String,CheckboxParam>();
         for(CheckBox checkBox : checkboxes) {
-            result.put(checkBox.getTag().toString(), checkBox.isChecked());
+            CheckboxParam checkboxParam = new CheckboxParam();
+            checkboxParam.setChecked(checkBox.isChecked());
+            if(mapValues != null)
+                checkboxParam.setValue(mapValues.get(checkBox.getText()));
+            result.put(checkBox.getTag().toString(), checkboxParam);
         }
         return result;
     }

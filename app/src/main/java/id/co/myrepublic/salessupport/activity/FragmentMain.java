@@ -1,5 +1,8 @@
 package id.co.myrepublic.salessupport.activity;
 
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,10 +12,20 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.GZIPOutputStream;
 
 import id.co.myrepublic.salessupport.R;
+import id.co.myrepublic.salessupport.constant.AppConstant;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
+import id.co.myrepublic.salessupport.util.UrlResponse;
+import id.co.myrepublic.salessupport.widget.Checkboxes;
 import id.co.myrepublic.salessupport.widget.CustomSpinner;
 
 /**
@@ -25,6 +38,7 @@ public class FragmentMain extends Fragment {
     private LinearLayout footerBar;
     private CustomSpinner customSpinner;
     private Button btn;
+    private Checkboxes testCheckboxes;
 
     @Nullable
     @Override
@@ -49,12 +63,88 @@ public class FragmentMain extends Fragment {
         customSpinner = (CustomSpinner) getActivity().findViewById(R.id.test_spinner);
         btn = (Button) getActivity().findViewById(R.id.test_button);
 
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                customSpinner.runProgress();
-            }
-        });
+//        testCheckboxes = (Checkboxes) getActivity().findViewById(R.id.test_checkboxes);
+//        Map<String,Object> dataMap = new HashMap<String,Object>();
+//        dataMap.put("test1","value A");
+//        dataMap.put("test2","value B");
+//        dataMap.put("test3","value C");
+//        testCheckboxes.setEntriesMap(dataMap);
+//        btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                HashMap<String,Object> planData = FormExtractor.extractValues(getContext(),layoutLogo,false);
+//                HashMap<String,CheckboxParam> checkboxMap = (HashMap<String, CheckboxParam>) planData.get("test_checkboxes");
+//                CheckboxParam param = checkboxMap.get(AbstractWidget.CHECKBOX_TAG+"test2");
+//            }
+//        });
 
+
+
+
+        //new AsyncTest().execute(new UrlParam());
+
+
+    }
+
+    class AsyncTest extends AsyncTask<Object, Integer, List<UrlResponse>> {
+
+        final File file = new File("/storage/emulated/0/DCIM/Camera/IMG_20180211_033508.jpg");
+        final String URL = AppConstant.UPLOAD_ORDER_DOCUMENT_API_URL+"/167805/1";
+        final Map<Object,Object> paramMap = new HashMap<Object,Object>();
+
+        public  byte[] compress(String data) throws IOException {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream(data.length());
+            GZIPOutputStream gzip = new GZIPOutputStream(bos);
+            gzip.write(data.getBytes());
+            gzip.close();
+            byte[] compressed = bos.toByteArray();
+            bos.close();
+            return compressed;
+        }
+
+        @Override
+        protected List<UrlResponse> doInBackground(Object... objects) {
+            final GlobalVariables gvar = GlobalVariables.getInstance();
+
+            String url = AppConstant.UPLOAD_ORDER_DOCUMENT_API_URL+"/167804/1";
+
+            Uri fileUri = Uri.fromFile(file);
+            Bitmap selectedImageBitmap = null;
+
+
+
+//            byte[] data = null;
+//            String encoded = null;
+//            String fileContent = null;
+//            try {
+//                fileContent = FileUtils.readFileToString(file);
+//                //data = FileUtils.readFileToByteArray(file);
+//                selectedImageBitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), fileUri);
+//
+//                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//                selectedImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+//                data = byteArrayOutputStream.toByteArray();
+//
+//                encoded = Base64.encodeToString(fileContent.getBytes("CP1252"), Base64.DEFAULT);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//            String URL = "https://boss-st.myrepublic.co.id/api/order/upload_file";
+//            //String URL = AppConstant.UPLOAD_ORDER_DOCUMENT_API_URL+"/167805/1";
+//            Map<Object, Object> paramMap = new HashMap<Object, Object>();
+//            paramMap.put("session_id", gvar.getSessionKey());
+//            paramMap.put("document[name]", "test.jpg");
+//            paramMap.put("document[document_type_id]", "1");
+//            paramMap.put("document[size]", file.length());
+//            paramMap.put("document[contents]", fileContent);
+//            paramMap.put("order_id", "167804");
+//
+//            paramMap.put("session_id", gvar.getString(AppConstant.COOKIE_SESSION_KEY, ""));
+//            UrlResponse response = URLConnector.doConnect(URL, paramMap);
+
+
+            return null;
+        }
     }
 }

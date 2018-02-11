@@ -12,6 +12,7 @@
             android:gravity="center"
             android:orientation="vertical">
 
+
             <id.co.myrepublic.salessupport.widget.CustomSpinner
                 android:id="@+id/test_spinner"
                 android:layout_width="match_parent"

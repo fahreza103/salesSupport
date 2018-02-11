@@ -69,7 +69,6 @@
                 android:layout_marginTop="10dp"
                 app:inputType="text"
                 app:enabled="false"
-                app:value="MyRepublic Limited"
                 app:labelText="@string/fragment_sales_agent_name" />
 
             <id.co.myrepublic.salessupport.widget.CustomEditText
