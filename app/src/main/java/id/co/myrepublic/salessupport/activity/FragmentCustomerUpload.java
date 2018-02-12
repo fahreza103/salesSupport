@@ -4,29 +4,25 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import id.co.myrepublic.salessupport.R;
+import id.co.myrepublic.salessupport.support.BitmapProcessor;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
-import id.co.myrepublic.salessupport.util.StringUtil;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -34,22 +30,23 @@ import static android.app.Activity.RESULT_OK;
 public class FragmentCustomerUpload extends Fragment implements View.OnClickListener {
 
     private static final int IMAGE_ID_GALLERY_PREVIEW = 0;
-    private static final int IMAGE_SELFIE_GALLERY_PREVIEW = 1;
+    private static final int IMAGE_OTHER_GALLERY_PREVIEW = 1;
     private static final int IMAGE_ID_CAMERA_PREVIEW = 2;
-    private static final int IMAGE_SELFIE_CAMERA_PREVIEW = 3;
+    private static final int IMAGE_OTHER_CAMERA_PREVIEW = 3;
 
     //private Button btnGalleryId;
     private Button btnCameraId;
     //private Button btnGallerySelfie;
-    //private Button btnCameraSelfie;
+    private Button btnCameraOther;
     private Button btnConfirm;
     private ImageView imageViewPreviewId;
-    private ImageView imageViewPreviewSelfie;
+    private ImageView imageViewPreviewOther;
 
     private Uri cameraImageUri;
-    private String imagePath;
     private String idImagePath;
-    private String selfieImagePath;
+    private String otherImagePath;
+    private Uri idImageUri;
+    private Uri otherImageUri;
 
     @Nullable
     @Override
@@ -67,20 +64,24 @@ public class FragmentCustomerUpload extends Fragment implements View.OnClickList
         //btnGalleryId = (Button) getActivity().findViewById(R.id.customer_btn_id_gallery);
         btnCameraId = (Button) getActivity().findViewById(R.id.customer_btn_id_takephoto);
         //btnGallerySelfie = (Button) getActivity().findViewById(R.id.customer_btn_selfie_gallery);
-        //btnCameraSelfie = (Button) getActivity().findViewById(R.id.customer_btn_selfie_takephoto);
+        btnCameraOther = (Button) getActivity().findViewById(R.id.customer_btn_other_takephoto);
         btnConfirm = (Button) getActivity().findViewById(R.id.customer_btn_confirm) ;
 
         imageViewPreviewId = (ImageView) getActivity().findViewById(R.id.customer_image_id_preview);
-        //imageViewPreviewSelfie = (ImageView) getActivity().findViewById(R.id.customer_image_selfie_preview) ;
+        imageViewPreviewOther = (ImageView) getActivity().findViewById(R.id.customer_image_other_preview);
 
         //btnGalleryId.setOnClickListener(this);
         //btnGallerySelfie.setOnClickListener(this);
         btnCameraId.setOnClickListener(this);
-        //btnCameraSelfie.setOnClickListener(this);
+        btnCameraOther.setOnClickListener(this);
         btnConfirm.setOnClickListener(this);
 
-        if(cameraImageUri != null) {
-            showImageFromUri(cameraImageUri);
+        if(idImageUri != null) {
+            showImageFromUri(idImageUri,imageViewPreviewId);
+        }
+
+        if(otherImageUri != null) {
+            showImageFromUri(otherImageUri,imageViewPreviewOther);
         }
     }
 
@@ -94,16 +95,16 @@ public class FragmentCustomerUpload extends Fragment implements View.OnClickList
                 openCamera(IMAGE_ID_CAMERA_PREVIEW);
                 break;
             //case R.id.customer_btn_selfie_gallery :
-            //    openGallery(IMAGE_SELFIE_GALLERY_PREVIEW);
+            //    openGallery(IMAGE_OTHER_GALLERY_PREVIEW);
             //    break;
 
-            //case R.id.customer_btn_selfie_takephoto :
-            //   openCamera(IMAGE_SELFIE_CAMERA_PREVIEW);
-            //    break;
+            case R.id.customer_btn_other_takephoto :
+               openCamera(IMAGE_OTHER_CAMERA_PREVIEW);
+                break;
             case R.id.customer_btn_confirm :
                 Bundle bundle = this.getArguments();
                 bundle.putString("customerIdPhoto",idImagePath);
-                bundle.putString("customerSelfiePhoto",selfieImagePath);
+                bundle.putString("customerOtherPhoto", otherImagePath);
 
                 Fragment fragment = new FragmentPlan();
                 fragment.setArguments(bundle);
@@ -122,7 +123,7 @@ public class FragmentCustomerUpload extends Fragment implements View.OnClickList
 
     private void openCamera(int type) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        File imageFile = getFile();
+        File imageFile = BitmapProcessor.createTempBitmapFile();
         //getting uri of the file
         cameraImageUri = Uri.fromFile(imageFile);
 
@@ -136,30 +137,7 @@ public class FragmentCustomerUpload extends Fragment implements View.OnClickList
         }
     }
 
-    //this method will create and return the path to the image file
-    private File getFile() {
-        File folder = Environment.getExternalStoragePublicDirectory("/salessupport/");// the file path
 
-        //if it doesn't exist the folder will be created
-        if(!folder.exists()) {
-            if(!folder.getParentFile().exists())
-                folder.getParentFile().mkdirs();
-            boolean a = folder.mkdirs();
-        }
-
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "salessupport_"+ timeStamp + "_";
-        File image_file = null;
-
-        try {
-            image_file = File.createTempFile(imageFileName,".jpg",folder);
-            imagePath = image_file.getAbsolutePath();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return image_file;
-    }
 
     private void openGallery(int type) {
         Intent gallery =
@@ -177,39 +155,44 @@ public class FragmentCustomerUpload extends Fragment implements View.OnClickList
         // then this is our request and we can process the result
 
         if (resultCode == RESULT_OK) {
-            Uri imageUri = null;
-            if(data != null) {
-                imageUri = data.getData();
-            } else {
-                imageUri = cameraImageUri;
-            }
+            Uri imageUri = cameraImageUri;
+
+            // Compress the image
+            File imageFile = new File(imageUri.getPath());
+            String imagePath = imageFile.getAbsolutePath();
+            imageFile = BitmapProcessor.compressAndResize(imageFile);
+            Log.i("Image File compressed",imageFile.length()+"");
+            imageUri = Uri.fromFile(imageFile);
+
             if (requestCode == IMAGE_ID_GALLERY_PREVIEW) {
                 imageViewPreviewId.setImageURI(imageUri);
                 imageViewPreviewId.setVisibility(View.VISIBLE);
-                idImagePath = StringUtil.getPath(getContext(),imageUri);
-            } else if (requestCode == IMAGE_SELFIE_GALLERY_PREVIEW) {
-                imageViewPreviewSelfie.setImageURI(imageUri);
-                imageViewPreviewSelfie.setVisibility(View.VISIBLE);
-                selfieImagePath = StringUtil.getPath(getContext(),imageUri);
+                idImageUri = imageUri;
+            } else if (requestCode == IMAGE_OTHER_GALLERY_PREVIEW) {
+                imageViewPreviewOther.setImageURI(imageUri);
+                imageViewPreviewOther.setVisibility(View.VISIBLE);
+                otherImageUri = imageUri;
             } else if (requestCode == IMAGE_ID_CAMERA_PREVIEW) {
-                showImageFromUri(cameraImageUri);
+                showImageFromUri(cameraImageUri, imageViewPreviewId);
+                idImageUri = imageUri;
                 idImagePath = imagePath;
-            } else if (requestCode == IMAGE_SELFIE_CAMERA_PREVIEW) {
-                showImageFromUri(cameraImageUri);
-                selfieImagePath = imagePath;
+            } else if (requestCode == IMAGE_OTHER_CAMERA_PREVIEW) {
+                showImageFromUri(cameraImageUri, imageViewPreviewOther);
+                otherImageUri = imageUri;
+                otherImagePath = imagePath;
             }
         }
 
     }
 
-    private void showImageFromUri(Uri uri) {
+    private void showImageFromUri(Uri uri, ImageView imageView) {
         Bitmap bmp = null;
         GlobalVariables gVar = GlobalVariables.getInstance();
         try {
             bmp = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
-            imageViewPreviewId.setImageBitmap(bmp);
-            imageViewPreviewId.startAnimation(gVar.getFadeInAnim());
-            imageViewPreviewId.setVisibility(View.VISIBLE);
+            imageView.setImageBitmap(bmp);
+            imageView.startAnimation(gVar.getFadeInAnim());
+            imageView.setVisibility(View.VISIBLE);
         } catch (IOException e) {
             e.printStackTrace();
         }

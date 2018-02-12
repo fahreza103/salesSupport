@@ -24,6 +24,7 @@ import id.co.myrepublic.salessupport.listener.DialogListener;
 import id.co.myrepublic.salessupport.model.MainModel;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
+import id.co.myrepublic.salessupport.util.UrlParam;
 import id.co.myrepublic.salessupport.util.UrlResponse;
 
 /**
@@ -205,6 +206,19 @@ public abstract class AbstractAsyncOperation extends AsyncTask<Object, Integer, 
             public void onDialogCancelPressed(DialogInterface dialog, int which) {}
         });
         builder.createAlertDialog(this.context,"ERROR", message);
+    }
+
+    protected void initResultKey(UrlResponse urlResponse,UrlParam urlParam) {
+        String result = urlResponse.getResultValue();
+
+        if(result != null) {
+            // if resultKey not defined , the Object will  store defaultKey
+            String resultKey = DEFAULT_RESULT_KEY;
+            if (!StringUtil.isEmpty(urlParam.getResultKey())) {
+                resultKey = urlParam.getResultKey();
+            }
+            urlResponse.setResultKey(resultKey);
+        }
     }
 
     public String getDialogMsg() {

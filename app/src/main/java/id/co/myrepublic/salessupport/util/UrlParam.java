@@ -1,5 +1,6 @@
 package id.co.myrepublic.salessupport.util;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +16,7 @@ public class UrlParam {
 
     private String url;
     private String resultKey;
+    private File file;
     private Map<Object,Object> paramMap;
 
     public String getUrl() {
@@ -41,6 +43,13 @@ public class UrlParam {
         this.resultKey = resultKey;
     }
 
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
 
     public static UrlParam createParamCheckSession(String sessionId) {
         Map<Object,Object> paramMap = new HashMap<Object,Object>();

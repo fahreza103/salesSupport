@@ -4,10 +4,9 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,21 +14,22 @@ import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import org.apache.commons.io.FileUtils;
-
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
 import id.co.myrepublic.salessupport.R;
-import id.co.myrepublic.salessupport.constant.AppConstant;
+import id.co.myrepublic.salessupport.support.BitmapProcessor;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
-import id.co.myrepublic.salessupport.util.URLConnector;
-import id.co.myrepublic.salessupport.util.UrlParam;
 import id.co.myrepublic.salessupport.util.UrlResponse;
 import id.co.myrepublic.salessupport.widget.Checkboxes;
 import id.co.myrepublic.salessupport.widget.CustomSpinner;
@@ -114,40 +114,26 @@ public class FragmentMain extends Fragment {
             String url = "https://boss-st.myrepublic.co.id/api/mobile-order-upload/167812/2/56907d10-4223-4b0d-94d4-bc3602d3d17f";
 
             Uri fileUri = Uri.fromFile(file);
-            Bitmap selectedImageBitmap = null;
+            Bitmap selectedImageBitmap = BitmapProcessor.decodeFile(file);
 
 
+            try {
+                File folder = Environment.getExternalStoragePublicDirectory("/salessupport/");
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                String imageFileName = "salessupport_"+ timeStamp + "_";
+                //write the bytes in file
+                File file =  File.createTempFile(imageFileName,".jpg",folder);
+                OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
+                selectedImageBitmap.compress(Bitmap.CompressFormat.JPEG, 80 , new FileOutputStream(file));
+                os.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-//            byte[] data = null;
-//            String encoded = null;
-//            String fileContent = null;
-//            try {
-//                //fileContent = FileUtils.readFileToString(file);
-//                data = FileUtils.readFileToByteArray(file);
-//                selectedImageBitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), fileUri);
-//
-//                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-//                selectedImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-//                data = byteArrayOutputStream.toByteArray();
-//
-//                encoded = Base64.encodeToString(data, Base64.DEFAULT);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//
-//            String URL = "https://boss-st.myrepublic.co.id/api/order/upload_file";
-//            //String URL = AppConstant.UPLOAD_ORDER_DOCUMENT_API_URL+"/167805/1";
-//            Map<Object, Object> paramMap = new HashMap<Object, Object>();
-//            paramMap.put("session_id", gvar.getSessionKey());
-//            paramMap.put("document[name]", "test_file_new.jpg");
-//            paramMap.put("document[document_type_id]", "1");
-//            paramMap.put("document[size]", file.length());
-//            paramMap.put("document[contents]", encoded);
-//            paramMap.put("order_id", "167804");
 
-            paramMap.put("session_id", gvar.getString(AppConstant.COOKIE_SESSION_KEY, ""));
-            UrlResponse response = URLConnector.doConnectMultipart(url, paramMap,file,gvar.getString(AppConstant.COOKIE_FULL_STRING,""),null);
-
+//            paramMap.put("session_id", gvar.getString(AppConstant.COOKIE_SESSION_KEY, ""));
+//            UrlResponse response = URLConnector.doConnectMultipart(url, paramMap,file,gvar.getString(AppConstant.COOKIE_FULL_STRING,""),null);
+            boolean exist = file.exists();
 
             return null;
         }

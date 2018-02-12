@@ -29,7 +29,7 @@ public interface AppConstant {
     public static final String GET_ADDRESS_PREFIX_API_URL = BASE_API_URL+"/homepass/get_address_prefix";
     public static final String GET_ORDER_CATALOG_API_URL = BASE_API_URL+"/product_catalog/get_order_catalog";
     public static final String INSERT_ORDER_API_URL = BASE_API_URL+"/order/create_new_order";
-    public static final String UPLOAD_ORDER_DOCUMENT_API_URL = BASE_API_URL+"/order-file-upload";
+    public static final String UPLOAD_ORDER_DOCUMENT_API_URL = BASE_API_URL+"/mobile-order-upload";
     public static final String GET_OTP_API_URL = BASE_API_URL+"/sms/send_otp";
     public static final String SESSION_KEY = "myrepublicid";
     public static final String COOKIE_FULL_STRING = "cookieFullString";

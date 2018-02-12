@@ -1,13 +1,16 @@
 package id.co.myrepublic.salessupport.widget;
 
+import java.io.Serializable;
+
 /**
  * POJO checkbox to store checkbox value and checked state
  *
  * @author Fahreza Tamara
  */
 
-public class CheckboxParam {
+public class CheckboxParam implements Serializable {
 
+    private static final long serialVersionUID = 3243344518456725L;
     public Boolean isChecked;
     public Object value;
 

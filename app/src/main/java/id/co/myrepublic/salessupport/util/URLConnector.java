@@ -111,7 +111,7 @@ public class URLConnector {
             for (Map.Entry<Object, Object> entry : paramMap.entrySet()) {
                 multipart.addFormField(entry.getKey().toString(), ""+entry.getValue());
             }
-            multipart.addFilePart("file", requestFile);
+            multipart.addFilePart("file", requestFile,progressListener);
             String serverResponse = multipart.finish();
 
             urlResponse.setResultValue(serverResponse);
@@ -121,7 +121,7 @@ public class URLConnector {
             e.printStackTrace();
             urlResponse.setResultCode(UrlResponse.RESULT_ERR_TIMEOUT);
             urlResponse.setErrorMessage("Connection Time out, server not responding");
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             urlResponse.setResultCode(UrlResponse.RESULT_ERR_FATAL);
             urlResponse.setErrorMessage("Server returned non-OK status or connection failure");

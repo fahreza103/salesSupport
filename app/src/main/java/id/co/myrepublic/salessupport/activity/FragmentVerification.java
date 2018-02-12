@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,7 +34,9 @@ import id.co.myrepublic.salessupport.model.Homepass;
 import id.co.myrepublic.salessupport.model.MainModel;
 import id.co.myrepublic.salessupport.model.Order;
 import id.co.myrepublic.salessupport.model.Otp;
+import id.co.myrepublic.salessupport.support.AbstractAsyncOperation;
 import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
+import id.co.myrepublic.salessupport.support.ApiMultipartConnectorAsyncOperation;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.UrlParam;
@@ -45,13 +48,23 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
 
     private static final String RESULT_KEY_ORDER = "createOrder";
     private static final String RESULT_KEY_OTP = "getOtp";
+    private static final String DOC_TYPE_MISC = "1";
+    private static final String DOC_TYPE_ID = "3";
+
 
     private Button btnResend;
     private Button btnConfirm;
     private LinearLayout layoutVerificationCode;
     private LinearLayout layoutVerificationCreateOrderStatus;
-    private LinearLayout layoutVerificationUploadStatus;
     private LinearLayout layoutVerificationResultStatus;
+
+    private LinearLayout layoutVerificationUploadIdStatus;
+    private LinearLayout layoutVerificationUploadOtherStatus;
+    private TextView textUploadIdStatus;
+    private TextView textUploadOtherStatus;
+    private ProgressBar progressUploadId;
+    private ProgressBar progressUploadOther;
+
     private TextView orderResultText;
     private TextView orderResultValue;
     private TextView orderProgressText;
@@ -62,6 +75,7 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
     private Button btnOk;
     private Otp otp;
     private Boolean isSuccessCreateOrder = false;
+    private Boolean buttonOkPressed = false;
 
     @Nullable
     @Override
@@ -82,8 +96,15 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
 
         layoutVerificationCode = (LinearLayout) getActivity().findViewById(R.id.verification_code_layout);
         layoutVerificationCreateOrderStatus = (LinearLayout) getActivity().findViewById(R.id.verification_status_progress_create_order_layout);
-        layoutVerificationUploadStatus = (LinearLayout) getActivity().findViewById(R.id.verification_status_progress_upload_layout);
+        layoutVerificationUploadIdStatus = (LinearLayout) getActivity().findViewById(R.id.verification_status_progress_upload_id_layout);
+        layoutVerificationUploadOtherStatus = (LinearLayout) getActivity().findViewById(R.id.verification_status_progress_upload_other_layout);
         layoutVerificationResultStatus = (LinearLayout) getActivity().findViewById(R.id.verification_result_layout);
+
+        textUploadIdStatus = (TextView) getActivity().findViewById(R.id.verification_status_progress_upload_id_status_txt);
+        textUploadOtherStatus = (TextView) getActivity().findViewById(R.id.verification_status_progress_upload_other_status_txt);
+        progressUploadId = (ProgressBar) getActivity().findViewById(R.id.verification_status_progress_upload_id_progress);
+        progressUploadOther = (ProgressBar) getActivity().findViewById(R.id.verification_status_progress_upload_other_progress);
+
         orderResultValue = (TextView) getActivity().findViewById(R.id.verification_result_value);
         orderResultText = (TextView) getActivity().findViewById(R.id.verification_result_txt);
         orderProgressText = (TextView) getActivity().findViewById(R.id.verification_status_progress_create_order_status_txt);
@@ -101,6 +122,7 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
             @Override
             public void onClick(View v) {
                 // Back to cluster detail
+                buttonOkPressed = true;
                 backToClusterDetail();
             }
         });
@@ -123,7 +145,7 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
 
                     Animation fadeOut = gVar.getFadeOutAnim();
                     layoutVerificationCreateOrderStatus.setVisibility(View.VISIBLE);
-                    layoutVerificationCreateOrderStatus.startAnimation(gVar.getFadeInAnim());
+                    layoutVerificationCreateOrderStatus.startAnimation(gVar.getRightLeftAnim());
                     layoutVerificationCode.setVisibility(View.GONE);
                     layoutVerificationCode.startAnimation(fadeOut);
                 } else {
@@ -176,8 +198,7 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
         HashMap<String,Object> salesData = (HashMap<String, Object>) bundle.getSerializable("salesData");
         HashMap<String,Object> customerData = (HashMap<String, Object>) bundle.getSerializable("customerData");
         HashMap<String,Object> planData = (HashMap<String, Object>) bundle.getSerializable("planData");
-        String idImagePath = bundle.getString("customerIdPhoto");
-        String selfieImagePath = bundle.getString("customerSelfiePhoto");
+
         Channels knowUs = (Channels) salesData.get("sales_spinner_know_us");
 
         Map<Object,Object> paramMap = new HashMap<Object,Object>();
@@ -225,8 +246,8 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
         paramMap.put("subscription[tp_status]", "30");
         paramMap.put("subscription[net_co]", "ON");
         paramMap.put("subscription[addresses][0][type]", "Billing");
-        paramMap.put("subscription[addresses][0][province]",homepassDataBilling.getProvince());
-        paramMap.put("subscription[addresses][0][city]", homepassDataBilling.getCity());
+        paramMap.put("subscription[addresses][0][province]",StringUtil.isEmpty(homepassDataBilling.getProvince())? area.getProvinceCode() : homepassDataBilling.getProvince());
+        paramMap.put("subscription[addresses][0][city]", StringUtil.isEmpty(homepassDataBilling.getCity())? area.getAreaName() : homepassDataBilling.getCity());
         paramMap.put("subscription[addresses][0][developer_cluster]", homepassDataBilling.getClusterName());
         paramMap.put("subscription[addresses][0][dwelling_type]", homepassDataBilling.getDwellingType());
         paramMap.put("subscription[addresses][0][block]", homepassDataBilling.getBlock());
@@ -366,6 +387,33 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
         return paramMap;
     }
 
+    private void uploadFile(String filePath, String orderId, String docType, LinearLayout layout, TextView textProgress) {
+        if(!StringUtil.isEmpty(filePath)) {
+            File imageFile = new File(filePath);
+            if(imageFile.exists()) {
+                final GlobalVariables gVar = GlobalVariables.getInstance();
+                textProgress.setTextColor(getResources().getColor(R.color.yellow));
+
+                Map<Object, Object> paramMap = new HashMap<Object, Object>();
+                UrlParam urlParam = new UrlParam();
+                urlParam.setUrl(AppConstant.UPLOAD_ORDER_DOCUMENT_API_URL+"/"+orderId+"/"+docType+"/"+gVar.getSessionKey());
+                urlParam.setParamMap(paramMap);
+                urlParam.setFile(imageFile);
+
+                ApiMultipartConnectorAsyncOperation amsop = new ApiMultipartConnectorAsyncOperation(getContext(),"upload_"+docType,AsyncUiDisplayType.NONE);
+                amsop.setListener(FragmentVerification.this);
+                amsop.setProgressTextView(textProgress);
+                amsop.execute(urlParam);
+
+
+                layout.setVisibility(View.VISIBLE);
+                layout.startAnimation(gVar.getRightLeftAnim());
+
+
+            }
+        }
+    }
+
     @Override
     public void onAsyncTaskComplete(Object result, String taskName) {
         GlobalVariables gVar = GlobalVariables.getInstance();
@@ -380,7 +428,6 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
                 if(!model.getSuccess()) {
                     orderProgressText.setText(getResources().getText(R.string.status_failed));
                     orderProgressText.setTextColor(getResources().getColor(R.color.red));
-                    orderProgressText.startAnimation(gVar.getFadeInAnim());
                     orderResultText.setText(model.getError());
                 } else {
                     isSuccessCreateOrder = true;
@@ -389,12 +436,49 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
 
                     orderProgressText.setText(getResources().getText(R.string.status_success));
                     orderProgressText.setTextColor(getResources().getColor(R.color.green));
-                    orderProgressText.startAnimation(gVar.getFadeInAnim());
                     orderResultText.setText(getResources().getText(R.string.fragment_verification_order_success));
                     orderResultValue.setText("Order ID : "+order.getOrderId()+"\n"
                         +"Customer ID : "+order.getCustomerId()+"\n"
                         +"Subscription ID : "+order.getSubscriptionId());
+
+                    // do Upload file
+                    Bundle bundle = this.getArguments();
+                    String idImagePath = bundle.getString("customerIdPhoto");
+                    String otherImagePath = bundle.getString("customerOtherPhoto");
+
+                    uploadFile(idImagePath,order.getOrderId(),DOC_TYPE_ID,layoutVerificationUploadIdStatus,textUploadIdStatus);
+                    uploadFile(otherImagePath,order.getOrderId(),DOC_TYPE_MISC,layoutVerificationUploadOtherStatus,textUploadOtherStatus);
                 }
+                orderProgressText.startAnimation(gVar.getFadeInAnim());
+            }
+        } else if(taskName.equals("upload_"+DOC_TYPE_ID)) {
+            MainModel model = resultMap.get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
+            progressUploadId.setVisibility(View.GONE);
+            progressUploadId.startAnimation(gVar.getFadeOutAnim());
+            if(model != null) {
+                if(!model.getSuccess()) {
+                    textUploadIdStatus.setText(getResources().getText(R.string.status_failed)+" : "+model.getError());
+                    textUploadIdStatus.setTextColor(getResources().getColor(R.color.red));
+                } else {
+                    textUploadIdStatus.setText(getResources().getText(R.string.status_success));
+                    textUploadIdStatus.setTextColor(getResources().getColor(R.color.green));
+                }
+                textUploadIdStatus.startAnimation(gVar.getFadeInAnim());
+            }
+
+        } else if(taskName.equals("upload_"+DOC_TYPE_MISC)) {
+            MainModel model = resultMap.get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
+            progressUploadOther.setVisibility(View.GONE);
+            progressUploadOther.startAnimation(gVar.getFadeOutAnim());
+            if(model != null) {
+                if(!model.getSuccess()) {
+                    textUploadOtherStatus.setText(getResources().getText(R.string.status_failed)+" : "+model.getError());
+                    textUploadOtherStatus.setTextColor(getResources().getColor(R.color.red));
+                } else {
+                    textUploadOtherStatus.setText(getResources().getText(R.string.status_success));
+                    textUploadOtherStatus.setTextColor(getResources().getColor(R.color.green));
+                }
+                textUploadOtherStatus.startAnimation(gVar.getFadeInAnim());
             }
         } else if("sendOtp".equals(taskName)) {
             MainModel<Otp> model = resultMap.get(RESULT_KEY_OTP);
@@ -421,11 +505,12 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
     }
 
 
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         // Back, if already success, back to cluster detail
-        if(isSuccessCreateOrder) {
+        if(isSuccessCreateOrder && !buttonOkPressed) {
             backToClusterDetail();
         }
     }

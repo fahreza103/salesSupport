@@ -15,7 +15,6 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.List;
 
 import id.co.myrepublic.salessupport.listener.ProgressListener;
 
@@ -117,7 +116,7 @@ public class MultipartUtility {
         FileInputStream inputStream = new FileInputStream(requestFile);
 
         int totalSize =  (int)requestFile.length();
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[128];
         int progress = 0;
         int bytesRead = -1;
         while ((bytesRead = inputStream.read(buffer)) != -1) {
@@ -126,7 +125,7 @@ public class MultipartUtility {
             progress += bytesRead; // Here progress is total uploaded bytes
 
             if(progressListener != null) {
-                progressListener.onAsyncProgressUpdate(""+(int)((progress*100)/totalSize));
+                progressListener.onAsyncProgressUpdate((int)((progress*100)/totalSize));
             }
         }
         //outputStream.flush();

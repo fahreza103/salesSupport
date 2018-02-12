@@ -51,6 +51,7 @@
     <string name="fragment_customer_home_phone">Home Phone</string>
     <string name="fragment_customer_work_phone">Work Phone</string>
     <string name="fragment_customer_upload_id">Upload KTP</string>
+    <string name="fragment_customer_upload_other">Upload Other Document</string>
     <string name="fragment_customer_upload_selfie">Upload Selfie With Customer</string>
     <string name="fragment_customer_upload_take_photo">Take a Photo</string>
     <string name="fragment_customer_upload_gallery">Load Gallery</string>
@@ -73,6 +74,8 @@
     <string name="fragment_verification_status">Status</string>
     <string name="fragment_verification_status_insert_order">Creating Order</string>
     <string name="fragment_verification_status_upload_doc">Uploading Document</string>
+    <string name="fragment_verification_status_upload_id">Uploading ID Picture</string>
+    <string name="fragment_verification_status_upload_other_doc">Uploading Other Document Picture</string>
     <string name="fragment_verification_customer_id">Customer ID</string>
     <string name="fragment_verification_subscription_id">Subscription ID</string>
     <string name="fragment_verification_order_id">Order ID</string>
