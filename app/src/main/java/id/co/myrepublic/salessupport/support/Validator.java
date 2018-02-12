@@ -27,6 +27,7 @@ public class Validator {
     public static final String VALIDATION_REQUIRED = "required";
     public static final String VALIDATION_EMAIL = "email";
     public static final String VALIDATION_DATE = "date";
+    public static final String VALIDATION_PHONE = "phone";
 
     public static final String VALIDATION_KEY_RESULT = "validation_result";
 
@@ -34,6 +35,7 @@ public class Validator {
     public static final String VALIDATION_MSG_REQUIRED = "This field is required";
     public static final String VALIDATION_MSG_EMAIL = "Invalid email format";
     public static final String VALIDATION_MSG_DATE = "Invalid date format";
+    public static final String VALIDATION_MSG_PHONE = "Invalid phone format";
 
     private static final String DEFAULT_DATE_FORMAT = "mm/DD/yyyy";
 
@@ -75,6 +77,27 @@ public class Validator {
     }
 
     /**
+     * Validate Indonesia phone number
+     * @param value
+     * @return
+     */
+    private static Boolean validatePhone(String value) {
+        if(!StringUtil.isEmpty(value)) {
+            // clean dashes and spaces
+            value = value.replace(" ", "");
+            value = value.replace("-", "");
+
+            String PHONE_PATTERN = "^(0|\\+?62)\\d{9,12}$";
+
+            Pattern pattern = Pattern.compile(PHONE_PATTERN);
+            Matcher matcher = pattern.matcher(value);
+            return matcher.matches();
+        } else {
+            return true;
+        }
+    }
+
+    /**
      * perform validation, private call
      * @param view
      * @return
@@ -101,6 +124,9 @@ public class Validator {
         } else if(validator.equals(VALIDATION_DATE) && !validateDate(inputValue,view.getDateFormat())) {
             result = false;
             newErrorMsg += VALIDATION_MSG_DATE;
+        } else if(validator.equals(VALIDATION_PHONE) && !validatePhone(inputValue)) {
+            result = false;
+            newErrorMsg += VALIDATION_MSG_PHONE;
         }
         if(!StringUtil.isEmpty(newErrorMsg)) {
             errorMsg += StringUtil.isEmpty(errorMsg) ? newErrorMsg : "\n"+newErrorMsg;
@@ -161,6 +187,11 @@ public class Validator {
             return false;
         }
         return true;
+    }
+
+    public static void main (String[] args) {
+        boolean valid = Validator.validatePhone("62813435455");
+        System.out.print(valid);
     }
 
 }

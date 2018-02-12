@@ -131,7 +131,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 app:inputType="phone"
-                app:validator="required"
+                app:validator="required,phone"
                 app:inputHint="08157776565"
                 app:labelText="@string/fragment_customer_mobile_phone" />
 
@@ -141,6 +141,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                app:validator="phone"
                 app:inputType="phone"
                 app:inputHint="0218765567"
                 app:labelText="@string/fragment_customer_home_phone" />
@@ -150,6 +151,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                app:validator="phone"
                 app:inputType="phone"
                 app:inputHint="0218765567"
                 app:labelText="@string/fragment_customer_work_phone" />

@@ -18,6 +18,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +33,8 @@ import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
 import id.co.myrepublic.salessupport.model.Homepass;
 import id.co.myrepublic.salessupport.model.MainModel;
 import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
+import id.co.myrepublic.salessupport.support.DialogBuilder;
+import id.co.myrepublic.salessupport.support.Validator;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.UrlParam;
@@ -208,6 +211,8 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
                                homepass.getHomeNumber()
                     );
                     homepass.setNo(i);
+                    homepass.setActiveText(homepass.getActive() ? getResources().getString(R.string.fragment_homepass_status_available) :
+                            getResources().getString(R.string.fragment_homepass_status_taken));
                     i++;
                 }
                 populateItem(homepassModel.getListObject());
@@ -233,7 +238,13 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Homepass homepass = listObject.get(position);
-                showOrderDialog(homepass);
+                if(homepass.getActive()) {
+                    showOrderDialog(homepass);
+                } else {
+                    Toast.makeText(getContext(), getResources().getText(R.string.fragment_homepass_already_taken),
+                            Toast.LENGTH_SHORT).show();
+
+                }
             }
         });
     }

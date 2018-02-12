@@ -20,6 +20,7 @@ import id.co.myrepublic.salessupport.util.StringUtil;
 
 import static id.co.myrepublic.salessupport.support.Validator.VALIDATION_DATE;
 import static id.co.myrepublic.salessupport.support.Validator.VALIDATION_EMAIL;
+import static id.co.myrepublic.salessupport.support.Validator.VALIDATION_PHONE;
 import static id.co.myrepublic.salessupport.support.Validator.VALIDATION_REQUIRED;
 
 /**
@@ -121,6 +122,8 @@ public abstract class AbstractWidget extends LinearLayout {
                 } else if(VALIDATION_EMAIL.equals(validator)) {
                     this.validators.add(validator);
                 } else if(VALIDATION_DATE.equals(validator)) {
+                    this.validators.add(validator);
+                } else if(VALIDATION_PHONE.equals(validator)) {
                     this.validators.add(validator);
                 }
             }

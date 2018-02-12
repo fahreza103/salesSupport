@@ -108,10 +108,10 @@ public class URLConnector {
         try {
             MultipartUtility multipart = new MultipartUtility(request,cookie, TIMEOUT_DURATION);
             // Add form value
-//            for (Map.Entry<Object, Object> entry : paramMap.entrySet()) {
-//                multipart.addFormField(entry.getKey().toString(), ""+entry.getValue());
-//            }
-//            multipart.addFilePart("file", requestFile);
+            for (Map.Entry<Object, Object> entry : paramMap.entrySet()) {
+                multipart.addFormField(entry.getKey().toString(), ""+entry.getValue());
+            }
+            multipart.addFilePart("file", requestFile);
             String serverResponse = multipart.finish();
 
             urlResponse.setResultValue(serverResponse);

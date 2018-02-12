@@ -61,6 +61,7 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
     private EditText editTextOtp;
     private Button btnOk;
     private Otp otp;
+    private Boolean isSuccessCreateOrder = false;
 
     @Nullable
     @Override
@@ -100,13 +101,7 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
             @Override
             public void onClick(View v) {
                 // Back to cluster detail
-
-                android.support.v4.app.FragmentManager fm = getActivity().getSupportFragmentManager();
-                int popBackStackCount = fm.getBackStackEntryCount();
-                while(popBackStackCount >= 5) {
-                    fm.popBackStack();
-                    popBackStackCount--;
-                }
+                backToClusterDetail();
             }
         });
 
@@ -388,6 +383,7 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
                     orderProgressText.startAnimation(gVar.getFadeInAnim());
                     orderResultText.setText(model.getError());
                 } else {
+                    isSuccessCreateOrder = true;
                     model = StringUtil.convertJsonNodeIntoObject(model, Order.class);
                     Order order = model.getObject();
 
@@ -412,6 +408,25 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
                     editTextUserId.setText(otp.getUserId());
                 }
             }
+        }
+    }
+
+    private void backToClusterDetail() {
+        android.support.v4.app.FragmentManager fm = getActivity().getSupportFragmentManager();
+        int popBackStackCount = fm.getBackStackEntryCount();
+        while(popBackStackCount >= 5) {
+            fm.popBackStack();
+            popBackStackCount--;
+        }
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // Back, if already success, back to cluster detail
+        if(isSuccessCreateOrder) {
+            backToClusterDetail();
         }
     }
 }

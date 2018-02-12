@@ -227,7 +227,7 @@ public class Checkboxes extends AbstractWidget {
         Bundle bundle = new Bundle();
         bundle.putParcelable("superState", super.onSaveInstanceState());
 
-        HashMap<String,Boolean> result = (HashMap<String, Boolean>) getInputValue();
+        HashMap<String,CheckboxParam> result = (HashMap<String, CheckboxParam>) getInputValue();
         bundle.putSerializable("checkBoxSelected", result);
         return bundle;
     }
@@ -241,9 +241,10 @@ public class Checkboxes extends AbstractWidget {
         if (state instanceof Bundle) {
             Bundle bundle = (Bundle) state;
 
-            HashMap<String,Boolean> resultMap = (HashMap<String, Boolean>) bundle.getSerializable("checkBoxSelected");
-            for (Map.Entry<String, Boolean> entry : resultMap.entrySet()) {
-                setChecked(entry.getValue(),entry.getKey());
+            HashMap<String,CheckboxParam> resultMap = (HashMap<String, CheckboxParam>) bundle.getSerializable("checkBoxSelected");
+            for (Map.Entry<String, CheckboxParam> entry : resultMap.entrySet()) {
+                CheckboxParam checkboxParam = entry.getValue();
+                setChecked(checkboxParam.getChecked(),entry.getKey());
             }
             state = bundle.getParcelable("superState");
         }

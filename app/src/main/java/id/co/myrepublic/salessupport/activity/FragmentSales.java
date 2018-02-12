@@ -26,6 +26,7 @@ import id.co.myrepublic.salessupport.adapter.CommonRowAdapter;
 import id.co.myrepublic.salessupport.constant.AppConstant;
 import id.co.myrepublic.salessupport.constant.AsyncUiDisplayType;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
+import id.co.myrepublic.salessupport.model.AddressPrefix;
 import id.co.myrepublic.salessupport.model.Channels;
 import id.co.myrepublic.salessupport.model.Dealer;
 import id.co.myrepublic.salessupport.model.Homepass;
@@ -48,6 +49,8 @@ import id.co.myrepublic.salessupport.widget.CustomSpinner;
 public class FragmentSales extends Fragment implements View.OnClickListener, AsyncTaskListener {
 
     private static final String RESULT_KEY_KNOW_US = "fetchKnowUs";
+    private static final String RESULT_KEY_DWELLING_TYPE = "fetchDwellingType";
+    private static final String RESULT_KEY_ADDRESS_PREFIX = "fetchAddressPrefix";
     private static final String RESULT_KEY_DEALER  = "fetchDealer";
 
     private Button btnConfirm;
@@ -57,6 +60,8 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
     private CustomSpinner spinnerKnowUs;
 
     private HashMap<String,Object> formValues = new HashMap<String,Object>();
+    private Map<String,Object> dwellingTypeMap = new HashMap<String,Object>();
+    private List<AddressPrefix> addressPrefixList = new ArrayList<AddressPrefix>();
     private List<Channels> channelsList = new ArrayList<Channels>();
     private Boolean isAlreadyLoaded = false;
     private String salesCode;
@@ -108,14 +113,24 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
             Map<Object, Object> paramMap = new HashMap<Object, Object>();
             paramMap.put("session_id", sessionId);
 
-            UrlParam urlParam = new UrlParam();
-            urlParam.setUrl(AppConstant.GET_CHANNELS_API_URL);
-            urlParam.setParamMap(paramMap);
-            urlParam.setResultKey(RESULT_KEY_KNOW_US);
+            UrlParam urlParamChannels = new UrlParam();
+            urlParamChannels.setUrl(AppConstant.GET_CHANNELS_API_URL);
+            urlParamChannels.setParamMap(paramMap);
+            urlParamChannels.setResultKey(RESULT_KEY_KNOW_US);
+
+            UrlParam urlParamDwelling = new UrlParam();
+            urlParamDwelling.setUrl(AppConstant.GET_DWELLING_TYPE_API_URL);
+            urlParamDwelling.setParamMap(paramMap);
+            urlParamDwelling.setResultKey(RESULT_KEY_DWELLING_TYPE);
+
+            UrlParam urlParamAddressPrefix = new UrlParam();
+            urlParamAddressPrefix.setUrl(AppConstant.GET_ADDRESS_PREFIX_API_URL);
+            urlParamAddressPrefix.setParamMap(paramMap);
+            urlParamAddressPrefix.setResultKey(RESULT_KEY_ADDRESS_PREFIX);
 
             ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(getContext(), "salesFormData", AsyncUiDisplayType.NONE);
             asop.setListener(this);
-            asop.execute(urlParam);
+            asop.execute(urlParamChannels,urlParamDwelling,urlParamAddressPrefix);
 
             spinnerKnowUs.runProgress();
             btnConfirm.setEnabled(false);
@@ -163,6 +178,17 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
 
         Button btnConfirm = (Button) dialog.findViewById(R.id.dialogitem_btn_confirm);
         Button btnCancel = (Button) dialog.findViewById(R.id.dialogitem_btn_cancel);
+        CustomSpinner spinnerDwellingType = (CustomSpinner) dialog.findViewById(R.id.billing_spinner_dwelling);
+        CustomSpinner spinnerAddressPrefix = (CustomSpinner) dialog.findViewById(R.id.billing_spinner_address_prefix);
+
+        CommonRowAdapter dwellingAdapter = new CommonRowAdapter(dwellingTypeMap,getContext());
+        dwellingAdapter.setSpinner(true);
+        CommonRowAdapter addressPrefixAdapter = new CommonRowAdapter(addressPrefixList,getContext());
+        addressPrefixAdapter.setSpinner(true);
+
+        spinnerDwellingType.setAdapter(dwellingAdapter);
+        spinnerAddressPrefix.setAdapter(addressPrefixAdapter);
+
         final LinearLayout billingAddressLayout = (LinearLayout) dialog.findViewById(R.id.billing_address_scroll_layout);
         final Bundle bundle = this.getArguments();
 
@@ -174,10 +200,14 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
                 if(result) {
 
                     //Homepass serviceAddress =  bundle.getSerializable("homepassDataService") == null ? new Homepass() : (Homepass) bundle.getSerializable("homepassDataService");
-
                     Homepass billingAddress = new Homepass();
+
+                    if(billingAddressValues.get("billing_spinner_address_prefix") != null) {
+                        AddressPrefix addressPrefix = (AddressPrefix) billingAddressValues.get("billing_spinner_address_prefix");
+                        billingAddress.setAddressPrefix(addressPrefix.getAddressPrefix());
+                    }
+
                     billingAddress.setActive(true);
-                    billingAddress.setAddressPrefix(""+billingAddressValues.get("billing_spinner_address_prefix"));
                     billingAddress.setBlock(""+billingAddressValues.get("billing_txt_dialog_block"));
                     billingAddress.setDwellingType(""+billingAddressValues.get("billing_spinner_dwelling"));
                     billingAddress.setProvince(""+billingAddressValues.get("billing_txt_dialog_province"));
@@ -296,6 +326,20 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
                 channelsList = model.getListObject();
                 populateKnowUsSpinner(channelsList);
             }
+
+            MainModel<Map> modelDwelling = resultMap.get(RESULT_KEY_DWELLING_TYPE);
+            if(modelDwelling != null) {
+                modelDwelling = StringUtil.convertJsonNodeIntoObject(modelDwelling, Map.class);
+                dwellingTypeMap = modelDwelling.getObject();
+            }
+
+            MainModel<AddressPrefix> modelAddressPrefix = resultMap.get(RESULT_KEY_ADDRESS_PREFIX);
+            if(modelAddressPrefix != null) {
+                modelAddressPrefix = StringUtil.convertJsonNodeIntoObject(modelAddressPrefix, AddressPrefix[].class);
+                addressPrefixList = modelAddressPrefix.getListObject();
+            }
+
+
         } else if("dealerData".equals(taskName)) {
             MainModel<Dealer> model = resultMap.get(RESULT_KEY_DEALER);
             if(model != null) {

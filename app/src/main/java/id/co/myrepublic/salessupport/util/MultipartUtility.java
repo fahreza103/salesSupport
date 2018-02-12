@@ -2,17 +2,20 @@ package id.co.myrepublic.salessupport.util;
 
 import android.webkit.CookieManager;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.List;
 
 import id.co.myrepublic.salessupport.listener.ProgressListener;
 
@@ -55,7 +58,7 @@ public class MultipartUtility {
         httpConn.setDoInput(true);
         httpConn.setRequestProperty("Connection", "Keep-Alive");
         httpConn.setRequestProperty("Content-Type",
-                "application/json");
+                "multipart/form-data; boundary=" + boundary);
         httpConn.setRequestProperty("User-Agent", "Android Multipart HTTP Client 1.0");
         httpConn.setRequestProperty("Cookie", cookieString);
         httpConn.connect();
@@ -156,9 +159,9 @@ public class MultipartUtility {
         writer.append("--" + boundary + "--").append(LINE_FEED);
         writer.close();
 
-
+        InputStream in = new BufferedInputStream(httpConn.getInputStream());
         BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    httpConn.getInputStream()));
+                    in));
         String line = null;
         while ((line = reader.readLine()) != null) {
             stringBuilder.append(line);

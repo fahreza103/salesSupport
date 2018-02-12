@@ -44,7 +44,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:entries="@array/dwelling_type_arrays"
                 app:labelText="@string/dialog_dwelling_type" />
 
             <id.co.myrepublic.salessupport.widget.CustomEditText
@@ -168,7 +167,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:entries="@array/address_prefix_arrays"
                 app:labelText="@string/dialog_address_prefix" />
 
             <id.co.myrepublic.salessupport.widget.CustomEditText

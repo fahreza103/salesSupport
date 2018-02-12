@@ -24,6 +24,9 @@
     <string name="fragment_cluster_detail_status">Status</string>
 
     <string name="fragment_homepass_note">Tap the list to create SO / Survey</string>
+    <string name="fragment_homepass_already_taken">This homepass already taken</string>
+    <string name="fragment_homepass_status_taken">Taken</string>
+    <string name="fragment_homepass_status_available">Available</string>
 
     <string name="fragment_sales_salesrefferal">Sales and Referral</string>
     <string name="fragment_sales_agent_code">Sales Agent Code</string>
