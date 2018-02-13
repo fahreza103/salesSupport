@@ -21,7 +21,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-
+        <ProgressBar
+            android:id="@+id/custom_progressbar"
+            android:indeterminateDrawable="@drawable/progressbar_small"
+            android:layout_width="20dp"
+            android:layout_marginTop="0dp"
+            android:visibility="gone"
+            android:layout_height="20dp" />
 
     </LinearLayout>
 

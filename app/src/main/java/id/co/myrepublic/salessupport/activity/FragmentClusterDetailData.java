@@ -278,7 +278,7 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
         urlParam.setUrl(AppConstant.INSERT_CLUSTERINFO_API_URL);
         urlParam.setParamMap(paramMap);
 
-        Toast.makeText(getActivity(), "Insert Cluster Information...",
+        Toast.makeText(getActivity(), "Insert Cluster Competitor...",
                 Toast.LENGTH_LONG).show();
 
         ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(getContext(),"insertCompetitor", AsyncUiDisplayType.SCREEN);

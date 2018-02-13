@@ -61,7 +61,9 @@
     <string name="fragment_plan_ont_package">ONT</string>
     <string name="fragment_plan_tv_package">TV Package</string>
     <string name="fragment_plan_stb">STB</string>
-    <string name="fragment_plan_alacarte">Ala Carte</string>
+    <string name="fragment_plan_alacarte">Tv Add-on</string>
+    <string name="fragment_plan_internet_addon">Service Add-on</string>
+    <string name="fragment_plan_hardware">Hardware</string>
     <string name="fragment_plan_movies">Movies</string>
     <string name="fragment_plan_sport">Sport</string>
     <string name="fragment_plan_xtras">Xtras</string>
@@ -80,6 +82,8 @@
     <string name="fragment_verification_subscription_id">Subscription ID</string>
     <string name="fragment_verification_order_id">Order ID</string>
     <string name="fragment_verification_order_success">Congratulation, your order has been created, the details is as follow :</string>
+    <string name="fragment_verification_send_sms_thanks">Sending SMS to customer</string>
+
 
 
     <string name="activity_login_username">Username</string>
@@ -177,6 +181,10 @@
         <item>Sport</item>
         <item>Xtras</item>
         <!--<item>IP Public</item>-->
+    </string-array>
+
+    <string-array name="service_arrays">
+        <item>IP Public</item>
     </string-array>
 
     <string-array name="dwelling_type_arrays">

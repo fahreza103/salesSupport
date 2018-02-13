@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -46,7 +47,7 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
 
     // View lookup cache
     private static class ViewHolder {
-        private RelativeLayout rowLayout;
+        private LinearLayout rowLayout;
         private TextView mainText1;
         private TextView mainText2;
         private TextView subText1;
@@ -102,7 +103,7 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.row_item_common, parent, false);
 
-            viewHolder.rowLayout = (RelativeLayout) convertView.findViewById(R.id.rowitem_layout);
+            viewHolder.rowLayout = (LinearLayout) convertView.findViewById(R.id.rowitem_layout);
             viewHolder.mainText1 = (TextView) convertView.findViewById(R.id.rowitem_maintext);
             viewHolder.mainText2= (TextView) convertView.findViewById(R.id.rowitem_maintext2);
             viewHolder.subText1 = (TextView) convertView.findViewById(R.id.rowitem_subtext);
@@ -193,12 +194,12 @@ public class CommonRowAdapter<T> extends ArrayAdapter<T> {
         }
 
         // Text Gravity
-        if(textGravity != null) {
-            RelativeLayout.LayoutParams layoutParams =
-                    (RelativeLayout.LayoutParams)viewHolder.mainText1.getLayoutParams();
-            layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
-        }
+//        if(textGravity != null) {
+//            LinearLayout.LayoutParams layoutParams =
+//                    (LinearLayout.LayoutParams)viewHolder.mainText1.getLayoutParams();
+//            layoutParams.addRule(LinearLayout.CENTER_IN_PARENT, LinearLayout.TRUE);
+//            layoutParams.addRule(LinearLayout.ALIGN_PARENT_LEFT, LinearLayout.TRUE);
+//        }
 
         // Spinner animation only animate the text, not the entire layout because it will stacked when changing item selected
         GlobalVariables gvar = GlobalVariables.getInstance();

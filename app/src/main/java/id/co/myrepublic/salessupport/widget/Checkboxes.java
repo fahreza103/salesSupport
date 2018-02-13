@@ -8,6 +8,7 @@ import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +27,7 @@ public class Checkboxes extends AbstractWidget {
 
     private List<CheckBox> checkboxes;
     private LinearLayout checkboxParentLayout;
+    private ProgressBar progressBar;
     private Map<String,Object> mapValues ;
 
     public Checkboxes(Context context) {
@@ -39,6 +41,7 @@ public class Checkboxes extends AbstractWidget {
     @Override
     protected void initCustomAttr(Context context, AttributeSet attrs) {
         this.checkboxParentLayout = (LinearLayout) this.widgetView;
+        this.progressBar = (ProgressBar) findViewById(R.id.custom_progressbar);
         this.checkboxes = new ArrayList<CheckBox>();
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.appAttr);
 
@@ -49,10 +52,18 @@ public class Checkboxes extends AbstractWidget {
     }
 
     /**
+     * show progressbar while waiting data has been populated
+     */
+    public void runProgress() {
+        this.progressBar.setVisibility(VISIBLE);
+    }
+
+    /**
      * Set checkbox entries with map values
      * @param mapValues
      */
     public void setEntriesMap(Map<String,Object> mapValues) {
+        this.progressBar.setVisibility(GONE);
         // Remove all checkbox view from previous
         if(checkboxParentLayout != null) {
             checkboxParentLayout.removeAllViews();
@@ -71,6 +82,7 @@ public class Checkboxes extends AbstractWidget {
      * @param entries
      */
     public void setEntries(CharSequence[] entries) {
+        this.progressBar.setVisibility(GONE);
         if(entries != null && entries.length >0) {
             List<String> dataList = new ArrayList<String>();
             for (CharSequence entry : entries) {

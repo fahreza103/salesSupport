@@ -17,20 +17,18 @@ public class Catalog implements Serializable {
 
     private static final long serialVersionUID = 2334565678487532333L;
 
-    @JsonProperty("internet_items")
     private List<CatalogItem> internetItems;
-    @JsonProperty("tv_items")
     private List<CatalogItem> tvItems;
-    @JsonProperty("vas_items")
     private List<CatalogItem> vasItems;
-    @JsonProperty("stb_items")
+    private List<CatalogItem> internetAddonItems;
     private List<CatalogItem> stbItems;
-    @JsonProperty("ont_items")
     private List<CatalogItem> ontItems;
-    @JsonProperty("router_items")
     private List<CatalogItem> routerItems;
-    @JsonProperty("promotions")
     private List<CatalogItem> promotions;
+    @JsonProperty("total")
+    private int total;
+    @JsonProperty("data")
+    private List<CatalogItem> data;
 
     public List<CatalogItem> getInternetItems() {
         return internetItems;
@@ -86,5 +84,29 @@ public class Catalog implements Serializable {
 
     public void setPromotions(List<CatalogItem> promotions) {
         this.promotions = promotions;
+    }
+
+    public List<CatalogItem> getInternetAddonItems() {
+        return internetAddonItems;
+    }
+
+    public void setInternetAddonItems(List<CatalogItem> internetAddonItems) {
+        this.internetAddonItems = internetAddonItems;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
+    }
+
+    public List<CatalogItem> getData() {
+        return data;
+    }
+
+    public void setData(List<CatalogItem> data) {
+        this.data = data;
     }
 }

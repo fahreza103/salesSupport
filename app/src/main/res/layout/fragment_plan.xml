@@ -52,18 +52,20 @@
             android:orientation="vertical">
 
             <id.co.myrepublic.salessupport.widget.CustomSpinner
-                android:id="@+id/plan_spinner_internet_package"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                app:labelText="@string/fragment_plan_internet_package" />
-
-            <id.co.myrepublic.salessupport.widget.CustomSpinner
                 android:id="@+id/plan_spinner_ont_package"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                app:validator="required"
                 app:labelText="@string/fragment_plan_ont_package" />
+
+            <id.co.myrepublic.salessupport.widget.CustomSpinner
+                android:id="@+id/plan_spinner_internet_package"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:validator="required"
+                app:labelText="@string/fragment_plan_internet_package" />
 
 
             <id.co.myrepublic.salessupport.widget.CustomSpinner
@@ -86,8 +88,23 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:visibility="visible"
-                android:entries="@array/alacarte_arrays"
                 app:labelText="@string/fragment_plan_alacarte" />
+
+            <id.co.myrepublic.salessupport.widget.Checkboxes
+                android:id="@+id/plan_checkboxes_internet_addon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:visibility="visible"
+                app:labelText="@string/fragment_plan_internet_addon" />
+
+
+            <id.co.myrepublic.salessupport.widget.CustomSpinner
+                android:id="@+id/plan_spinner_hardware"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:labelText="@string/fragment_plan_hardware" />
 
 
             <id.co.myrepublic.salessupport.widget.CustomSpinner
@@ -106,6 +123,7 @@
                 app:inputType="textMultiline"
                 app:inputHeight="100dp"
                 app:labelText="@string/fragment_plan_remarks" />
+
 
 
             <Button

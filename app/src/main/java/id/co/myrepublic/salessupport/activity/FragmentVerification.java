@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,6 +49,8 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
 
     private static final String RESULT_KEY_ORDER = "createOrder";
     private static final String RESULT_KEY_OTP = "getOtp";
+    private static final String RESULT_KEY_THANKS = "thanksSms";
+
     private static final String DOC_TYPE_MISC = "1";
     private static final String DOC_TYPE_ID = "3";
 
@@ -74,6 +77,7 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
     private EditText editTextOtp;
     private Button btnOk;
     private Otp otp;
+    private Order order;
     private Boolean isSuccessCreateOrder = false;
     private Boolean buttonOkPressed = false;
 
@@ -122,6 +126,7 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
             @Override
             public void onClick(View v) {
                 // Back to cluster detail
+                sendThanksSms(mobilePhone,order);
                 buttonOkPressed = true;
                 backToClusterDetail();
             }
@@ -165,6 +170,32 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
         sendOtp(mobilePhone);
     }
 
+    private void sendThanksSms(String mobileNumber, Order order) {
+        if(order != null) {
+            GlobalVariables gVar = GlobalVariables.getInstance();
+            String sessionId = gVar.getSessionKey();
+
+            Map<Object,Object> paramMap = new HashMap<Object,Object>();
+            paramMap.put("session_id", sessionId);
+            paramMap.put("mobile_number",mobileNumber);
+            paramMap.put("subscription_id",order.getSubscriptionId());
+
+            UrlParam urlParam = new UrlParam();
+            urlParam.setUrl(AppConstant.SEND_THANKS_SMS_API_URL);
+            //urlParam.setUrl("https://boss.myrepublic.co.id/api/sms/send_sms_verified");
+            urlParam.setParamMap(paramMap);
+            urlParam.setResultKey(RESULT_KEY_THANKS);
+
+            ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(getContext(), "sendThanksSms", AsyncUiDisplayType.NONE);
+            asop.setListener(FragmentVerification.this);
+            asop.execute(urlParam);
+
+            Toast.makeText(getContext(), getResources().getText(R.string.fragment_verification_send_sms_thanks),
+                    Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
     private void sendOtp(String mobileNumber) {
         btnConfirm.setEnabled(false);
         GlobalVariables gVar = GlobalVariables.getInstance();
@@ -176,6 +207,7 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
 
         UrlParam urlParam = new UrlParam();
         urlParam.setUrl(AppConstant.GET_OTP_API_URL);
+        //urlParam.setUrl("https://boss.myrepublic.co.id/api/sms/send_otp");
         urlParam.setParamMap(paramMap);
         urlParam.setResultKey(RESULT_KEY_OTP);
 
@@ -318,47 +350,53 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
         }
 
         if(planData.get("plan_spinner_promotion") != null) {
-            CatalogItem item = (CatalogItem) planData.get("plan_spinner_stb_package");
+            CatalogItem item = (CatalogItem) planData.get("plan_spinner_promotion");
+            paramMap = setOrderItem(paramMap,item,i);
+            if(item.getId() != null) {i++;}
+        }
+
+        if(planData.get("plan_spinner_ont_package") != null) {
+            CatalogItem item = (CatalogItem) planData.get("plan_spinner_ont_package");
+            paramMap = setOrderItem(paramMap,item,i);
+            if(item.getId() != null) {i++;}
+        }
+
+        if(planData.get("plan_spinner_hardware") != null) {
+            CatalogItem item = (CatalogItem) planData.get("plan_spinner_hardware");
             paramMap = setOrderItem(paramMap,item,i);
             if(item.getId() != null) {i++;}
         }
 
         if(planData.get("plan_checkboxes_alacarte") != null) {
             Map<String,CheckboxParam> alaCarteMap = (Map<String,CheckboxParam>) planData.get("plan_checkboxes_alacarte");
-            CheckboxParam checkboxMovies = alaCarteMap.get(AbstractWidget.CHECKBOX_TAG+"_Movies");
-            if(checkboxMovies.getChecked()) {
-                CatalogItem item = new CatalogItem();
-                item.setId(AppConstant.ALACARTE_MOVIES_ID);
-                setOrderItem(paramMap,item,i);
-                i++;
+            for (Map.Entry<String, CheckboxParam> entry : alaCarteMap.entrySet()) {
+                CheckboxParam checkboxParam = entry.getValue();
+                if(checkboxParam != null) {
+                    if(checkboxParam.getChecked()) {
+                        CatalogItem item = new CatalogItem();
+                        item.setId(""+checkboxParam.getValue());
+                        setOrderItem(paramMap,item,i);
+                        i++;
+                    }
+                }
             }
-
-            CheckboxParam checkboxSport = alaCarteMap.get(AbstractWidget.CHECKBOX_TAG+"_Sport");
-            if(checkboxSport.getChecked()) {
-                CatalogItem item = new CatalogItem();
-                item.setId(AppConstant.ALACARTE_SPORT_ID);
-                setOrderItem(paramMap,item,i);
-                i++;
-            }
-
-            CheckboxParam checkboxXtras = alaCarteMap.get(AbstractWidget.CHECKBOX_TAG+"_Xtras");
-            if(checkboxXtras.getChecked()) {
-                CatalogItem item = new CatalogItem();
-                item.setId(AppConstant.ALACARTE_XTRATV_ID);
-                setOrderItem(paramMap,item,i);
-                i++;
-            }
-
-//            Boolean ip = alaCarteMap.get(AbstractWidget.CHECKBOX_TAG+"_IP Public");
-//            if(ip) {
-//                CatalogItem item = new CatalogItem();
-//                item.setId(AppConstant.ALACARTE_PUBLICIP_ID);
-//                setOrderItem(paramMap,item,i);
-//                i++;
-//            }
-
-
         }
+
+        if(planData.get("plan_checkboxes_internet_addon") != null) {
+            Map<String,CheckboxParam> serviceMap = (Map<String,CheckboxParam>) planData.get("plan_checkboxes_internet_addon");
+            for (Map.Entry<String, CheckboxParam> entry : serviceMap.entrySet()) {
+                CheckboxParam checkboxParam = entry.getValue();
+                if(checkboxParam != null) {
+                    if(checkboxParam.getChecked()) {
+                        CatalogItem item = new CatalogItem();
+                        item.setId(""+checkboxParam.getValue());
+                        setOrderItem(paramMap,item,i);
+                        i++;
+                    }
+                }
+            }
+        }
+
         String json = null;
         try {
             json = new ObjectMapper().writeValueAsString(paramMap);
@@ -432,7 +470,7 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
                 } else {
                     isSuccessCreateOrder = true;
                     model = StringUtil.convertJsonNodeIntoObject(model, Order.class);
-                    Order order = model.getObject();
+                    order = model.getObject();
 
                     orderProgressText.setText(getResources().getText(R.string.status_success));
                     orderProgressText.setTextColor(getResources().getColor(R.color.green));
@@ -492,6 +530,17 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
                     editTextUserId.setText(otp.getUserId());
                 }
             }
+        } else if("sendThanksSms".equals(taskName)) {
+//            MainModel model = resultMap.get(RESULT_KEY_THANKS);
+//            if(model != null) {
+//                if(model.getSuccess()) {
+//                    Toast.makeText(getContext(), getResources().getText(R.string.status_success),
+//                            Toast.LENGTH_SHORT).show();
+//                } else {
+//                    Toast.makeText(getContext(), getResources().getText(R.string.status_failed),
+//                            Toast.LENGTH_SHORT).show();
+//                }
+//            }
         }
     }
 
@@ -508,10 +557,14 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
-        // Back, if already success, back to cluster detail
-        if(isSuccessCreateOrder && !buttonOkPressed) {
-            backToClusterDetail();
+        try {
+            super.onDestroyView();
+            // Back, if already success, back to cluster detail
+            if (isSuccessCreateOrder && !buttonOkPressed) {
+                backToClusterDetail();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

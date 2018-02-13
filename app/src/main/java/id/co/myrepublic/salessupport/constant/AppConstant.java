@@ -31,6 +31,7 @@ public interface AppConstant {
     public static final String INSERT_ORDER_API_URL = BASE_API_URL+"/order/create_new_order";
     public static final String UPLOAD_ORDER_DOCUMENT_API_URL = BASE_API_URL+"/mobile-order-upload";
     public static final String GET_OTP_API_URL = BASE_API_URL+"/sms/send_otp";
+    public static final String SEND_THANKS_SMS_API_URL = BASE_API_URL+"/sms/send_sms_verified";
     public static final String SESSION_KEY = "myrepublicid";
     public static final String COOKIE_FULL_STRING = "cookieFullString";
     public static final String COOKIE_SESSION_KEY = "mySessionId";

@@ -111,7 +111,7 @@ public abstract class AbstractWidget extends LinearLayout {
      * EX : required,email
      * @param validatorAttr
      */
-    protected void setValidator(String validatorAttr) {
+    public void setValidator(String validatorAttr) {
         this.hasRequiredValidation = false;
         if(!StringUtil.isEmpty(validatorAttr)) {
             String[] validatorArr = validatorAttr.split(",");
@@ -130,6 +130,9 @@ public abstract class AbstractWidget extends LinearLayout {
         } else {
             this.validators.clear();
         }
+
+        String labelText = getLabelText();
+        setLabelText(labelText);
     }
 
     /**
@@ -138,6 +141,8 @@ public abstract class AbstractWidget extends LinearLayout {
      */
     public void addValidator (String validator) {
         validators.add(validator);
+        String labelText = getLabelText();
+        setLabelText(labelText);
     }
 
     /**
@@ -164,6 +169,8 @@ public abstract class AbstractWidget extends LinearLayout {
     public void setLabelText(String text) {
         if(hasRequiredValidation) {
             text+="*";
+        } else if (!StringUtil.isEmpty(text)) {
+            text = text.replace("*","");
         }
         labelText.setText(text);
     }
