@@ -54,9 +54,13 @@ public class ApiMultipartConnectorAsyncOperation  extends AbstractAsyncOperation
     }
 
     protected void onProgressUpdate(Integer... progress) {
-        if(progressTextView != null && progress.length > 0) {
-            String text = this.context.getResources().getText(R.string.status_progress)+" ("+progress[0]+"%)";
-            progressTextView.setText(text);
+        if(this.uiType == AsyncUiDisplayType.DIALOG && progress.length > 0) {
+            progressDialog.setMessage(getDialogMsg()+"\nProgress"+ " (" + progress[0] + "%)");
+        } else {
+            if (progressTextView != null && progress.length > 0) {
+                String text = this.context.getResources().getText(R.string.status_progress) + " (" + progress[0] + "%)";
+                progressTextView.setText(text);
+            }
         }
     }
 

@@ -176,13 +176,14 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
             String sessionId = gVar.getSessionKey();
 
             Map<Object,Object> paramMap = new HashMap<Object,Object>();
-            paramMap.put("session_id", sessionId);
+            //paramMap.put("session_id", sessionId);
+            paramMap.put("session_id", "a570ade9-2f5c-4bba-a3d0-d81bfcfc103f");
             paramMap.put("mobile_number",mobileNumber);
             paramMap.put("subscription_id",order.getSubscriptionId());
 
             UrlParam urlParam = new UrlParam();
-            urlParam.setUrl(AppConstant.SEND_THANKS_SMS_API_URL);
-            //urlParam.setUrl("https://boss.myrepublic.co.id/api/sms/send_sms_verified");
+            //urlParam.setUrl(AppConstant.SEND_THANKS_SMS_API_URL);
+            urlParam.setUrl("https://boss.myrepublic.co.id/api/sms/send_sms_verified");
             urlParam.setParamMap(paramMap);
             urlParam.setResultKey(RESULT_KEY_THANKS);
 
@@ -202,12 +203,13 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
         String sessionId = gVar.getSessionKey();
 
         Map<Object,Object> paramMap = new HashMap<Object,Object>();
-        paramMap.put("session_id", sessionId);
+        paramMap.put("session_id", "a570ade9-2f5c-4bba-a3d0-d81bfcfc103f");
+        //paramMap.put("session_id", sessionId);
         paramMap.put("mobile_number",mobileNumber);
 
         UrlParam urlParam = new UrlParam();
-        urlParam.setUrl(AppConstant.GET_OTP_API_URL);
-        //urlParam.setUrl("https://boss.myrepublic.co.id/api/sms/send_otp");
+        //urlParam.setUrl(AppConstant.GET_OTP_API_URL);
+        urlParam.setUrl("https://boss.myrepublic.co.id/api/sms/send_otp");
         urlParam.setParamMap(paramMap);
         urlParam.setResultKey(RESULT_KEY_OTP);
 
@@ -238,6 +240,7 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
         paramMap.put("rep_id", salesData.get("sales_editText_sales_agent_code"));
         paramMap.put("event_rep_id", salesData.get("sales_editText_event_rep_id"));
         paramMap.put("homepassdetailid", homepassDataService.getHomepassDetailId());
+
         paramMap.put("customer[type]", customerClass);
         paramMap.put("customer[referrer_customer_id]",salesData.get("sales_editText_customer_reff"));
 
@@ -311,7 +314,7 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
         paramMap.put("subscription[addresses][1][floor]", homepassDataService.getFloor());
         paramMap.put("subscription[addresses][1][unit]", homepassDataService.getUnit());
         paramMap.put("subscription[addresses][1][village]", "");
-        paramMap.put("subscription[addresses][0][district]", homepassDataService.getDistrict());
+        paramMap.put("subscription[addresses][1][district]", homepassDataService.getDistrict());
         paramMap.put("subscription[addresses][1][postal_code]", homepassDataService.getPostalcode());
         paramMap.put("subscription[addresses][1][rw]", homepassDataService.getRw());
         paramMap.put("subscription[addresses][1][rt]", homepassDataService.getRt());
@@ -325,6 +328,7 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
 
 
         paramMap.put("order[type]", "New Order");
+        paramMap.put("order[orders_source_type_id]","10");
         paramMap.put("order[order_date]", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
         paramMap.put("order[channel_id]", knowUs.getId());
         paramMap.put("order[promo_code]", salesData.get("sales_editText_promo_code"));
@@ -456,6 +460,10 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
     public void onAsyncTaskComplete(Object result, String taskName) {
         GlobalVariables gVar = GlobalVariables.getInstance();
         Map<String,MainModel> resultMap = (Map<String,MainModel>) result;
+
+        Bundle bundle = this.getArguments();
+        String idImagePath = bundle.getString("customerIdPhoto");
+        String otherImagePath = bundle.getString("customerOtherPhoto");
         if("createOrder".equals(taskName)) {
             orderProgressBar.setVisibility(View.GONE);
             orderProgressBar.startAnimation(gVar.getFadeOutAnim());
@@ -480,14 +488,16 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
                         +"Subscription ID : "+order.getSubscriptionId());
 
                     // do Upload file
-                    Bundle bundle = this.getArguments();
-                    String idImagePath = bundle.getString("customerIdPhoto");
-                    String otherImagePath = bundle.getString("customerOtherPhoto");
-
                     uploadFile(idImagePath,order.getOrderId(),DOC_TYPE_ID,layoutVerificationUploadIdStatus,textUploadIdStatus);
+
                     uploadFile(otherImagePath,order.getOrderId(),DOC_TYPE_MISC,layoutVerificationUploadOtherStatus,textUploadOtherStatus);
+
+
+
                 }
                 orderProgressText.startAnimation(gVar.getFadeInAnim());
+            } else {
+                btnOk.setVisibility(View.GONE);
             }
         } else if(taskName.equals("upload_"+DOC_TYPE_ID)) {
             MainModel model = resultMap.get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
@@ -526,7 +536,7 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
                 if(model.getSuccess()) {
                     otp = model.getObject();
                     Log.i("OTP Token", otp.getOtp());
-                    editTextOtp.setText(otp.getOtp());
+                    //editTextOtp.setText(otp.getOtp());
                     editTextUserId.setText(otp.getUserId());
                 }
             }

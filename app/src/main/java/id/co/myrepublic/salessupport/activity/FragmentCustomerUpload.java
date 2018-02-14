@@ -122,8 +122,15 @@ public class FragmentCustomerUpload extends Fragment implements View.OnClickList
     }
 
     private void openCamera(int type) {
+        String fileNameType = "";
+        if(type == IMAGE_ID_CAMERA_PREVIEW) {
+            fileNameType = "KTP";
+        } else if (type ==IMAGE_OTHER_CAMERA_PREVIEW) {
+            fileNameType = "Other_Document";
+        }
+
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        File imageFile = BitmapProcessor.createTempBitmapFile();
+        File imageFile = BitmapProcessor.createTempBitmapFile(fileNameType);
         //getting uri of the file
         cameraImageUri = Uri.fromFile(imageFile);
 

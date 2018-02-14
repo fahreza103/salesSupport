@@ -1,21 +1,20 @@
 package id.co.myrepublic.salessupport.util;
 
-import android.webkit.CookieManager;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
 
+import cz.msebera.android.httpclient.HttpEntity;
+import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.client.HttpClient;
+import cz.msebera.android.httpclient.client.config.RequestConfig;
+import cz.msebera.android.httpclient.client.methods.HttpPost;
+import cz.msebera.android.httpclient.entity.ContentType;
+import cz.msebera.android.httpclient.entity.mime.MultipartEntityBuilder;
+import cz.msebera.android.httpclient.entity.mime.content.FileBody;
+import cz.msebera.android.httpclient.entity.mime.content.StringBody;
+import cz.msebera.android.httpclient.impl.client.HttpClientBuilder;
+import cz.msebera.android.httpclient.params.HttpParams;
+import cz.msebera.android.httpclient.util.EntityUtils;
 import id.co.myrepublic.salessupport.listener.ProgressListener;
 
 /**
@@ -25,13 +24,12 @@ import id.co.myrepublic.salessupport.listener.ProgressListener;
  *
  */
 public class MultipartUtility {
-    private final String boundary;
-    private static final String LINE_FEED = "\r\n";
-    private HttpURLConnection httpConn;
-    private static final String charset = "UTF-8";
-    private DataOutputStream outputStream;
-    private PrintWriter writer;
-    private String cookie;
+
+    private ProgressListener progressListener;
+    private MultipartEntityBuilder entityBuilder;
+    private String url;
+    private String cookieStr;
+    private int timeout;
 
     /**
      * This constructor initializes a new HTTP POST request with content type
@@ -41,31 +39,10 @@ public class MultipartUtility {
      */
     public MultipartUtility(String requestURL, String cookieStr,int timeout)
             throws IOException {
-
-        CookieManager cookieManager = CookieManager.getInstance();
-        String cookieString = cookieManager.getCookie(requestURL);
-        this.cookie = cookieStr;
-        // creates a unique boundary based on time stamp
-        boundary = "===" + System.currentTimeMillis() + "===";
-
-        URL url = new URL(requestURL);
-        httpConn = (HttpURLConnection) url.openConnection();
-        httpConn.setConnectTimeout(timeout);
-        httpConn.setReadTimeout(timeout);
-        httpConn.setUseCaches(false);
-        httpConn.setDoOutput(true); // indicates POST method
-        httpConn.setDoInput(true);
-        httpConn.setRequestProperty("Connection", "Keep-Alive");
-        httpConn.setRequestProperty("Content-Type",
-                "multipart/form-data; boundary=" + boundary);
-        httpConn.setRequestProperty("User-Agent", "Android Multipart HTTP Client 1.0");
-        httpConn.setRequestProperty("Cookie", cookieString);
-        httpConn.connect();
-
-        //List<String> cookiesResp = httpConn.getHeaderFields().get("Set-Cookie");
-        outputStream = new DataOutputStream(httpConn.getOutputStream());
-        writer = new PrintWriter(new OutputStreamWriter(outputStream, charset),
-                true);
+        this.url = requestURL;
+        this.cookieStr = cookieStr;
+        this.timeout = timeout;
+        entityBuilder = MultipartEntityBuilder.create();
     }
 
     /**
@@ -74,21 +51,7 @@ public class MultipartUtility {
      * @param value field value
      */
     public void addFormField(String name, String value) {
-        writer.append("--" + boundary).append(LINE_FEED);
-        writer.append("Content-Disposition: form-data; name=\"" + name + "\"")
-                .append(LINE_FEED);
-        writer.append("Content-Type: text/plain; charset=" + charset).append(
-                LINE_FEED);
-        writer.append(LINE_FEED);
-        writer.append(value).append(LINE_FEED);
-        writer.flush();
-    }
-
-
-
-    public void addFilePart(String fieldName, File uploadFile)
-            throws IOException {
-        addFilePart(fieldName,uploadFile,null);
+        entityBuilder.addPart(name, new StringBody(value, ContentType.MULTIPART_FORM_DATA));
     }
 
     /**
@@ -97,52 +60,19 @@ public class MultipartUtility {
      * @param requestFile a File to be processed
      * @throws IOException
      */
-    public void addFilePart(String fieldName, File requestFile, ProgressListener progressListener)
+    public void addFilePart(String fieldName, File requestFile)
             throws IOException {
-        String fileName = requestFile.getName();
-        writer.append("--" + boundary).append(LINE_FEED);
-        writer.append(
-                "Content-Disposition: form-data; name=\"" + fieldName
-                        + "\"; filename=\"" + fileName + "\"")
-                .append(LINE_FEED);
-        writer.append(
-                "Content-Type: "
-                        + URLConnection.guessContentTypeFromName(fileName))
-                .append(LINE_FEED);
-        writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
-        writer.append(LINE_FEED);
-        writer.flush();
-
-        FileInputStream inputStream = new FileInputStream(requestFile);
-
-        int totalSize =  (int)requestFile.length();
-        byte[] buffer = new byte[128];
-        int progress = 0;
-        int bytesRead = -1;
-        while ((bytesRead = inputStream.read(buffer)) != -1) {
-            outputStream.write(buffer, 0, bytesRead);
-            outputStream.flush();
-            progress += bytesRead; // Here progress is total uploaded bytes
-
-            if(progressListener != null) {
-                progressListener.onAsyncProgressUpdate((int)((progress*100)/totalSize));
-            }
-        }
-        //outputStream.flush();
-        inputStream.close();
-
-        writer.append(LINE_FEED);
-        writer.flush();
+        entityBuilder.addPart(fieldName, new FileBody(requestFile));
     }
 
-    /**
-     * Adds a header field to the request.
-     * @param name - name of the header field
-     * @param value - value of the header field
-     */
-    public void addHeaderField(String name, String value) {
-        writer.append(name + ": " + value).append(LINE_FEED);
-        writer.flush();
+
+
+    public RequestConfig requestConfigWithTimeout(int timeoutInMilliseconds) {
+        return RequestConfig.copy(RequestConfig.DEFAULT)
+                .setSocketTimeout(timeoutInMilliseconds)
+                .setConnectTimeout(timeoutInMilliseconds)
+                .setConnectionRequestTimeout(timeoutInMilliseconds)
+                .build();
     }
 
     /**
@@ -151,24 +81,40 @@ public class MultipartUtility {
      * status OK, otherwise an exception is thrown.
      * @throws IOException
      */
-    public String finish() throws IOException {
+    public String doConnect() throws IOException {
+        HttpClientBuilder builder = HttpClientBuilder.create();
+        HttpClient httpClient = builder.build();
+        HttpPost httpPost = new HttpPost(url);
+        httpPost.setConfig(requestConfigWithTimeout(timeout));
 
-        StringBuilder stringBuilder = new StringBuilder();
-        writer.append(LINE_FEED).flush();
-        writer.append("--" + boundary + "--").append(LINE_FEED);
-        writer.close();
+        HttpEntity entity = null;
+        if(progressListener == null) {
+            entity = entityBuilder.build();
+        } else {
+            ProgressHttpEntityWrapper.ProgressCallback  progressCallback = new ProgressHttpEntityWrapper.ProgressCallback() {
+                @Override
+                public void progress(float progress) {
+                    progressListener.onAsyncProgressUpdate((int) progress);
+                }
 
-        InputStream in = new BufferedInputStream(httpConn.getInputStream());
-        BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    in));
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-            stringBuilder.append(line);
+            };
+            entity = new ProgressHttpEntityWrapper(entityBuilder.build(), progressCallback);
         }
-        reader.close();
-        httpConn.disconnect();
+        httpPost.setEntity(entity);
+        HttpResponse response = httpClient.execute(httpPost);
 
+        // get the result
+        HttpEntity responseEntity = response.getEntity();
+        String responseString = EntityUtils.toString(responseEntity, "UTF-8");
 
-        return stringBuilder.toString();
+        return responseString;
+    }
+
+    public ProgressListener getProgressListener() {
+        return progressListener;
+    }
+
+    public void setProgressListener(ProgressListener progressListener) {
+        this.progressListener = progressListener;
     }
 }

@@ -17,7 +17,7 @@ public class UrlParam {
     private String url;
     private String resultKey;
     private File file;
-    private Map<Object,Object> paramMap;
+    private Map<Object,Object> paramMap = new HashMap<Object,Object>();
 
     public String getUrl() {
         return url;

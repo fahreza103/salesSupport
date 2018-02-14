@@ -73,7 +73,7 @@ public class URLConnector {
             wr.write(postData);
 
             InputStream inputStream = conn.getInputStream();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream,Charset.forName("UTF-8")));
 
             StringBuilder stringBuilder = new StringBuilder();
             String line;
@@ -96,7 +96,12 @@ public class URLConnector {
             e.printStackTrace();
         } catch (Exception e) {
             urlResponse.setResultCode(UrlResponse.RESULT_ERR_FATAL);
-            urlResponse.setErrorMessage("Server returned non-OK status or connection failure");
+            if(StringUtil.isEmpty(e.getMessage())) {
+                urlResponse.setErrorMessage("Server returned non-OK status or connection failure");
+            } else {
+                urlResponse.setErrorMessage(e.getMessage());
+            }
+
             e.printStackTrace();
         }
 
@@ -107,12 +112,14 @@ public class URLConnector {
         UrlResponse urlResponse = new UrlResponse();
         try {
             MultipartUtility multipart = new MultipartUtility(request,cookie, TIMEOUT_DURATION);
-            // Add form value
+            multipart.setProgressListener(progressListener);
+            multipart.addFilePart("file",requestFile);
+            //Add form value
             for (Map.Entry<Object, Object> entry : paramMap.entrySet()) {
                 multipart.addFormField(entry.getKey().toString(), ""+entry.getValue());
             }
-            multipart.addFilePart("file", requestFile,progressListener);
-            String serverResponse = multipart.finish();
+
+            String serverResponse = multipart.doConnect();
 
             urlResponse.setResultValue(serverResponse);
             urlResponse.setResultCode(UrlResponse.RESULT_SUCCESS);

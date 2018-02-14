@@ -28,8 +28,12 @@ import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
 import id.co.myrepublic.salessupport.R;
+import id.co.myrepublic.salessupport.constant.AppConstant;
+import id.co.myrepublic.salessupport.constant.AsyncUiDisplayType;
+import id.co.myrepublic.salessupport.support.ApiMultipartConnectorAsyncOperation;
 import id.co.myrepublic.salessupport.support.BitmapProcessor;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
+import id.co.myrepublic.salessupport.util.UrlParam;
 import id.co.myrepublic.salessupport.util.UrlResponse;
 import id.co.myrepublic.salessupport.widget.Checkboxes;
 import id.co.myrepublic.salessupport.widget.CustomSpinner;
@@ -69,73 +73,24 @@ public class FragmentMain extends Fragment {
         customSpinner = (CustomSpinner) getActivity().findViewById(R.id.test_spinner);
         btn = (Button) getActivity().findViewById(R.id.test_button);
 
-//        testCheckboxes = (Checkboxes) getActivity().findViewById(R.id.test_checkboxes);
-//        Map<String,Object> dataMap = new HashMap<String,Object>();
-//        dataMap.put("test1","value A");
-//        dataMap.put("test2","value B");
-//        dataMap.put("test3","value C");
-//        testCheckboxes.setEntriesMap(dataMap);
-//        btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                HashMap<String,Object> planData = FormExtractor.extractValues(getContext(),layoutLogo,false);
-//                HashMap<String,CheckboxParam> checkboxMap = (HashMap<String, CheckboxParam>) planData.get("test_checkboxes");
-//                CheckboxParam param = checkboxMap.get(AbstractWidget.CHECKBOX_TAG+"test2");
-//            }
-//        });
 
 
-
+//        final File file = new File("/storage/emulated/0/Download/IMG_20160417_193743.jpg");
+//        final GlobalVariables gvar = GlobalVariables.getInstance();
+//
+//        UrlParam urlParam = new UrlParam();
+//        urlParam.setResultKey("ts");
+//        urlParam.setFile(file);
+//        urlParam.setUrl(AppConstant.UPLOAD_ORDER_DOCUMENT_API_URL+"/167812/1/"+gvar.getSessionKey());
+//
+//        ApiMultipartConnectorAsyncOperation amsop = new ApiMultipartConnectorAsyncOperation(getContext(),"task", AsyncUiDisplayType.DIALOG);
+//        amsop.setDialogMsg("Upload File");
+//        amsop.execute(urlParam);
 
         //new AsyncTest().execute(new UrlParam());
 
-
     }
 
-    class AsyncTest extends AsyncTask<Object, Integer, List<UrlResponse>> {
-
-        final File file = new File("/storage/emulated/0/Download/IMG_20160417_193743.jpg");
-        final Map<Object,Object> paramMap = new HashMap<Object,Object>();
-
-        public  byte[] compress(String data) throws IOException {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream(data.length());
-            GZIPOutputStream gzip = new GZIPOutputStream(bos);
-            gzip.write(data.getBytes());
-            gzip.close();
-            byte[] compressed = bos.toByteArray();
-            bos.close();
-            return compressed;
-        }
-
-        @Override
-        protected List<UrlResponse> doInBackground(Object... objects) {
-            final GlobalVariables gvar = GlobalVariables.getInstance();
-
-            String url = "https://boss-st.myrepublic.co.id/api/mobile-order-upload/167812/2/56907d10-4223-4b0d-94d4-bc3602d3d17f";
-
-            Uri fileUri = Uri.fromFile(file);
-            Bitmap selectedImageBitmap = BitmapProcessor.decodeFile(file);
 
 
-            try {
-                File folder = Environment.getExternalStoragePublicDirectory("/salessupport/");
-                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                String imageFileName = "salessupport_"+ timeStamp + "_";
-                //write the bytes in file
-                File file =  File.createTempFile(imageFileName,".jpg",folder);
-                OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
-                selectedImageBitmap.compress(Bitmap.CompressFormat.JPEG, 80 , new FileOutputStream(file));
-                os.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-
-//            paramMap.put("session_id", gvar.getString(AppConstant.COOKIE_SESSION_KEY, ""));
-//            UrlResponse response = URLConnector.doConnectMultipart(url, paramMap,file,gvar.getString(AppConstant.COOKIE_FULL_STRING,""),null);
-            boolean exist = file.exists();
-
-            return null;
-        }
-    }
 }

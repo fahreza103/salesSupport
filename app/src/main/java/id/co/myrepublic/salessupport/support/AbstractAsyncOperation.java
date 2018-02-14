@@ -46,10 +46,11 @@ public abstract class AbstractAsyncOperation extends AsyncTask<Object, Integer, 
     protected AsyncUiDisplayType uiType;
     protected String taskName;
     protected Context context;
+    protected ProgressDialog progressDialog;
 
     private String dialogMsg;
     private AsyncTaskListener listener;
-    private ProgressDialog progressDialog;
+
     private Boolean isInLoginActivity = false;
 
 

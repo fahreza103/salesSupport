@@ -113,6 +113,7 @@ public abstract class AbstractWidget extends LinearLayout {
      */
     public void setValidator(String validatorAttr) {
         this.hasRequiredValidation = false;
+        this.validators.clear();
         if(!StringUtil.isEmpty(validatorAttr)) {
             String[] validatorArr = validatorAttr.split(",");
             for(String validator : validatorArr) {
@@ -127,8 +128,6 @@ public abstract class AbstractWidget extends LinearLayout {
                     this.validators.add(validator);
                 }
             }
-        } else {
-            this.validators.clear();
         }
 
         String labelText = getLabelText();
@@ -167,10 +166,10 @@ public abstract class AbstractWidget extends LinearLayout {
      * @param text
      */
     public void setLabelText(String text) {
+        text = text == null ? "" : text;
+        text = text.replace("*","");
         if(hasRequiredValidation) {
             text+="*";
-        } else if (!StringUtil.isEmpty(text)) {
-            text = text.replace("*","");
         }
         labelText.setText(text);
     }

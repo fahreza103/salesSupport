@@ -32,7 +32,7 @@ public class BitmapProcessor {
      * Create temp image file
      * @return
      */
-    public static File createTempBitmapFile() {
+    public static File createTempBitmapFile(String fileName) {
         File folder = Environment.getExternalStoragePublicDirectory("/salessupport/");// the file path
 
         //if it doesn't exist the folder will be created
@@ -43,7 +43,7 @@ public class BitmapProcessor {
         }
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "salessupport_"+ timeStamp + "_";
+        String imageFileName = "salessupport_"+fileName+"_"+ timeStamp + "_";
         File image_file = null;
 
         try {
