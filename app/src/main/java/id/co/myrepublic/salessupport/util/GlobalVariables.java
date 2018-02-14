@@ -5,12 +5,15 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.animation.Animation;
 
+import java.util.Map;
+
 import id.co.myrepublic.salessupport.constant.AppConstant;
 
 public class GlobalVariables {
 
     private static GlobalVariables instance = new GlobalVariables();
     private SharedPreferences sharedPreferences;
+    private Map<Object,Object> userPermission;
     private Animation fadeInAnim;
     private Animation fadeOutAnim;
     private Animation popupAnim;
@@ -119,5 +122,13 @@ public class GlobalVariables {
 
     public void setRightLeftAnim(Animation rightLeftAnim) {
         RightLeftAnim = rightLeftAnim;
+    }
+
+    public Map<Object, Object> getUserPermission() {
+        return userPermission;
+    }
+
+    public void setUserPermission(Map<Object, Object> userPermission) {
+        this.userPermission = userPermission;
     }
 }

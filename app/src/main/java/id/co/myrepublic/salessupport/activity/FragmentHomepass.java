@@ -33,8 +33,6 @@ import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
 import id.co.myrepublic.salessupport.model.Homepass;
 import id.co.myrepublic.salessupport.model.MainModel;
 import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
-import id.co.myrepublic.salessupport.support.DialogBuilder;
-import id.co.myrepublic.salessupport.support.Validator;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.UrlParam;
@@ -120,9 +118,17 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
 
         // set the custom dialog components - text, spinner
         final CustomSpinner spinnerCustomerClass = (CustomSpinner) dialog.findViewById(R.id.dialogitem_spinner_customer_class);
-        CommonRowAdapter adapter = new CommonRowAdapter(customerClassMap,getContext());
-        adapter.setSpinner(true);
-        spinnerCustomerClass.setAdapter(adapter);
+
+        Button okButton = (Button) dialog.findViewById(R.id.dialogitem_btn_ok);
+        TextView textView = (TextView) dialog.findViewById(R.id.homepass_dialog_txt_choose_action);
+        if(customerClassMap != null) {
+            CommonRowAdapter adapter = new CommonRowAdapter(customerClassMap, getContext());
+            adapter.setSpinner(true);
+            spinnerCustomerClass.setAdapter(adapter);
+        } else {
+            okButton.setEnabled(false);
+            textView.setText("Insufficient permission");
+        }
 
         final TextView txtHomepassName = (TextView) dialog.findViewById(R.id.dialogitem_txt_homepass_value);
         txtHomepassName.setText(homepass.getHomepassAddressView());
@@ -138,7 +144,6 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
             }
         });
 
-        Button okButton = (Button) dialog.findViewById(R.id.dialogitem_btn_ok);
         // if button is clicked, call API insert cluster
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override

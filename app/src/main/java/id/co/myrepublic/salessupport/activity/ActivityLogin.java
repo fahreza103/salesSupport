@@ -172,6 +172,7 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
 
     @Override
     public void onAsyncTaskComplete(Object result, String taskName) {
+        GlobalVariables gVar = GlobalVariables.getInstance();
         Map<String,MainModel> resultMap = (Map<String,MainModel>) result;
         if("checkPermission".equals(taskName)) {
             boolean isPermitted = true;
@@ -179,6 +180,7 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
             if(model != null) {
                 model = StringUtil.convertJsonNodeIntoObject(model, Map.class);
                 Map<Object,Object> mapResponse = model.getObject();
+                gVar.setUserPermission(mapResponse);
                 // Search for mobile app permission
                 for (Map.Entry<Object, Object> entry : mapResponse.entrySet()) {
                     String value = entry.getValue() == null ? "-" : ""+ entry.getValue();

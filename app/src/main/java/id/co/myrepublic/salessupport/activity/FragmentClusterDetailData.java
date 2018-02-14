@@ -137,7 +137,24 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
                 showCompetitorDialog(clusterName);
                 break;
             case R.id.fab_homepassSearch :
-                showSearchDialog();
+                // check permission
+                Boolean isPermitted = false;
+                GlobalVariables gVar = GlobalVariables.getInstance();
+                for (Map.Entry<Object, Object> entry :gVar.getUserPermission().entrySet()) {
+                    String value = entry.getValue() == null ? "-" : ""+ entry.getValue();
+                    if(AppConstant.PERMISSION_CREATE_ORDER.equals(value))  {
+                        isPermitted = true;
+                        break;
+                    }
+                }
+
+                if (isPermitted) {
+                    showSearchDialog();
+                } else {
+                    DialogBuilder dialogBuilder = DialogBuilder.getInstance();
+                    dialogBuilder.createAlertDialog(getContext(),"Permission Denied","You do not have permission to create order");
+                }
+
                 break;
         }
 

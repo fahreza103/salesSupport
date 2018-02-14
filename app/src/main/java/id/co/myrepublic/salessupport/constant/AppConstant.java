@@ -42,6 +42,7 @@ public interface AppConstant {
     public static final String COOKIE_LOGIN_NAME = "loginName";
     public static final String SESSION_VALIDATION = "session_validation";
     public static final String PERMISSION_MOBILE_APP = "ux.homepass.mobile_sales_support";
+    public static final String PERMISSION_CREATE_ORDER = "ux.orders.newOrder";
     public static final String ALACARTE_MOVIES_ID = "20025";
     public static final String ALACARTE_SPORT_ID = "20026";
     public static final String ALACARTE_XTRATV_ID = "20748";

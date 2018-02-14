@@ -41,7 +41,6 @@ import id.co.myrepublic.salessupport.support.ApiMultipartConnectorAsyncOperation
 import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.UrlParam;
-import id.co.myrepublic.salessupport.widget.AbstractWidget;
 import id.co.myrepublic.salessupport.widget.CheckboxParam;
 
 
@@ -241,7 +240,7 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
         paramMap.put("event_rep_id", salesData.get("sales_editText_event_rep_id"));
         paramMap.put("homepassdetailid", homepassDataService.getHomepassDetailId());
 
-        paramMap.put("customer[type]", customerClass);
+        paramMap.put("customer[type]", "RES");
         paramMap.put("customer[referrer_customer_id]",salesData.get("sales_editText_customer_reff"));
 
         // CUSTOMER-PROFILE
@@ -277,7 +276,7 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
         paramMap.put("customer[company_info][business_segment]", "HRB");
 
         // BILLING-ADDRESS
-        paramMap.put("subscription[service_type]", customerClass);
+        paramMap.put("subscription[service_type]", "RES");
         paramMap.put("subscription[tp_status]", "30");
         paramMap.put("subscription[net_co]", "ON");
         paramMap.put("subscription[addresses][0][type]", "Billing");
