@@ -151,7 +151,8 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
         Map<Object, Object> paramMap = new HashMap<Object, Object>();
         paramMap.put("session_id", sessionId);
         paramMap.put("homepassdetailid",homepassDataService.getHomepassDetailId());
-        paramMap.put("customer_type",customerClass);
+        //paramMap.put("customer_type",customerClass);
+        paramMap.put("customer_type","RES");
         paramMap.put("rep_id",gVar.getString(AppConstant.COOKIE_REP_ID,"1"));
         paramMap.put("tag[0]",tagType);
 

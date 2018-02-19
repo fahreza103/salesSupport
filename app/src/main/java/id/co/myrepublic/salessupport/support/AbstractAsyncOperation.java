@@ -120,7 +120,7 @@ public abstract class AbstractAsyncOperation extends AsyncTask<Object, Integer, 
         for(UrlResponse urlResponse : urlResponseList) {
             // Actual response value for result in API call will be converted in each activity, so null will be set here, because
             // only success flag and error message returned from API will be used here
-            MainModel model = StringUtil.convertStringToObject(urlResponse.getResultValue(),null);
+            MainModel model = StringUtil.convertStringToMainModel(urlResponse.getResultValue(),null);
             if(model != null) {
                 // if resultKey has same value for each response, add the postfix number into the key, so the map will store the response in different key (not replacing)
                 // it can happen when resultKey not defined so all response will using defaultKey, or you purposely set the resultKey with same value

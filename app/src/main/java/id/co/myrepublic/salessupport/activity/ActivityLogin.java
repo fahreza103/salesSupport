@@ -123,17 +123,7 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
                     sm.putString(AppConstant.COOKIE_USERTYPE_KEY,cookieMap.get(AppConstant.COOKIE_USERTYPE_KEY));
 
                     // Check Permission
-                    Map<Object,Object> paramMap = new HashMap<Object,Object>();
-                    paramMap.put("session_id",cookieMap.get(AppConstant.COOKIE_SESSION_KEY));
-
-                    UrlParam urlParam = new UrlParam();
-                    urlParam.setUrl(AppConstant.CHECK_PERMISSION);
-                    urlParam.setParamMap(paramMap);
-
-                    ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(ActivityLogin.this,"checkPermission", AsyncUiDisplayType.SCREEN);
-                    asop.setInLoginActivity(true);
-                    asop.setListener(ActivityLogin.this);
-                    asop.execute(urlParam);
+                    checkPermission();
 
                 }
                 return super.shouldOverrideUrlLoading(view,url);
@@ -169,6 +159,20 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
 
     }
 
+    private void checkPermission() {
+        Map<Object,Object> paramMap = new HashMap<Object,Object>();
+        paramMap.put("session_id",cookieMap.get(AppConstant.COOKIE_SESSION_KEY));
+
+        UrlParam urlParam = new UrlParam();
+        urlParam.setUrl(AppConstant.CHECK_PERMISSION);
+        urlParam.setParamMap(paramMap);
+
+        ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(ActivityLogin.this,"checkPermission", AsyncUiDisplayType.SCREEN);
+        asop.setInLoginActivity(true);
+        asop.setListener(ActivityLogin.this);
+        asop.execute(urlParam);
+    }
+
 
     @Override
     public void onAsyncTaskComplete(Object result, String taskName) {
@@ -180,7 +184,7 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
             if(model != null) {
                 model = StringUtil.convertJsonNodeIntoObject(model, Map.class);
                 Map<Object,Object> mapResponse = model.getObject();
-                gVar.setUserPermission(mapResponse);
+                gVar.putString(AppConstant.COOKIE_PERMISSION,StringUtil.convertObjectToString(model));
                 // Search for mobile app permission
                 for (Map.Entry<Object, Object> entry : mapResponse.entrySet()) {
                     String value = entry.getValue() == null ? "-" : ""+ entry.getValue();
@@ -236,6 +240,7 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
             if (model != null) {
                 // Success, session valid go to main, otherwise show login form, to authenticate
                 if (model.getSuccess()) {
+
                     Intent intent = new Intent(context, ActivityMain.class);
                     startActivity(intent);
                     finish();

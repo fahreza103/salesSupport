@@ -26,6 +26,8 @@ public interface AppConstant {
     public static final String GET_DEALER_API_URL = BASE_API_URL+"/misc/get_dealer_info";
     public static final String GET_USER_REP_API_URL = BASE_API_URL+"/user/get_user_rep_info";
     public static final String GET_DWELLING_TYPE_API_URL = BASE_API_URL+"/misc/get_dwelling_type";
+    public static final String GET_BUSINESS_TYPE_API_URL = BASE_API_URL+"/misc/get_business_type";
+    public static final String GET_BUSINESS_SIZE_API_URL = BASE_API_URL+"/misc/get_business_segment";
     public static final String GET_ADDRESS_PREFIX_API_URL = BASE_API_URL+"/homepass/get_address_prefix";
     public static final String GET_ORDER_CATALOG_API_URL = BASE_API_URL+"/product_catalog/get_order_catalog";
     public static final String INSERT_ORDER_API_URL = BASE_API_URL+"/order/create_new_order";
@@ -40,6 +42,7 @@ public interface AppConstant {
     public static final String COOKIE_USERNAME_KEY = "myUserName";
     public static final String COOKIE_REP_ID = "myRepId";
     public static final String COOKIE_LOGIN_NAME = "loginName";
+    public static final String COOKIE_PERMISSION = "permission";
     public static final String SESSION_VALIDATION = "session_validation";
     public static final String PERMISSION_MOBILE_APP = "ux.homepass.mobile_sales_support";
     public static final String PERMISSION_CREATE_ORDER = "ux.orders.newOrder";

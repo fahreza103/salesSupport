@@ -175,14 +175,14 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
             String sessionId = gVar.getSessionKey();
 
             Map<Object,Object> paramMap = new HashMap<Object,Object>();
-            //paramMap.put("session_id", sessionId);
-            paramMap.put("session_id", "a570ade9-2f5c-4bba-a3d0-d81bfcfc103f");
+            paramMap.put("session_id", sessionId);
+            //paramMap.put("session_id", "1344df94-adc9-46a8-975b-6ae71f79af9b");
             paramMap.put("mobile_number",mobileNumber);
             paramMap.put("subscription_id",order.getSubscriptionId());
 
             UrlParam urlParam = new UrlParam();
-            //urlParam.setUrl(AppConstant.SEND_THANKS_SMS_API_URL);
-            urlParam.setUrl("https://boss.myrepublic.co.id/api/sms/send_sms_verified");
+            urlParam.setUrl(AppConstant.SEND_THANKS_SMS_API_URL);
+            //urlParam.setUrl("https://boss.myrepublic.co.id/api/sms/send_sms_verified");
             urlParam.setParamMap(paramMap);
             urlParam.setResultKey(RESULT_KEY_THANKS);
 
@@ -202,13 +202,13 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
         String sessionId = gVar.getSessionKey();
 
         Map<Object,Object> paramMap = new HashMap<Object,Object>();
-        paramMap.put("session_id", "a570ade9-2f5c-4bba-a3d0-d81bfcfc103f");
-        //paramMap.put("session_id", sessionId);
+        //paramMap.put("session_id", "1344df94-adc9-46a8-975b-6ae71f79af9b");
+        paramMap.put("session_id", sessionId);
         paramMap.put("mobile_number",mobileNumber);
 
         UrlParam urlParam = new UrlParam();
-        //urlParam.setUrl(AppConstant.GET_OTP_API_URL);
-        urlParam.setUrl("https://boss.myrepublic.co.id/api/sms/send_otp");
+        urlParam.setUrl(AppConstant.GET_OTP_API_URL);
+        //urlParam.setUrl("https://boss.myrepublic.co.id/api/sms/send_otp");
         urlParam.setParamMap(paramMap);
         urlParam.setResultKey(RESULT_KEY_OTP);
 
@@ -231,12 +231,18 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
         HashMap<String,Object> salesData = (HashMap<String, Object>) bundle.getSerializable("salesData");
         HashMap<String,Object> customerData = (HashMap<String, Object>) bundle.getSerializable("customerData");
         HashMap<String,Object> planData = (HashMap<String, Object>) bundle.getSerializable("planData");
+        String repId = bundle.getString("repId");
 
         Channels knowUs = (Channels) salesData.get("sales_spinner_know_us");
 
         Map<Object,Object> paramMap = new HashMap<Object,Object>();
         paramMap.put("session_id", sessionId);
-        paramMap.put("rep_id", salesData.get("sales_editText_sales_agent_code"));
+        if(StringUtil.isEmpty(repId)) {
+            paramMap.put("rep_id", "21");
+        } else {
+            paramMap.put("rep_id", salesData.get("sales_editText_sales_agent_code"));
+        }
+
         paramMap.put("event_rep_id", salesData.get("sales_editText_event_rep_id"));
         paramMap.put("homepassdetailid", homepassDataService.getHomepassDetailId());
 
@@ -289,7 +295,7 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
         paramMap.put("subscription[addresses][0][street]", homepassDataBilling.getStreet());
         paramMap.put("subscription[addresses][0][floor]", homepassDataBilling.getFloor());
         paramMap.put("subscription[addresses][0][unit]", homepassDataBilling.getUnit());
-        paramMap.put("subscription[addresses][0][village]", homepassDataService.getVillage());
+        paramMap.put("subscription[addresses][0][village]", homepassDataBilling.getVillage());
         paramMap.put("subscription[addresses][0][district]", homepassDataBilling.getDistrict());
         paramMap.put("subscription[addresses][0][postal_code]", homepassDataBilling.getPostalcode());
         paramMap.put("subscription[addresses][0][rw]", homepassDataBilling.getRw());

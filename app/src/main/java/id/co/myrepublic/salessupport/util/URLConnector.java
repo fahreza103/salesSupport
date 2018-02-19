@@ -271,7 +271,7 @@ public class URLConnector {
 
 //        UrlResponse response = URLConnector.doConnect(URL, paramMap);
         UrlResponse response = URLConnector.doConnect(URL,paramMap);
-        MainModel<Order> model = StringUtil.convertStringToObject(response.getResultValue(),Order.class);
+        MainModel<Order> model = StringUtil.convertStringToMainModel(response.getResultValue(),Order.class);
         Order order =model.getObject();
 
     }

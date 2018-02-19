@@ -5,45 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:background="@color/colorLogo"
-        android:id="@+id/homepass_dialog_header"
-        android:paddingBottom="5dp"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/dialogitem_txt_homepass_value"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@android:color/white" />
-
-    </RelativeLayout>
-
-
-    <TextView
-        android:id="@+id/homepass_dialog_txt_choose_action"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:textColor="@android:color/black"
-        android:textStyle="bold"
-        android:text="@string/dialog_homepass_action" />
-
-    <View
-        android:layout_height="2dp"
-        android:layout_marginTop="5dp"
-        android:background="@color/colorLogo"
-        android:layout_width="match_parent" />
-
     <TabHost
-        android:id="@+id/homepass_dialog_tabhost"
+        android:id="@+id/authorized_person_tabhost"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -63,25 +26,26 @@
                 android:layout_height="match_parent">
 
                 <LinearLayout
-                    android:id="@+id/create_order"
+                    android:id="@+id/authorized_officer"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
-
-                    <id.co.myrepublic.salessupport.widget.CustomSpinner
-                        android:id="@+id/dialogitem_spinner_customer_class"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp"
-                        app:labelText="@string/dialog_homepass_customer"
-                        app:validator="required" />
 
                     <LinearLayout
                         android:id="@+id/dialogitem_layout_company"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:visibility="gone"
+                        android:visibility="visible"
                         android:orientation="vertical">
+
+                        <id.co.myrepublic.salessupport.widget.CustomSpinner
+                            android:id="@+id/dialogitem_spinner_customer_class"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="15dp"
+                            app:labelText="@string/dialog_homepass_customer"
+                            app:validator="required" />
+
 
                         <id.co.myrepublic.salessupport.widget.CustomEditText
                             android:id="@+id/dialogitem_edittext_company_name"
@@ -107,7 +71,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="15dp"
                             app:labelText="@string/dialog_homepass_business_type"
-                             />
+                            />
 
                         <id.co.myrepublic.salessupport.widget.CustomSpinner
                             android:id="@+id/dialogitem_spinner_business_size"
@@ -134,27 +98,4 @@
         </LinearLayout>
     </TabHost>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="horizontal" android:layout_width="match_parent"
-        android:gravity="center"
-        android:layout_height="50dp">
-
-        <Button
-            android:id="@+id/dialogitem_btn_ok"
-            android:layout_width="100dp"
-            android:layout_height="40dp"
-            android:layout_margin="10dp"
-            android:textColor="@color/white"
-            android:background="@drawable/button_blue"
-            android:text="@string/button_ok" />
-
-        <Button
-            android:id="@+id/dialogitem_btn_cancel"
-            android:layout_width="100dp"
-            android:layout_height="40dp"
-            android:layout_margin="10dp"
-            android:textColor="@color/white"
-            android:background="@drawable/button_blue"
-            android:text="@string/button_cancel" />
-    </LinearLayout>
 </LinearLayout>

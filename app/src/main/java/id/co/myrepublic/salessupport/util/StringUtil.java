@@ -61,7 +61,7 @@ public class StringUtil {
      *               resulting unconverted JsonNode so you can convert this later using convertJsonNodeIntoObject
      * @return java object MainModel
      */
-    public static MainModel convertStringToObject (String jsonString, Class<?> clazz) {
+    public static MainModel convertStringToMainModel(String jsonString, Class<?> clazz) {
         if (jsonString == null) return null;
         try {
             ObjectMapper mapper = new ObjectMapper();

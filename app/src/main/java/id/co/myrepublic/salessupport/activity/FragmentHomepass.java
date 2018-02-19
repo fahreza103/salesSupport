@@ -14,6 +14,7 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TabHost;
@@ -33,6 +34,8 @@ import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
 import id.co.myrepublic.salessupport.model.Homepass;
 import id.co.myrepublic.salessupport.model.MainModel;
 import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
+import id.co.myrepublic.salessupport.support.FormExtractor;
+import id.co.myrepublic.salessupport.support.Validator;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.UrlParam;
@@ -46,6 +49,8 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
 
     private static final String RESULT_KEY_HOMEPASS = "homepass";
     private static final String RESULT_KEY_CUSTOMER_CLASS = "customerClass";
+    private static final String RESULT_KEY_COMPANY_TYPE = "companyType";
+    private static final String RESULT_KEY_COMPANY_SIZE = "companySize";
 
     private ListView listViewHomepass;
     private Dialog dialog;
@@ -56,6 +61,8 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
     private ApiConnectorAsyncOperation asop;
 
     private Map<Object,Object> customerClassMap;
+    private List<String> companyTypeList = new ArrayList<String>();
+    private List<String> companySizeList = new ArrayList<String>();
 
     @Nullable
     @Override
@@ -100,9 +107,19 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
             urlParamCustomerClass.setParamMap(paramMap);
             urlParamCustomerClass.setResultKey(RESULT_KEY_CUSTOMER_CLASS);
 
+            UrlParam urlParamCompanyType = new UrlParam();
+            urlParamCompanyType.setUrl(AppConstant.GET_BUSINESS_TYPE_API_URL);
+            urlParamCompanyType.setParamMap(paramMap);
+            urlParamCompanyType.setResultKey(RESULT_KEY_COMPANY_TYPE);
+
+            UrlParam urlParamCompanySize = new UrlParam();
+            urlParamCompanySize.setUrl(AppConstant.GET_BUSINESS_SIZE_API_URL);
+            urlParamCompanySize.setParamMap(paramMap);
+            urlParamCompanySize.setResultKey(RESULT_KEY_COMPANY_SIZE);
+
             asop = new ApiConnectorAsyncOperation(getContext(), "homepassSearch", AsyncUiDisplayType.SCREEN);
             asop.setListener(this);
-            asop.execute(urlParamHomepass,urlParamCustomerClass);
+            asop.execute(urlParamHomepass,urlParamCustomerClass,urlParamCompanyType,urlParamCompanySize);
         } else {
             populateItem(homePassList);
         }
@@ -118,6 +135,18 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
 
         // set the custom dialog components - text, spinner
         final CustomSpinner spinnerCustomerClass = (CustomSpinner) dialog.findViewById(R.id.dialogitem_spinner_customer_class);
+        final LinearLayout companyLayout = (LinearLayout) dialog.findViewById(R.id.dialogitem_layout_company);
+        final CustomSpinner spinnerCompanyType = (CustomSpinner) dialog.findViewById(R.id.dialogitem_spinner_business_type);
+        final CustomSpinner spinnerCompanySize = (CustomSpinner) dialog.findViewById(R.id.dialogitem_spinner_business_size);
+
+        // set spinner data
+        CommonRowAdapter<String> companyTypeAdapter = new CommonRowAdapter<String>(companyTypeList,getContext());
+        companyTypeAdapter.setSpinner(true);
+        spinnerCompanyType.setAdapter(companyTypeAdapter);
+
+        CommonRowAdapter<String> companySizeAdapter = new CommonRowAdapter<String>(companySizeList,getContext());
+        companySizeAdapter.setSpinner(true);
+        spinnerCompanySize.setAdapter(companySizeAdapter);
 
         Button okButton = (Button) dialog.findViewById(R.id.dialogitem_btn_ok);
         TextView textView = (TextView) dialog.findViewById(R.id.homepass_dialog_txt_choose_action);
@@ -135,7 +164,22 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
 
         initTabHost();
 
-        Button cancelButton = (Button) dialog.findViewById(R.id.dialogitem_btn_cancel);
+        spinnerCustomerClass.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String value = spinnerCustomerClass.getSelectedItem()+"";
+                if("RES".equals(value)) {
+                    companyLayout.setVisibility(View.GONE);
+                } else {
+                    companyLayout.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        final Button cancelButton = (Button) dialog.findViewById(R.id.dialogitem_btn_cancel);
         // if button is clicked, close the custom dialog
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -149,6 +193,17 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
             @Override
             public void onClick(View v) {
                 String itemSelected = ""+spinnerCustomerClass.getSelectedItem();
+
+                // if non-res, validate and extract the form
+                if(!"RES".equals(itemSelected)) {
+                    HashMap<String,Object> formValues = FormExtractor.extractValues(getContext(),companyLayout,true);
+                    boolean valid = (boolean) formValues.get(Validator.VALIDATION_KEY_RESULT);
+                    if(valid) {
+                        bundle.putSerializable("companyInfo",formValues);
+                    } else {
+                        return;
+                    }
+                }
 
                 bundle.putSerializable("homepassDataService",homepass);
                 bundle.putString("customerClassification",itemSelected);
@@ -232,6 +287,18 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
                 if(listMap.size() > 0) {
                     customerClassMap = listMap.get(0);
                 }
+            }
+
+            MainModel<String> companyTypeModel = resultMap.get(RESULT_KEY_COMPANY_TYPE);
+            if(customerClassModel != null) {
+                companyTypeModel = StringUtil.convertJsonNodeIntoObject(companyTypeModel, String[].class);
+                companyTypeList = companyTypeModel.getListObject();
+            }
+
+            MainModel<String> companySizeModel = resultMap.get(RESULT_KEY_COMPANY_SIZE);
+            if(companySizeModel != null) {
+                companySizeModel = StringUtil.convertJsonNodeIntoObject(companySizeModel, String[].class);
+                companySizeList = companySizeModel.getListObject();
             }
         }
     }

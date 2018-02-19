@@ -141,7 +141,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                app:validator="phone"
                 app:inputType="phone"
                 app:inputHint="0218765567"
                 app:labelText="@string/fragment_customer_home_phone" />
@@ -151,7 +150,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                app:validator="phone"
                 app:inputType="phone"
                 app:inputHint="0218765567"
                 app:labelText="@string/fragment_customer_work_phone" />

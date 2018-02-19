@@ -140,19 +140,24 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
                 // check permission
                 Boolean isPermitted = false;
                 GlobalVariables gVar = GlobalVariables.getInstance();
-                for (Map.Entry<Object, Object> entry :gVar.getUserPermission().entrySet()) {
-                    String value = entry.getValue() == null ? "-" : ""+ entry.getValue();
-                    if(AppConstant.PERMISSION_CREATE_ORDER.equals(value))  {
-                        isPermitted = true;
-                        break;
+                MainModel<Map<Object,Object>> modelPermission = (MainModel<Map<Object,Object>>) StringUtil.convertStringToMainModel(gVar.getString(AppConstant.COOKIE_PERMISSION,""),Map.class);
+                if(modelPermission.getObject() != null) {
+                    for (Map.Entry<Object, Object> entry :modelPermission.getObject().entrySet()) {
+                        String value = entry.getValue() == null ? "-" : ""+ entry.getValue();
+                        if(AppConstant.PERMISSION_CREATE_ORDER.equals(value))  {
+                            isPermitted = true;
+                            break;
+                        }
                     }
-                }
 
-                if (isPermitted) {
-                    showSearchDialog();
+                    if (isPermitted) {
+                        showSearchDialog();
+                    } else {
+                        DialogBuilder dialogBuilder = DialogBuilder.getInstance();
+                        dialogBuilder.createAlertDialog(getContext(),"Permission Denied","You do not have permission to create order");
+                    }
                 } else {
-                    DialogBuilder dialogBuilder = DialogBuilder.getInstance();
-                    dialogBuilder.createAlertDialog(getContext(),"Permission Denied","You do not have permission to create order");
+                    showSearchDialog();
                 }
 
                 break;

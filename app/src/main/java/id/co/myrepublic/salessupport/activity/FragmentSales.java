@@ -65,6 +65,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
     private List<Channels> channelsList = new ArrayList<Channels>();
     private Boolean isAlreadyLoaded = false;
     private String salesCode;
+    private String repId;
 
     @Nullable
     @Override
@@ -300,6 +301,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
         bundle.putString("BillingAddress",address);
         bundle.putBoolean("identicalAddress",sameAddress);
         bundle.putSerializable("homepassDataBilling",billingAddress);
+        bundle.putString("repId",repId);
 
         Fragment fragment = new FragmentCustomerProfile();
         fragment.setArguments(bundle);
@@ -341,13 +343,15 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
 
 
         } else if("dealerData".equals(taskName)) {
+            repId = "";
             MainModel<Dealer> model = resultMap.get(RESULT_KEY_DEALER);
+            btnConfirm.setEnabled(true);
             if(model != null) {
                 model = StringUtil.convertJsonNodeIntoObject(model, Dealer[].class);
                 List<Dealer> dealerList = model.getListObject();
                 if(dealerList.size() > 0) {
                     editTextSalesName.setInputValue(dealerList.get(0).getCompanyName());
-                    btnConfirm.setEnabled(true);
+                    repId = editTextsalesCode.getInputValue()+"";
                 } else {
                     editTextSalesName.setInputValue("Sales Agent Not Found!");
                 }

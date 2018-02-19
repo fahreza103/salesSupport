@@ -111,6 +111,10 @@
     <string name="dialog_clusterdetail_searchhomepass">Homepass Name</string>
     <string name="dialog_homepass_action">Choose Action</string>
     <string name="dialog_homepass_customer">Customer Classification</string>
+    <string name="dialog_homepass_company_name">Company Name</string>
+    <string name="dialog_homepass_npwp">NPWP</string>
+    <string name="dialog_homepass_business_type">Business Type</string>
+    <string name="dialog_homepass_business_size">Business Size</string>
     <string name="dialog_sales_billing_address">Billing Address</string>
     <string name="dialog_sales_billing_address_desc">Your Billing Address Same as Service Address?</string>
     <string name="dialog_sales_service_address">Service Address</string>
