@@ -209,7 +209,7 @@
                                 android:layout_marginTop="10dp"
                                 app:inputType="text"
                                 app:validator="required"
-                                app:inputHint="John"
+                                app:inputHint="Eren"
                                 app:labelText="@string/fragment_authorized_officer_full_name" />
 
                             <id.co.myrepublic.salessupport.widget.CustomEditText
@@ -219,7 +219,7 @@
                                 android:layout_marginTop="10dp"
                                 app:inputType="text"
                                 app:validator="required"
-                                app:inputHint="Smith"
+                                app:inputHint="Jeager"
                                 app:labelText="@string/fragment_authorized_officer_prefered_name" />
 
                             <id.co.myrepublic.salessupport.widget.CustomEditText
@@ -229,7 +229,7 @@
                                 android:layout_marginTop="10dp"
                                 app:inputType="text"
                                 app:validator="required"
-                                app:inputHint="CTO"
+                                app:inputHint="IT"
                                 app:labelText="@string/fragment_authorized_officer_designation" />
 
                             <id.co.myrepublic.salessupport.widget.CustomEditText
@@ -239,7 +239,7 @@
                                 android:layout_marginTop="10dp"
                                 app:inputType="text"
                                 app:validator="required"
-                                app:inputHint="78900005A"
+                                app:inputHint="45666666"
                                 app:labelText="@string/fragment_authorized_officer_ktp" />
 
                             <id.co.myrepublic.salessupport.widget.CustomEditText

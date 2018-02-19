@@ -179,7 +179,12 @@ public class FragmentContactPerson extends Fragment implements View.OnClickListe
     @Override
     public void onTabChanged(String tabId) {
         GlobalVariables gVar = GlobalVariables.getInstance();
-        layoutAuthorized.setAnimation(gVar.getFadeInAnim());
-        layoutTechnicalContact.setAnimation(gVar.getFadeInAnim());
+        if(tabId.equals("Tab Authorized Officer")) {
+            layoutTechnicalContact.startAnimation(gVar.getFadeOutAnim());
+            layoutAuthorized.startAnimation(gVar.getFadeInAnim());
+        } else if(tabId.equals("Tab Technical Contact")) {
+            layoutTechnicalContact.startAnimation(gVar.getFadeInAnim());
+            layoutAuthorized.startAnimation(gVar.getFadeOutAnim());
+        }
     }
 }
