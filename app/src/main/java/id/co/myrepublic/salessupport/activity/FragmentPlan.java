@@ -12,11 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -152,7 +150,7 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
         paramMap.put("session_id", sessionId);
         paramMap.put("homepassdetailid",homepassDataService.getHomepassDetailId());
         //paramMap.put("customer_type",customerClass);
-        paramMap.put("customer_type","RES");
+        paramMap.put("customer_type",customerClass);
         paramMap.put("rep_id",gVar.getString(AppConstant.COOKIE_REP_ID,"1"));
         paramMap.put("tag[0]",tagType);
 
@@ -307,8 +305,8 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
             for(CatalogItem catalogItem : catalogList) {
                 dataMap.put(catalogItem.getName(),catalogItem.getId());
             }
-            checkboxes.setEntriesMap(dataMap);
         }
+        checkboxes.setEntriesMap(dataMap);
     }
 
     @Override

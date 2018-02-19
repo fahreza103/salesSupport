@@ -304,6 +304,7 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
         bundle.putString("repId",repId);
 
         Fragment fragment = new FragmentCustomerProfile();
+
         fragment.setArguments(bundle);
 
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();

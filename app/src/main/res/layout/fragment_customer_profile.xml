@@ -66,8 +66,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 app:inputType="text"
-                app:validator="required"
-                app:labelText="@string/fragment_customer_full_name" />
+                app:labelText="@string/fragment_customer_full_name"
+                app:validator="required" />
 
             <id.co.myrepublic.salessupport.widget.CustomEditText
                 android:id="@+id/customer_editText_prefered_name"
@@ -75,8 +75,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 app:inputType="text"
-                app:validator="required"
-                app:labelText="@string/fragment_customer_prefered_name" />
+                app:labelText="@string/fragment_customer_prefered_name"
+                app:validator="required" />
 
             <id.co.myrepublic.salessupport.widget.CustomSpinner
                 android:id="@+id/customer_spinner_nationality"
@@ -93,19 +93,19 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 app:inputType="text"
-                app:validator="required"
-                app:labelText="@string/fragment_customer_id_type" />
+                app:labelText="@string/fragment_customer_id_type"
+                app:validator="required" />
 
             <id.co.myrepublic.salessupport.widget.CustomEditText
                 android:id="@+id/customer_editText_dob"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                app:inputType="calendar"
-                app:validator="date"
                 app:dateFormat="yyyy-MM-dd"
                 app:inputHint="yyyy-MM-dd"
-                app:labelText="@string/fragment_customer_dob" />
+                app:inputType="calendar"
+                app:labelText="@string/fragment_customer_dob"
+                app:validator="date" />
 
             <id.co.myrepublic.salessupport.widget.CustomSpinner
                 android:id="@+id/customer_spinner_gender"
@@ -120,20 +120,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                app:inputType="text"
                 app:inputHint="youremail@example.com"
-                app:validator="required,email"
-                app:labelText="@string/fragment_customer_email" />
+                app:inputType="text"
+                app:labelText="@string/fragment_customer_email"
+                app:validator="required,email" />
 
             <id.co.myrepublic.salessupport.widget.CustomEditText
                 android:id="@+id/customer_editText_mobilephone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                app:inputType="phone"
-                app:validator="required,phone"
                 app:inputHint="08157776565"
-                app:labelText="@string/fragment_customer_mobile_phone" />
+                app:inputType="phone"
+                app:labelText="@string/fragment_customer_mobile_phone"
+                app:validator="required,phone" />
 
 
             <id.co.myrepublic.salessupport.widget.CustomEditText
@@ -141,8 +141,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                app:inputType="phone"
                 app:inputHint="0218765567"
+                app:inputType="phone"
                 app:labelText="@string/fragment_customer_home_phone" />
 
             <id.co.myrepublic.salessupport.widget.CustomEditText
@@ -150,8 +150,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                app:inputType="phone"
                 app:inputHint="0218765567"
+                app:inputType="phone"
                 app:labelText="@string/fragment_customer_work_phone" />
 
 
@@ -159,11 +159,11 @@
                 android:id="@+id/customer_btn_confirm"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
                 android:layout_gravity="center"
-                android:textColor="@color/white"
+                android:layout_marginTop="15dp"
                 android:background="@drawable/button_blue"
-                android:text="@string/button_confirm" />
+                android:text="@string/button_confirm"
+                android:textColor="@color/white" />
 
 
         </LinearLayout>

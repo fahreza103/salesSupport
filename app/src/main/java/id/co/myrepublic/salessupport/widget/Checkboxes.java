@@ -6,9 +6,11 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +30,7 @@ public class Checkboxes extends AbstractWidget {
     private List<CheckBox> checkboxes;
     private LinearLayout checkboxParentLayout;
     private ProgressBar progressBar;
+    private TextView textStatus;
     private Map<String,Object> mapValues ;
 
     public Checkboxes(Context context) {
@@ -42,6 +45,7 @@ public class Checkboxes extends AbstractWidget {
     protected void initCustomAttr(Context context, AttributeSet attrs) {
         this.checkboxParentLayout = (LinearLayout) this.widgetView;
         this.progressBar = (ProgressBar) findViewById(R.id.custom_progressbar);
+        this.textStatus = (TextView) findViewById(R.id.custom_txt_status);
         this.checkboxes = new ArrayList<CheckBox>();
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.appAttr);
 
@@ -55,7 +59,21 @@ public class Checkboxes extends AbstractWidget {
      * show progressbar while waiting data has been populated
      */
     public void runProgress() {
+        this.textStatus.setVisibility(VISIBLE);
+        this.textStatus.setText(LOADING_TEXT);
         this.progressBar.setVisibility(VISIBLE);
+    }
+
+    private void removeCheckboxInLayout() {
+        if(checkboxParentLayout != null) {
+            for(int i=0;i<checkboxParentLayout.getChildCount();i++) {
+                Object child = checkboxParentLayout.getChildAt(i);
+                if(child instanceof CheckBox) {
+                    checkboxParentLayout.removeView((View) child);
+                }
+            }
+            this.checkboxes.clear();
+        }
     }
 
     /**
@@ -65,14 +83,15 @@ public class Checkboxes extends AbstractWidget {
     public void setEntriesMap(Map<String,Object> mapValues) {
         this.progressBar.setVisibility(GONE);
         // Remove all checkbox view from previous
-        if(checkboxParentLayout != null) {
-            checkboxParentLayout.removeAllViews();
-            this.checkboxes.clear();
-        }
-
-        this.mapValues = mapValues;
-        for (Map.Entry<String, Object> entry : mapValues.entrySet()) {
-            addCheckbox(entry.getKey());
+        removeCheckboxInLayout();
+        if(mapValues != null && mapValues.size() > 0) {
+            this.textStatus.setVisibility(GONE);
+            this.mapValues = mapValues;
+            for (Map.Entry<String, Object> entry : mapValues.entrySet()) {
+                addCheckbox(entry.getKey());
+            }
+        } else {
+            this.textStatus.setText(ITEM_EMPTY);
         }
 
     }
@@ -83,11 +102,15 @@ public class Checkboxes extends AbstractWidget {
      */
     public void setEntries(CharSequence[] entries) {
         this.progressBar.setVisibility(GONE);
+        removeCheckboxInLayout();
         if(entries != null && entries.length >0) {
+            this.textStatus.setVisibility(GONE);
             List<String> dataList = new ArrayList<String>();
             for (CharSequence entry : entries) {
                 addCheckbox(entry.toString());
             }
+        } else {
+            this.textStatus.setText(ITEM_EMPTY);
         }
     }
 
@@ -123,6 +146,8 @@ public class Checkboxes extends AbstractWidget {
      * @return
      */
     public CheckBox addCheckbox(String entry) {
+        this.progressBar.setVisibility(GONE);
+        this.textStatus.setVisibility(GONE);
         CheckBox checkBox = new CheckBox(this.context);
         checkBox.setText(entry);
         checkBox.setTag(CHECKBOX_TAG+"_"+entry);

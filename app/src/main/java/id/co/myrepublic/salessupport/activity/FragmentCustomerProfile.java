@@ -22,7 +22,6 @@ import id.co.myrepublic.salessupport.adapter.CommonRowAdapter;
 import id.co.myrepublic.salessupport.constant.AppConstant;
 import id.co.myrepublic.salessupport.constant.AsyncUiDisplayType;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
-import id.co.myrepublic.salessupport.model.Channels;
 import id.co.myrepublic.salessupport.model.MainModel;
 import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
 import id.co.myrepublic.salessupport.support.FormExtractor;
@@ -120,7 +119,14 @@ public class FragmentCustomerProfile extends Fragment implements View.OnClickLis
             Bundle bundle = this.getArguments();
             bundle.putSerializable("customerData",formValues);
 
-            Fragment fragment = new FragmentCustomerUpload();
+            String customerClass =  bundle.getString("customerClassification");
+
+            Fragment fragment = null;
+            if("RES".equals(customerClass)) {
+                fragment = new FragmentCustomerUpload();
+            } else {
+                fragment = new FragmentContactPerson();
+            }
             fragment.setArguments(bundle);
 
             FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();

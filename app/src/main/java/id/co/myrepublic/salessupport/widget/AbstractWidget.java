@@ -35,9 +35,10 @@ public abstract class AbstractWidget extends LinearLayout {
     public static final String CHECKBOX_TAG = "checkbox";
     /** text for empty spinner value */
     public static final String SPINNER_EMPTY_TEXT = "[select]";
-    /** text to show then spinner item is in load */
-    public static final String SPINNER_LOADING_TEXT = "Loading Item...";
-
+    /** text to show when item is in load */
+    public static final String LOADING_TEXT = "Loading Item...";
+    /** text to show when item is empty */
+    public static final String ITEM_EMPTY = "No Data";
 
     protected Context context;
     protected List<String> validators = new ArrayList<String>();

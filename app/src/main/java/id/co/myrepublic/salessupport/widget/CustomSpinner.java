@@ -133,7 +133,7 @@ public class CustomSpinner extends AbstractWidget {
      */
     public void runProgress() {
         List<String> loadingItem = new ArrayList<String>();
-        loadingItem.add(AbstractWidget.SPINNER_LOADING_TEXT);
+        loadingItem.add(AbstractWidget.LOADING_TEXT);
 
         CommonRowAdapter<String> adapter = new CommonRowAdapter<String>(loadingItem,this.context);
         adapter.setSpinner(true);

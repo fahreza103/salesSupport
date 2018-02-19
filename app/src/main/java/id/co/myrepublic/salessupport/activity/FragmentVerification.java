@@ -246,7 +246,7 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
         paramMap.put("event_rep_id", salesData.get("sales_editText_event_rep_id"));
         paramMap.put("homepassdetailid", homepassDataService.getHomepassDetailId());
 
-        paramMap.put("customer[type]", "RES");
+        paramMap.put("customer[type]", customerClass);
         paramMap.put("customer[referrer_customer_id]",salesData.get("sales_editText_customer_reff"));
 
         // CUSTOMER-PROFILE
@@ -275,14 +275,55 @@ public class FragmentVerification extends Fragment implements AsyncTaskListener 
         paramMap.put("customer[company_info][contacts][0][mobile]", customerData.get("customer_editText_mobilephone"));
         paramMap.put("customer[company_info][contacts][0][email]", customerData.get("customer_editText_email"));
 
+        if("RES".equals(customerClass)) {
+            paramMap.put("customer[company_info][business_type]", "SMG");
+            paramMap.put("customer[company_info][business_segment]", "HRB");
+        } else {
+            HashMap<String,Object> companyInfo = (HashMap<String, Object>) bundle.getSerializable("companyInfo");
+            HashMap<String,Object> authorizedOfficer = (HashMap<String, Object>) bundle.getSerializable("authorizedOfficerData");
+            HashMap<String,Object> technicalContact = (HashMap<String, Object>) bundle.getSerializable("technicalContactData");
+
+            paramMap.put("customer[company_info][name]", companyInfo.get("dialogitem_edittext_company_name"));
+            paramMap.put("customer[company_info][brn]", companyInfo.get("dialogitem_edittext_npwp"));
+            paramMap.put("customer[company_info][npwp_address]", null);
+            paramMap.put("customer[company_info][business_type]", companyInfo.get("dialogitem_spinner_business_type"));
+            paramMap.put("customer[company_info][business_segment]", companyInfo.get("dialogitem_spinner_business_size"));
+            paramMap.put("customer[company_info][business_consumer]", null);
+            paramMap.put("customer[company_info][registered_address][company_name]", null);
+            paramMap.put("customer[company_info][registered_address][full_address]", null);
+            paramMap.put("customer[company_info][registered_address][postal_code]", null);
+            paramMap.put("customer[company_info][office_phone]", null);
+            paramMap.put("customer[company_info][office_fax]", null);
+            paramMap.put("customer[company_info][additional_info]", null);
+
+            paramMap.put("customer[company_info][contacts][1][contact_type_id]", "3");
+            paramMap.put("customer[company_info][contacts][1][first_name]", technicalContact.get("technical_contact_edittext_full_name"));
+            paramMap.put("customer[company_info][contacts][1][last_name]", technicalContact.get("technical_contact_edittext_preferred_name"));
+            paramMap.put("customer[company_info][contacts][1][designation]", technicalContact.get("technical_contact_edittext_designation"));
+            paramMap.put("customer[company_info][contacts][1][nric]", technicalContact.get("technical_contact_edittext_ktp"));
+            paramMap.put("customer[company_info][contacts][1][date_of_birth]", technicalContact.get("technical_contact_edittext_dob"));
+            paramMap.put("customer[company_info][contacts][1][office_phone]", technicalContact.get("technical_contact_edittext_work_phone"));
+            paramMap.put("customer[company_info][contacts][1][mobile]", technicalContact.get("technical_contact_edittext_mobile_phone"));
+            paramMap.put("customer[company_info][contacts][1][email]", technicalContact.get("technical_contact_edittext_email"));
+
+            paramMap.put("customer[company_info][contacts][2][contact_type_id]", "4");
+            paramMap.put("customer[company_info][contacts][2][first_name]", authorizedOfficer.get("authorized_officer_edittext_full_name"));
+            paramMap.put("customer[company_info][contacts][2][last_name]", authorizedOfficer.get("authorized_officer_edittext_preferred_name"));
+            paramMap.put("customer[company_info][contacts][2][designation]", authorizedOfficer.get("authorized_officer_edittext_designation"));
+            paramMap.put("customer[company_info][contacts][2][nric]", authorizedOfficer.get("authorized_officer_edittext_ktp"));
+            paramMap.put("customer[company_info][contacts][2][date_of_birth]", authorizedOfficer.get("authorized_officer_edittext_dob"));
+            paramMap.put("customer[company_info][contacts][2][office_phone]", authorizedOfficer.get("authorized_officer_edittext_work_phone"));
+            paramMap.put("customer[company_info][contacts][2][mobile]", authorizedOfficer.get("authorized_officer_edittext_mobile_phone"));
+            paramMap.put("customer[company_info][contacts][2][email]", authorizedOfficer.get("authorized_officer_edittext_email"));
+
+        }
 
         paramMap.put("customer[payment_info][payment_type_id]", "15");
         paramMap.put("customer[payment_info][status_id]", "4");
-        paramMap.put("customer[company_info][business_type]", "SMG");
-        paramMap.put("customer[company_info][business_segment]", "HRB");
+
 
         // BILLING-ADDRESS
-        paramMap.put("subscription[service_type]", "RES");
+        paramMap.put("subscription[service_type]", customerClass);
         paramMap.put("subscription[tp_status]", "30");
         paramMap.put("subscription[net_co]", "ON");
         paramMap.put("subscription[addresses][0][type]", "Billing");

@@ -56,6 +56,16 @@
     <string name="fragment_customer_upload_take_photo">Take a Photo</string>
     <string name="fragment_customer_upload_gallery">Load Gallery</string>
 
+    <string name="fragment_authorized_officer_cp">Contact Person</string>
+    <string name="fragment_authorized_officer_full_name">Full Name</string>
+    <string name="fragment_authorized_officer_prefered_name">Preferred Name</string>
+    <string name="fragment_authorized_officer_designation">Designation</string>
+    <string name="fragment_authorized_officer_ktp">KTP/Sim/ Passport</string>
+    <string name="fragment_authorized_officer_dob">Date of Birth</string>
+    <string name="fragment_authorized_officer_email">Email</string>
+    <string name="fragment_authorized_officer_mobile">Mobile</string>
+    <string name="fragment_authorized_officer_work_phone">Work Phone</string>
+
     <string name="fragment_plan_create">Create Plan</string>
     <string name="fragment_plan_internet_package">Internet Package</string>
     <string name="fragment_plan_ont_package">ONT</string>
@@ -139,8 +149,11 @@
 
     <string name="tabhost_create_order">Create Order</string>
     <string name="tabhost_create_survey">Create Survey</string>
+    <string name="tabhost_authorized_officer">Authorized Officer</string>
+    <string name="tabhost_technical_contact">Technical Contact</string>
 
     <string name="button_confirm">Confirm</string>
+    <string name="button_copy">Copy</string>
     <string name="button_ok">OK</string>
     <string name="button_no">No</string>
     <string name="button_cancel">Cancel</string>

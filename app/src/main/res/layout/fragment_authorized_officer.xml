@@ -5,9 +5,46 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:id="@+id/homepass_list_header"
+        android:background="@color/white"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/icon_title"
+            android:layout_marginTop="2dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            app:srcCompat="@mipmap/icon_customer_profile" />
+
+        <TextView
+            android:id="@+id/customer_txt_customerprofile"
+            android:layout_toRightOf="@id/icon_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="10dp"
+            android:paddingBottom="5dp"
+            android:text="@string/fragment_authorized_officer_cp"
+            android:textStyle="bold"
+            android:textSize="22dp"
+            android:textColor="@color/colorLogo4" />
+
+        <View
+            android:layout_height="2dp"
+            android:layout_below="@id/customer_txt_customerprofile"
+            android:background="@color/colorLogo"
+            android:layout_width="match_parent" />
+
+    </RelativeLayout>
+
     <TabHost
         android:id="@+id/authorized_person_tabhost"
         android:layout_width="match_parent"
+        android:layout_weight=".50"
         android:layout_height="wrap_content">
 
         <LinearLayout
@@ -31,71 +68,235 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
-                    <LinearLayout
-                        android:id="@+id/dialogitem_layout_company"
+                    <ScrollView
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:visibility="visible"
-                        android:orientation="vertical">
+                        android:layout_height="match_parent">
 
-                        <id.co.myrepublic.salessupport.widget.CustomSpinner
-                            android:id="@+id/dialogitem_spinner_customer_class"
+                        <LinearLayout
+                            android:id="@+id/authorized_officer_layout_form"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="15dp"
-                            app:labelText="@string/dialog_homepass_customer"
-                            app:validator="required" />
+                            android:layout_height="match_parent"
+                            android:visibility="visible"
+                            android:orientation="vertical">
 
+                            <Button
+                                android:id="@+id/authorized_officer_btn_copy"
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:layout_marginLeft="10dp"
+                                android:textColor="@color/white"
+                                android:background="@drawable/button_blue"
+                                android:text="@string/button_copy" />
 
-                        <id.co.myrepublic.salessupport.widget.CustomEditText
-                            android:id="@+id/dialogitem_edittext_company_name"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            app:inputType="text"
-                            app:validator="required"
-                            app:labelText="@string/dialog_homepass_company_name" />
+                            <id.co.myrepublic.salessupport.widget.CustomEditText
+                                android:id="@+id/authorized_officer_edittext_full_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                app:inputType="text"
+                                app:validator="required"
+                                app:inputHint="John"
+                                app:labelText="@string/fragment_authorized_officer_full_name" />
 
-                        <id.co.myrepublic.salessupport.widget.CustomEditText
-                            android:id="@+id/customer_editText_workphone"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            app:inputType="text"
-                            app:validator="required"
-                            app:labelText="@string/dialog_homepass_npwp" />
+                            <id.co.myrepublic.salessupport.widget.CustomEditText
+                                android:id="@+id/authorized_officer_edittext_preferred_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                app:inputType="text"
+                                app:validator="required"
+                                app:inputHint="Smith"
+                                app:labelText="@string/fragment_authorized_officer_prefered_name" />
 
-                        <id.co.myrepublic.salessupport.widget.CustomSpinner
-                            android:id="@+id/dialogitem_spinner_business_type"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="15dp"
-                            app:labelText="@string/dialog_homepass_business_type"
-                            />
+                            <id.co.myrepublic.salessupport.widget.CustomEditText
+                                android:id="@+id/authorized_officer_edittext_designation"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                app:inputType="text"
+                                app:validator="required"
+                                app:inputHint="CTO"
+                                app:labelText="@string/fragment_authorized_officer_designation" />
 
-                        <id.co.myrepublic.salessupport.widget.CustomSpinner
-                            android:id="@+id/dialogitem_spinner_business_size"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="15dp"
-                            app:labelText="@string/dialog_homepass_business_size"/>
+                            <id.co.myrepublic.salessupport.widget.CustomEditText
+                                android:id="@+id/authorized_officer_edittext_ktp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                app:inputType="text"
+                                app:validator="required"
+                                app:inputHint="78900005A"
+                                app:labelText="@string/fragment_authorized_officer_ktp" />
 
-                    </LinearLayout>
+                            <id.co.myrepublic.salessupport.widget.CustomEditText
+                                android:id="@+id/authorized_officer_edittext_dob"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                app:inputType="calendar"
+                                app:dateFormat="yyyy-MM-dd"
+                                app:inputHint="yyyy-MM-dd"
+                                app:validator="required"
+                                app:labelText="@string/fragment_authorized_officer_dob" />
 
+                            <id.co.myrepublic.salessupport.widget.CustomEditText
+                                android:id="@+id/authorized_officer_edittext_email"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                app:inputType="text"
+                                app:validator="required,email"
+                                app:inputHint="youremail@example.com"
+                                app:labelText="@string/fragment_authorized_officer_email" />
+
+                            <id.co.myrepublic.salessupport.widget.CustomEditText
+                                android:id="@+id/authorized_officer_edittext_mobile_phone"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                app:inputType="phone"
+                                app:validator="required,phone"
+                                app:inputHint="081590004250"
+                                app:labelText="@string/fragment_authorized_officer_mobile" />
+
+                            <id.co.myrepublic.salessupport.widget.CustomEditText
+                                android:id="@+id/authorized_officer_edittext_work_phone"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                app:inputType="phone"
+                                app:inputHint="0218435664"
+                                app:labelText="@string/fragment_authorized_officer_work_phone" />
+
+                        </LinearLayout>
+                    </ScrollView>
                 </LinearLayout>
 
 
 
                 <LinearLayout
-                    android:id="@+id/create_survey"
+                    android:id="@+id/techincal_contact"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
-                </LinearLayout>
+                    <ScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
 
+                        <LinearLayout
+                            android:id="@+id/technical_contact_layout_form"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:visibility="visible"
+                            android:orientation="vertical">
+
+                            <Button
+                                android:id="@+id/technical_contact_btn_copy"
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:layout_marginLeft="10dp"
+                                android:textColor="@color/white"
+                                android:background="@drawable/button_blue"
+                                android:text="@string/button_copy" />
+
+                            <id.co.myrepublic.salessupport.widget.CustomEditText
+                                android:id="@+id/technical_contact_edittext_full_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                app:inputType="text"
+                                app:validator="required"
+                                app:inputHint="John"
+                                app:labelText="@string/fragment_authorized_officer_full_name" />
+
+                            <id.co.myrepublic.salessupport.widget.CustomEditText
+                                android:id="@+id/technical_contact_edittext_preferred_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                app:inputType="text"
+                                app:validator="required"
+                                app:inputHint="Smith"
+                                app:labelText="@string/fragment_authorized_officer_prefered_name" />
+
+                            <id.co.myrepublic.salessupport.widget.CustomEditText
+                                android:id="@+id/technical_contact_edittext_designation"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                app:inputType="text"
+                                app:validator="required"
+                                app:inputHint="CTO"
+                                app:labelText="@string/fragment_authorized_officer_designation" />
+
+                            <id.co.myrepublic.salessupport.widget.CustomEditText
+                                android:id="@+id/technical_contact_edittext_ktp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                app:inputType="text"
+                                app:validator="required"
+                                app:inputHint="78900005A"
+                                app:labelText="@string/fragment_authorized_officer_ktp" />
+
+                            <id.co.myrepublic.salessupport.widget.CustomEditText
+                                android:id="@+id/technical_contact_edittext_dob"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                app:inputType="calendar"
+                                app:dateFormat="yyyy-MM-dd"
+                                app:inputHint="yyyy-MM-dd"
+                                app:validator="required"
+                                app:labelText="@string/fragment_authorized_officer_dob" />
+
+                            <id.co.myrepublic.salessupport.widget.CustomEditText
+                                android:id="@+id/technical_contact_edittext_email"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                app:inputType="text"
+                                app:validator="required,email"
+                                app:inputHint="youremail@example.com"
+                                app:labelText="@string/fragment_authorized_officer_email" />
+
+                            <id.co.myrepublic.salessupport.widget.CustomEditText
+                                android:id="@+id/technical_contact_edittext_mobile_phone"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                app:inputType="phone"
+                                app:validator="required,phone"
+                                app:inputHint="081590004250"
+                                app:labelText="@string/fragment_authorized_officer_mobile" />
+
+                            <id.co.myrepublic.salessupport.widget.CustomEditText
+                                android:id="@+id/technical_contact_edittext_work_phone"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                app:inputType="phone"
+                                app:inputHint="0218435664"
+                                app:labelText="@string/fragment_authorized_officer_work_phone" />
+
+                        </LinearLayout>
+                    </ScrollView>
+                </LinearLayout>
             </FrameLayout>
         </LinearLayout>
     </TabHost>
+
+    <Button
+    android:id="@+id/authorized_officer_btn_confirm"
+    android:layout_width="100dp"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:layout_gravity="center"
+    android:textColor="@color/white"
+    android:background="@drawable/button_blue"
+    android:text="@string/button_confirm" />
 
 </LinearLayout>
