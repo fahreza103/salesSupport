@@ -19,8 +19,8 @@ import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
 import id.co.myrepublic.salessupport.listener.ProgressListener;
-import id.co.myrepublic.salessupport.model.MainModel;
-import id.co.myrepublic.salessupport.model.Order;
+import id.co.myrepublic.salessupport.response.MainResponse;
+import id.co.myrepublic.salessupport.response.Order;
 
 /**
  * Utility to connect this app to specified URL location, and return the response
@@ -30,90 +30,18 @@ public class URLConnector {
 
     private static final int TIMEOUT_DURATION = 40000;
 
+
     /**
-     * Connect to specified URL
-     * @param request
-     * @param paramMap
+     * Connect by using Application form encoded
+     * @param request Url address
+     * @param paramMap parameter send into server
+     * @param cookie
      * @return
      */
-    public static UrlResponse doConnect(String request, Map<Object,Object> paramMap) {
-        UrlResponse urlResponse = new UrlResponse();
-        String urlParameters = "";
-        int i = 0;
-        for (Map.Entry<Object, Object> entry : paramMap.entrySet()) {
-            Object key = entry.getKey();
-            Object value = entry.getValue();
-            if(i>0) {
-                urlParameters += "&";
-            }
-            urlParameters += key + "=" + value;
-            i++;
-        }
-
-        try {
-            byte[] postData = urlParameters.getBytes(Charset.forName("UTF-8"));
-            int postDataLength = postData.length;
-
-            URL url = new URL(request);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
-
-            conn.setDoOutput(true);
-            conn.setInstanceFollowRedirects(false);
-            conn.setConnectTimeout(TIMEOUT_DURATION);
-            conn.setReadTimeout(TIMEOUT_DURATION);
-            conn.setRequestMethod("POST");
-            conn.setFixedLengthStreamingMode(postData.length);
-            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            conn.setRequestProperty("charset", "utf-8");
-            conn.setRequestProperty("Content-Length", Integer.toString(postDataLength));
-            //conn.setRequestProperty("Accept-Encoding", "gzip, deflate");
-            conn.setUseCaches(false);
-            DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
-            wr.write(postData);
-
-            InputStream inputStream = conn.getInputStream();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream,Charset.forName("UTF-8")));
-
-            StringBuilder stringBuilder = new StringBuilder();
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                stringBuilder.append(line).append("\n");
-            }
-            bufferedReader.close();
-
-            int code = conn.getResponseCode();
-            System.out.println(code);
-
-            conn.disconnect();
-
-            urlResponse.setResultValue(stringBuilder.toString());
-            urlResponse.setResultCode(UrlResponse.RESULT_SUCCESS);
-            return urlResponse;
-        } catch (SocketTimeoutException e) {
-            urlResponse.setResultCode(UrlResponse.RESULT_ERR_TIMEOUT);
-            urlResponse.setErrorMessage("Connection Time out, server not responding");
-            e.printStackTrace();
-        } catch (Exception e) {
-            urlResponse.setResultCode(UrlResponse.RESULT_ERR_FATAL);
-            if(StringUtil.isEmpty(e.getMessage())) {
-                urlResponse.setErrorMessage("Server returned non-OK status or connection failure");
-            } else {
-                urlResponse.setErrorMessage(e.getMessage());
-            }
-
-            e.printStackTrace();
-        }
-
-        return urlResponse;
-    }
-
-    public static UrlResponse doConnectMultipart(String request, Map<Object,Object> paramMap, File requestFile,String cookie, ProgressListener progressListener) {
+    public static UrlResponse doConnect(String request, Map<Object,Object> paramMap,String cookie) {
         UrlResponse urlResponse = new UrlResponse();
         try {
-            MultipartUtility multipart = new MultipartUtility(request,cookie, TIMEOUT_DURATION);
-            multipart.setProgressListener(progressListener);
-            multipart.addFilePart("file",requestFile);
+            HttpClientUtil multipart = new HttpClientUtil(request,cookie, TIMEOUT_DURATION);
             //Add form value
             for (Map.Entry<Object, Object> entry : paramMap.entrySet()) {
                 multipart.addFormField(entry.getKey().toString(), ""+entry.getValue());
@@ -137,15 +65,44 @@ public class URLConnector {
         return urlResponse;
     }
 
-    public static byte[] compress(String data) throws IOException {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(data.length());
-        GZIPOutputStream gzip = new GZIPOutputStream(bos);
-        gzip.write(data.getBytes());
-        gzip.close();
-        byte[] compressed = bos.toByteArray();
-        bos.close();
-        return compressed;
+    /**
+     * Connect by using multipart request
+     * @param request Url address
+     * @param paramMap parameter send into server
+     * @param requestFile file that need to send / upload
+     * @param cookie
+     * @param progressListener
+     * @return
+     */
+    public static UrlResponse doConnectMultipart(String request, Map<Object,Object> paramMap, File requestFile,String cookie, ProgressListener progressListener) {
+        UrlResponse urlResponse = new UrlResponse();
+        try {
+            HttpClientUtil multipart = new HttpClientUtil(request,cookie, TIMEOUT_DURATION);
+            multipart.setProgressListener(progressListener);
+            multipart.addFilePart("file",requestFile);
+            //Add form value
+            for (Map.Entry<Object, Object> entry : paramMap.entrySet()) {
+                multipart.addFormFieldMultipart(entry.getKey().toString(), ""+entry.getValue());
+            }
+
+            String serverResponse = multipart.doConnect();
+
+            urlResponse.setResultValue(serverResponse);
+            urlResponse.setResultCode(UrlResponse.RESULT_SUCCESS);
+
+        } catch (SocketTimeoutException e) {
+            e.printStackTrace();
+            urlResponse.setResultCode(UrlResponse.RESULT_ERR_TIMEOUT);
+            urlResponse.setErrorMessage("Connection Time out, server not responding");
+        } catch (Exception e) {
+            e.printStackTrace();
+            urlResponse.setResultCode(UrlResponse.RESULT_ERR_FATAL);
+            urlResponse.setErrorMessage("Server returned non-OK status or connection failure");
+        }
+
+        return urlResponse;
     }
+
 
     public static void main (String[] args) {
         File file = new File("D:\\Design\\wall.jpg");
@@ -270,8 +227,8 @@ public class URLConnector {
 
 
 //        UrlResponse response = URLConnector.doConnect(URL, paramMap);
-        UrlResponse response = URLConnector.doConnect(URL,paramMap);
-        MainModel<Order> model = StringUtil.convertStringToMainModel(response.getResultValue(),Order.class);
+        UrlResponse response = URLConnector.doConnect(URL,paramMap,"");
+        MainResponse<Order> model = StringUtil.convertStringToMainModel(response.getResultValue(),Order.class);
         Order order =model.getObject();
 
     }

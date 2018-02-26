@@ -17,6 +17,7 @@ public class UrlParam {
     private String url;
     private String resultKey;
     private File file;
+    private Class<?> resultClass;
     private Map<Object,Object> paramMap = new HashMap<Object,Object>();
 
     public String getUrl() {
@@ -49,6 +50,14 @@ public class UrlParam {
 
     public void setFile(File file) {
         this.file = file;
+    }
+
+    public Class<?> getResultClass() {
+        return resultClass;
+    }
+
+    public void setResultClass(Class<?> resultClass) {
+        this.resultClass = resultClass;
     }
 
     public static UrlParam createParamCheckSession(String sessionId) {

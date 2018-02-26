@@ -14,28 +14,20 @@ import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.GZIPOutputStream;
 
 import id.co.myrepublic.salessupport.R;
-import id.co.myrepublic.salessupport.constant.AppConstant;
-import id.co.myrepublic.salessupport.constant.AsyncUiDisplayType;
-import id.co.myrepublic.salessupport.support.ApiMultipartConnectorAsyncOperation;
-import id.co.myrepublic.salessupport.support.BitmapProcessor;
+import id.co.myrepublic.salessupport.adapter.CommonRowAdapter;
+import id.co.myrepublic.salessupport.response.CatalogItem;
+import id.co.myrepublic.salessupport.support.FormExtractor;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
-import id.co.myrepublic.salessupport.util.UrlParam;
-import id.co.myrepublic.salessupport.util.UrlResponse;
+import id.co.myrepublic.salessupport.widget.CheckboxParam;
 import id.co.myrepublic.salessupport.widget.Checkboxes;
+import id.co.myrepublic.salessupport.widget.CustomEditText;
 import id.co.myrepublic.salessupport.widget.CustomSpinner;
 
 /**
@@ -47,6 +39,7 @@ public class FragmentMain extends Fragment {
     private LinearLayout layoutLogo;
     private LinearLayout footerBar;
     private CustomSpinner customSpinner;
+    private CustomEditText customEditText;
     private Button btn;
     private Checkboxes testCheckboxes;
 
@@ -70,10 +63,46 @@ public class FragmentMain extends Fragment {
         this.footerBar = (LinearLayout) getActivity().findViewById(R.id.footer_bar);
         this.footerBar.setVisibility(View.GONE);
 
+        customEditText = (CustomEditText) getActivity().findViewById(R.id.test_edittext);
         customSpinner = (CustomSpinner) getActivity().findViewById(R.id.test_spinner);
+        testCheckboxes = (Checkboxes) getActivity().findViewById(R.id.test_checkboxes);
         btn = (Button) getActivity().findViewById(R.id.test_button);
 
-
+//        List<CatalogItem> catalogItemList = new ArrayList<CatalogItem>();
+//        CatalogItem catalogItem = new CatalogItem();
+//        catalogItem.setName("Test Data");
+//        catalogItem.setId("1");
+//        catalogItemList.add(catalogItem);
+//
+//        CatalogItem catalogItem2 = new CatalogItem();
+//        catalogItem2.setName("Test Data 2");
+//        catalogItem2.setId("2");
+//        catalogItemList.add(catalogItem2);
+//
+//
+//        CatalogItem catalogItem3 = new CatalogItem();
+//        catalogItem3.setName("Test Data 3");
+//        catalogItem3.setId("3");
+//        catalogItemList.add(catalogItem3);
+//
+//        CommonRowAdapter adapter = new CommonRowAdapter(catalogItemList,getContext());
+//        customSpinner.setAdapter(adapter);
+//
+//
+//        Map<String,Object> dataMap = new HashMap<String,Object>();
+//        dataMap.put("test_edittext","Test data");
+//        dataMap.put("test_spinner",catalogItem2);
+//        //dataMap.put("test_checkboxes")
+//
+//        FormExtractor.putValues(dataMap,layoutLogo);
+//
+//        btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Map<String,Object> resMap = FormExtractor.extractValues(getContext(),layoutLogo,false);
+//                Map<String,CheckboxParam> checkboxParamMap = (Map<String, CheckboxParam>) resMap.get("test_checkboxes");
+//            }
+//        });
 
 //        final File file = new File("/storage/emulated/0/Download/IMG_20160417_193743.jpg");
 //        final GlobalVariables gvar = GlobalVariables.getInstance();

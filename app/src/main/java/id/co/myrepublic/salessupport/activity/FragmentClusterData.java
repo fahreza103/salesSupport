@@ -26,8 +26,8 @@ import id.co.myrepublic.salessupport.constant.AppConstant;
 import id.co.myrepublic.salessupport.constant.AsyncUiDisplayType;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
 import id.co.myrepublic.salessupport.listener.DialogListener;
-import id.co.myrepublic.salessupport.model.Cluster;
-import id.co.myrepublic.salessupport.model.MainModel;
+import id.co.myrepublic.salessupport.response.Cluster;
+import id.co.myrepublic.salessupport.response.MainResponse;
 import id.co.myrepublic.salessupport.support.AbstractAsyncOperation;
 import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
 import id.co.myrepublic.salessupport.support.DialogBuilder;
@@ -37,11 +37,12 @@ import id.co.myrepublic.salessupport.util.UrlParam;
 
 
 /**
- * Created by myrepublicid on 26/9/17.
+ * Cluster data list
  */
 
-public class FragmentClusterData extends Fragment implements AsyncTaskListener, View.OnClickListener, DialogListener, AdapterView.OnItemClickListener {
+public class FragmentClusterData extends AbstractFragment implements  View.OnClickListener, DialogListener, AdapterView.OnItemClickListener {
 
+    private static final String CLUSTER_TASK_NAME = "getCluster";
     private ListView listViewCluster;
     private CommonRowAdapter<Cluster> clusterAdapter;
     private List<Cluster> dataModels = new ArrayList<Cluster>();
@@ -50,7 +51,6 @@ public class FragmentClusterData extends Fragment implements AsyncTaskListener, 
     private LinearLayout fabLayout;
     private FloatingActionButton fabSearch;
     private FloatingActionButton fabRefresh;
-    private ApiConnectorAsyncOperation asop;
 
     @Nullable
     @Override
@@ -71,27 +71,22 @@ public class FragmentClusterData extends Fragment implements AsyncTaskListener, 
         String areaCode = bundle.getString("areaCode", null);
 
         // get citylist from API
-        GlobalVariables gVar = GlobalVariables.getInstance();
-        String sessionId = gVar.getSessionKey();
-
         Map<Object,Object> paramMap = new HashMap<Object,Object>();
-        paramMap.put("session_id",sessionId);
         paramMap.put("area_id",areaCode);
 
         UrlParam urlParam = new UrlParam();
         urlParam.setUrl(AppConstant.GET_CLUSTER_API_URL);
         urlParam.setParamMap(paramMap);
+        urlParam.setResultClass(Cluster[].class);
 
         fabLayout = (LinearLayout) getActivity().findViewById(R.id.cluster_layout_floating);
         fabRefresh = (FloatingActionButton)getActivity().findViewById(R.id.fab_clusterRefresh);
         fabSearch = (FloatingActionButton)getActivity().findViewById(R.id.fab_clusterSearch);
         listViewCluster =(ListView)getActivity().findViewById(R.id.listCluster);
 
-        if(dataModels.size() ==0) {
+        if(!isAlreadyLoaded) {
             fabLayout.setVisibility(View.GONE);
-            asop = new ApiConnectorAsyncOperation(getContext(),"getCluster", AsyncUiDisplayType.SCREEN);
-            asop.setListener(this);
-            asop.execute(urlParam);
+            doApiCallAsyncTask(CLUSTER_TASK_NAME,urlParam,AsyncUiDisplayType.SCREEN);
         } else {
             fabLayout.setVisibility(View.VISIBLE);
             listViewCluster.setAdapter(clusterAdapter);
@@ -116,37 +111,22 @@ public class FragmentClusterData extends Fragment implements AsyncTaskListener, 
             dataModel = dataModels.get(position);
         }
 
-        Fragment fragment = new FragmentClusterDetailData();
-
         Bundle bundle = this.getArguments();
         bundle.putString("clusterName", dataModel.getClusterName());
         bundle.putSerializable("cluster",dataModel);
-        fragment.setArguments(bundle);
 
-        String backStateName = fragment.getClass().getName();
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        ft.setCustomAnimations(R.anim.left_from_right,R.anim.right_from_left, R.anim.left_from_right,R.anim.right_from_left);
-        ft.replace(R.id.content_frame, fragment,backStateName);
-        ft.addToBackStack(backStateName);
-        ft.commit();
-
-        DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        openFragmentExistingBundle(bundle,new FragmentClusterDetailData());
     }
 
 
 
     @Override
-    public void onAsyncTaskComplete(Object result, String taskName) {
+    public void onAsyncTaskApiSuccess(Map<String, MainResponse> resultMap, String taskName) {
         GlobalVariables gVar = GlobalVariables.getInstance();
-
-        Map<String,MainModel> resultMap = (Map<String,MainModel>) result;
-        MainModel<Cluster> model = resultMap.get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
+        MainResponse<Cluster> model = resultMap.get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
         if(model != null) {
             fabLayout.setVisibility(View.VISIBLE);
             fabLayout.startAnimation(gVar.getLeftRightAnim());
-
-            model = StringUtil.convertJsonNodeIntoObject(model, Cluster[].class);
             dataModels = model.getListObject();
             createCluster(dataModels);
         }
@@ -189,12 +169,5 @@ public class FragmentClusterData extends Fragment implements AsyncTaskListener, 
     @Override
     public void onDialogCancelPressed(DialogInterface dialog, int which) {}
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if(asop != null && !asop.isCancelled()) {
-            asop.cancel(true);
-            ActivityMain.loadingFrame.setVisibility(View.GONE);
-        }
-    }
+
 }

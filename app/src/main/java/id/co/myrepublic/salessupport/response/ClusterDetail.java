@@ -1,4 +1,4 @@
-package id.co.myrepublic.salessupport.model;
+package id.co.myrepublic.salessupport.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -13,7 +13,7 @@ import java.util.Map;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ClusterDetail<T> implements Serializable {
+public class ClusterDetail implements Serializable {
 
     private static final long serialVersionUID = 7657663563933224754L;
 

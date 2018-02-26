@@ -29,7 +29,14 @@ public class ApiConnectorAsyncOperation extends AbstractAsyncOperation {
         List<UrlResponse> responseList = new ArrayList<UrlResponse>();
         for(Object object : objects) {
             UrlParam urlParam = (UrlParam) object;
-            UrlResponse urlResponse = URLConnector.doConnect(urlParam.getUrl(),urlParam.getParamMap());
+            UrlResponse urlResponse = null;
+            if(urlParam.getFile() != null) {
+                urlResponse = URLConnector.doConnectMultipart(urlParam.getUrl(),urlParam.getParamMap(),urlParam.getFile(),cookie,this);
+            } else {
+                urlResponse = URLConnector.doConnect(urlParam.getUrl(),urlParam.getParamMap(),cookie);
+            }
+
+            urlResponse.setResultClass(urlParam.getResultClass());
             initResultKey(urlResponse,urlParam);
             responseList.add(urlResponse);
             if(isCancelled()) {

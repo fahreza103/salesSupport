@@ -31,8 +31,8 @@ import id.co.myrepublic.salessupport.adapter.CommonRowAdapter;
 import id.co.myrepublic.salessupport.constant.AppConstant;
 import id.co.myrepublic.salessupport.constant.AsyncUiDisplayType;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
-import id.co.myrepublic.salessupport.model.Homepass;
-import id.co.myrepublic.salessupport.model.MainModel;
+import id.co.myrepublic.salessupport.response.Homepass;
+import id.co.myrepublic.salessupport.response.MainResponse;
 import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
 import id.co.myrepublic.salessupport.support.FormExtractor;
 import id.co.myrepublic.salessupport.support.Validator;
@@ -42,11 +42,12 @@ import id.co.myrepublic.salessupport.util.UrlParam;
 import id.co.myrepublic.salessupport.widget.CustomSpinner;
 
 /**
- * Created by myrepublicid on 28/11/17.
+ * Homepass list fragment
  */
 
-public class FragmentHomepass extends Fragment implements AsyncTaskListener {
+public class FragmentHomepass extends AbstractFragment implements AsyncTaskListener {
 
+    private static final String HOMEPASS_TASK_NAME = "homepassSearch";
     private static final String RESULT_KEY_HOMEPASS = "homepass";
     private static final String RESULT_KEY_CUSTOMER_CLASS = "customerClass";
     private static final String RESULT_KEY_COMPANY_TYPE = "companyType";
@@ -56,7 +57,6 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
     private Dialog dialog;
     private TabHost host;
     private List<Homepass> homePassList = new ArrayList<Homepass>();
-    private Boolean isAlreadyLoaded = false;
     private RelativeLayout footerLayout;
     private ApiConnectorAsyncOperation asop;
 
@@ -82,7 +82,6 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
 
 
         if(!isAlreadyLoaded) {
-            isAlreadyLoaded = true;
             footerLayout.setVisibility(View.GONE);
             GlobalVariables gVar = GlobalVariables.getInstance();
             String sessionId = gVar.getSessionKey();
@@ -100,26 +99,30 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
             UrlParam urlParamHomepass = new UrlParam();
             urlParamHomepass.setUrl(AppConstant.GET_HOMEPASS_API_URL);
             urlParamHomepass.setParamMap(paramMap);
+            urlParamHomepass.setResultClass(Homepass[].class);
             urlParamHomepass.setResultKey(RESULT_KEY_HOMEPASS);
 
             UrlParam urlParamCustomerClass = new UrlParam();
             urlParamCustomerClass.setUrl(AppConstant.GET_CUSTOMER_TYPE_API_URL);
             urlParamCustomerClass.setParamMap(paramMap);
+            urlParamCustomerClass.setResultClass(Map[].class);
             urlParamCustomerClass.setResultKey(RESULT_KEY_CUSTOMER_CLASS);
 
             UrlParam urlParamCompanyType = new UrlParam();
             urlParamCompanyType.setUrl(AppConstant.GET_BUSINESS_TYPE_API_URL);
             urlParamCompanyType.setParamMap(paramMap);
+            urlParamCompanyType.setResultClass(String[].class);
             urlParamCompanyType.setResultKey(RESULT_KEY_COMPANY_TYPE);
 
             UrlParam urlParamCompanySize = new UrlParam();
             urlParamCompanySize.setUrl(AppConstant.GET_BUSINESS_SIZE_API_URL);
             urlParamCompanySize.setParamMap(paramMap);
+            urlParamCompanySize.setResultClass(String[].class);
             urlParamCompanySize.setResultKey(RESULT_KEY_COMPANY_SIZE);
 
-            asop = new ApiConnectorAsyncOperation(getContext(), "homepassSearch", AsyncUiDisplayType.SCREEN);
-            asop.setListener(this);
-            asop.execute(urlParamHomepass,urlParamCustomerClass,urlParamCompanyType,urlParamCompanySize);
+            doApiCallAsyncTask(HOMEPASS_TASK_NAME, AsyncUiDisplayType.SCREEN,
+                    urlParamHomepass,urlParamCustomerClass,urlParamCompanyType,urlParamCompanySize);
+
         } else {
             populateItem(homePassList);
         }
@@ -208,17 +211,7 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
                 bundle.putSerializable("homepassDataService",homepass);
                 bundle.putString("customerClassification",itemSelected);
 
-                Fragment fragment = new FragmentSales();
-                fragment.setArguments(bundle);
-
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ft.setCustomAnimations(R.anim.left_from_right,R.anim.right_from_left, R.anim.left_from_right,R.anim.right_from_left);
-                ft.replace(R.id.content_frame, fragment,fragment.getClass().getName());
-                ft.addToBackStack(fragment.getClass().getName());
-                ft.commit();
-
-                DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
-                drawer.closeDrawer(GravityCompat.START);
+                openFragmentExistingBundle(bundle,new FragmentSales());
                 dialog.dismiss();
             }
         });
@@ -255,13 +248,11 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
 
 
     @Override
-    public void onAsyncTaskComplete(Object result, String taskName) {
+    public void onAsyncTaskApiSuccess(Map<String,MainResponse> resultMap,String taskName) {
         GlobalVariables gVar = GlobalVariables.getInstance();
-        Map<String,MainModel> resultMap = (Map<String,MainModel>) result;
-        if("homepassSearch".equals(taskName)) {
-            MainModel homepassModel = resultMap.get(RESULT_KEY_HOMEPASS);
+        if(HOMEPASS_TASK_NAME.equals(taskName)) {
+            MainResponse homepassModel = resultMap.get(RESULT_KEY_HOMEPASS);
             if(homepassModel != null) {
-                homepassModel = StringUtil.convertJsonNodeIntoObject(homepassModel, Homepass[].class);
                 homePassList = homepassModel.getListObject();
                 int i = 1;
                 for(Homepass homepass : homePassList) {
@@ -280,24 +271,21 @@ public class FragmentHomepass extends Fragment implements AsyncTaskListener {
                 footerLayout.setVisibility(View.VISIBLE);
             }
 
-            MainModel<Map<Object,Object>> customerClassModel = resultMap.get(RESULT_KEY_CUSTOMER_CLASS);
+            MainResponse<Map<Object,Object>> customerClassModel = resultMap.get(RESULT_KEY_CUSTOMER_CLASS);
             if(customerClassModel != null) {
-                customerClassModel = StringUtil.convertJsonNodeIntoObject(customerClassModel, Map[].class);
                 List<Map<Object,Object>> listMap = customerClassModel.getListObject();
                 if(listMap.size() > 0) {
                     customerClassMap = listMap.get(0);
                 }
             }
 
-            MainModel<String> companyTypeModel = resultMap.get(RESULT_KEY_COMPANY_TYPE);
+            MainResponse<String> companyTypeModel = resultMap.get(RESULT_KEY_COMPANY_TYPE);
             if(customerClassModel != null) {
-                companyTypeModel = StringUtil.convertJsonNodeIntoObject(companyTypeModel, String[].class);
                 companyTypeList = companyTypeModel.getListObject();
             }
 
-            MainModel<String> companySizeModel = resultMap.get(RESULT_KEY_COMPANY_SIZE);
+            MainResponse<String> companySizeModel = resultMap.get(RESULT_KEY_COMPANY_SIZE);
             if(companySizeModel != null) {
-                companySizeModel = StringUtil.convertJsonNodeIntoObject(companySizeModel, String[].class);
                 companySizeList = companySizeModel.getListObject();
             }
         }

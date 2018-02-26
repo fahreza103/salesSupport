@@ -33,9 +33,9 @@ import id.co.myrepublic.salessupport.constant.AppConstant;
 import id.co.myrepublic.salessupport.constant.AsyncUiDisplayType;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
 import id.co.myrepublic.salessupport.listener.DialogListener;
-import id.co.myrepublic.salessupport.model.CommonItem;
-import id.co.myrepublic.salessupport.model.MainModel;
-import id.co.myrepublic.salessupport.model.ClusterDetail;
+import id.co.myrepublic.salessupport.response.CommonItem;
+import id.co.myrepublic.salessupport.response.MainResponse;
+import id.co.myrepublic.salessupport.response.ClusterDetail;
 import id.co.myrepublic.salessupport.support.AbstractAsyncOperation;
 import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
 import id.co.myrepublic.salessupport.support.DialogBuilder;
@@ -45,10 +45,13 @@ import id.co.myrepublic.salessupport.util.UrlParam;
 
 
 /**
- * Created by myrepublicid on 26/9/17.
+ * Cluster Detail fragment
  */
 
-public class FragmentClusterDetailData extends Fragment implements AsyncTaskListener , View.OnClickListener, DialogListener{
+public class FragmentClusterDetailData extends AbstractFragment implements  View.OnClickListener, DialogListener{
+
+    private static final String CLUSTER_DETAIL_TASK_NAME = "getClusterDetail";
+    private static final String INSERT_COMPETITOR_TASK_NAME = "insertCompetitor";
 
     private ListView listViewClusterDetail;
     private CommonRowAdapter<CommonItem> clusterDetailAdapter;
@@ -61,7 +64,6 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
     private List<String> competitorList = new ArrayList<String>();
     private Dialog dialog;
     private String clusterName;
-    private ApiConnectorAsyncOperation asop;
 
     @Nullable
     @Override
@@ -78,6 +80,7 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
         getActivity().setTitle(getActivity().getString(R.string.fragment_view_cluster_detail));
         GlobalVariables gVar = GlobalVariables.getInstance();
 
+        gVar.putString(AppConstant.SESSION_ORDER_DATA_KEY,"");
         // Floating Button
         fabLayout = (LinearLayout) getActivity().findViewById(R.id.cluster_layout_floating);
         fabCompetitor = (FloatingActionButton) getActivity().findViewById(R.id.fab_addcompetitor);
@@ -87,33 +90,25 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
         fabSearch.setOnClickListener(this);
 
 
-
-
         // Get Bundle data from previous fragment
         Bundle bundle = this.getArguments();
         clusterName = bundle.getString("clusterName", null);
 
 
-        // get citylist from API
-        String sessionId = gVar.getSessionKey();
-
         Map<Object,Object> paramMap = new HashMap<Object,Object>();
-        paramMap.put("session_id",sessionId);
         paramMap.put("cluster_name",clusterName);
 
         UrlParam urlParam = new UrlParam();
         urlParam.setUrl(AppConstant.GET_CLUSTERDETAIL_API_URL);
         urlParam.setParamMap(paramMap);
-
+        urlParam.setResultClass(ClusterDetail.class);
 
         listViewClusterDetail =(ListView)getActivity().findViewById(R.id.listClusterDetail);
 
         String caller = getCallerFragment();
-        if(dataModels.size() == 0) {
+        if(!isAlreadyLoaded) {
             toggleViewFloatingButton(View.GONE);
-            asop = new ApiConnectorAsyncOperation(getContext(),"getClusterDetail", AsyncUiDisplayType.SCREEN);
-            asop.setListener(this);
-            asop.execute(urlParam);
+            doApiCallAsyncTask(CLUSTER_DETAIL_TASK_NAME,urlParam,AsyncUiDisplayType.SCREEN);
         } else {
             toggleViewFloatingButton(View.VISIBLE);
             listViewClusterDetail.setAdapter(clusterDetailAdapter);
@@ -140,7 +135,7 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
                 // check permission
                 Boolean isPermitted = false;
                 GlobalVariables gVar = GlobalVariables.getInstance();
-                MainModel<Map<Object,Object>> modelPermission = (MainModel<Map<Object,Object>>) StringUtil.convertStringToMainModel(gVar.getString(AppConstant.COOKIE_PERMISSION,""),Map.class);
+                MainResponse<Map<Object,Object>> modelPermission = (MainResponse<Map<Object,Object>>) StringUtil.convertStringToMainModel(gVar.getString(AppConstant.COOKIE_PERMISSION,""),Map.class);
                 if(modelPermission.getObject() != null) {
                     for (Map.Entry<Object, Object> entry :modelPermission.getObject().entrySet()) {
                         String value = entry.getValue() == null ? "-" : ""+ entry.getValue();
@@ -197,19 +192,17 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
     }
 
     @Override
-    public void onAsyncTaskComplete(Object result, String taskName) {
+    public void onAsyncTaskApiSuccess(Map<String,MainResponse> result, String taskName) {
 
-        Map<String,MainModel> resultMap = (Map<String,MainModel>) result;
-        MainModel<ClusterDetail> model = resultMap.get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
-        if("getClusterDetail".equals(taskName)) {
+        MainResponse<ClusterDetail> model = result.get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
+        if(CLUSTER_DETAIL_TASK_NAME.equals(taskName)) {
             toggleViewFloatingButton(View.VISIBLE);
 
             if(model != null) {
-                model = StringUtil.convertJsonNodeIntoObject(model, ClusterDetail.class);
                 ClusterDetail rci = model.getObject();
                 populateItem(rci);
             }
-        } else if ("insertCompetitor".equals(taskName)) {
+        } else if (INSERT_COMPETITOR_TASK_NAME.equals(taskName)) {
             dialog.dismiss();
             if(model != null) {
                 Boolean success = model.getSuccess();
@@ -285,11 +278,9 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
 
     private void insertCluster(String competitorName, String clusterId, String clusterName) {
         GlobalVariables gVar = GlobalVariables.getInstance();
-        String sessionId = gVar.getSessionKey();
         String userId = gVar.getString(AppConstant.COOKIE_USERID_KEY,null);
 
         Map<Object,Object> paramMap = new HashMap<Object,Object>();
-        paramMap.put("session_id",sessionId);
         paramMap.put("cluster_name",clusterName);
         paramMap.put("cluster_id",clusterId);
         paramMap.put("competitor_name",competitorName);
@@ -303,10 +294,7 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
         Toast.makeText(getActivity(), "Insert Cluster Competitor...",
                 Toast.LENGTH_LONG).show();
 
-        ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(getContext(),"insertCompetitor", AsyncUiDisplayType.SCREEN);
-        asop.setListener(this);
-        asop.execute(urlParam);
-
+        doApiCallAsyncTask(INSERT_COMPETITOR_TASK_NAME,urlParam,AsyncUiDisplayType.NONE);
     }
 
     @Override
@@ -317,28 +305,11 @@ public class FragmentClusterDetailData extends Fragment implements AsyncTaskList
         bundle.putString("cluster_id",clusterName);
         bundle.putString("address", (String) result[0]);
 
-        Fragment fragment = new FragmentHomepass();
-        fragment.setArguments(bundle);
-
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        ft.setCustomAnimations(R.anim.left_from_right,R.anim.right_from_left, R.anim.left_from_right,R.anim.right_from_left);
-        ft.replace(R.id.content_frame, fragment,fragment.getClass().getName());
-        ft.addToBackStack(fragment.getClass().getName());
-        ft.commit();
-
-        DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        openFragmentExistingBundle(bundle, new FragmentHomepass());
     }
 
     @Override
     public void onDialogCancelPressed(DialogInterface dialog, int which) {}
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if(asop != null && !asop.isCancelled()) {
-            asop.cancel(true);
-            ActivityMain.loadingFrame.setVisibility(View.GONE);
-        }
-    }
+
 }

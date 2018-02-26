@@ -1,4 +1,4 @@
-package id.co.myrepublic.salessupport.model;
+package id.co.myrepublic.salessupport.response;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;

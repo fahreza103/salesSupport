@@ -27,7 +27,7 @@ import id.co.myrepublic.salessupport.util.GlobalVariables;
 import static android.app.Activity.RESULT_OK;
 
 
-public class FragmentCustomerUpload extends Fragment implements View.OnClickListener {
+public class FragmentCustomerUpload extends AbstractFragment implements View.OnClickListener {
 
     private static final int IMAGE_ID_GALLERY_PREVIEW = 0;
     private static final int IMAGE_OTHER_GALLERY_PREVIEW = 1;
@@ -106,17 +106,7 @@ public class FragmentCustomerUpload extends Fragment implements View.OnClickList
                 bundle.putString("customerIdPhoto",idImagePath);
                 bundle.putString("customerOtherPhoto", otherImagePath);
 
-                Fragment fragment = new FragmentPlan();
-                fragment.setArguments(bundle);
-
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ft.setCustomAnimations(R.anim.left_from_right,R.anim.right_from_left, R.anim.left_from_right,R.anim.right_from_left);
-                ft.replace(R.id.content_frame, fragment,fragment.getClass().getName());
-                ft.addToBackStack(fragment.getClass().getName());
-                ft.commit();
-
-                DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
-                drawer.closeDrawer(GravityCompat.START);
+                openFragmentExistingBundle(bundle,new FragmentPlan());
                 break;
         }
     }

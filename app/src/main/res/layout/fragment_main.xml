@@ -12,6 +12,16 @@
             android:gravity="center"
             android:orientation="vertical">
 
+            <id.co.myrepublic.salessupport.widget.CustomEditText
+                android:id="@+id/test_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:inputType="text"
+                android:visibility="gone"
+                app:labelText="@string/fragment_customer_full_name"
+                app:validator="required" />
+
 
             <id.co.myrepublic.salessupport.widget.CustomSpinner
                 android:id="@+id/test_spinner"
@@ -20,6 +30,15 @@
                 android:layout_marginTop="10dp"
                 android:visibility="gone"
                 app:labelText="@string/fragment_sales_know_us" />
+
+            <id.co.myrepublic.salessupport.widget.Checkboxes
+                android:id="@+id/test_checkboxes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:visibility="gone"
+                android:entries="@array/alacarte_arrays"
+                app:labelText="@string/fragment_plan_alacarte" />
 
             <Button
                 android:id="@+id/test_button"

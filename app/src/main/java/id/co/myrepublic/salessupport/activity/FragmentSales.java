@@ -26,11 +26,11 @@ import id.co.myrepublic.salessupport.adapter.CommonRowAdapter;
 import id.co.myrepublic.salessupport.constant.AppConstant;
 import id.co.myrepublic.salessupport.constant.AsyncUiDisplayType;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
-import id.co.myrepublic.salessupport.model.AddressPrefix;
-import id.co.myrepublic.salessupport.model.Channels;
-import id.co.myrepublic.salessupport.model.Dealer;
-import id.co.myrepublic.salessupport.model.Homepass;
-import id.co.myrepublic.salessupport.model.MainModel;
+import id.co.myrepublic.salessupport.response.AddressPrefix;
+import id.co.myrepublic.salessupport.response.Channels;
+import id.co.myrepublic.salessupport.response.Dealer;
+import id.co.myrepublic.salessupport.response.Homepass;
+import id.co.myrepublic.salessupport.response.MainResponse;
 import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
 import id.co.myrepublic.salessupport.support.FormExtractor;
 import id.co.myrepublic.salessupport.support.Validator;
@@ -46,7 +46,10 @@ import id.co.myrepublic.salessupport.widget.CustomSpinner;
  * @author Fahreza Tamara
  */
 
-public class FragmentSales extends Fragment implements View.OnClickListener, AsyncTaskListener {
+public class FragmentSales extends AbstractFragment implements View.OnClickListener, AsyncTaskListener {
+
+    private static final String SALES_DATA_TASK_NAME = "salesFormData";
+    private static final String DEALER_TASK_NAME = "dealerData";
 
     private static final String RESULT_KEY_KNOW_US = "fetchKnowUs";
     private static final String RESULT_KEY_DWELLING_TYPE = "fetchDwellingType";
@@ -63,7 +66,6 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
     private Map<String,Object> dwellingTypeMap = new HashMap<String,Object>();
     private List<AddressPrefix> addressPrefixList = new ArrayList<AddressPrefix>();
     private List<Channels> channelsList = new ArrayList<Channels>();
-    private Boolean isAlreadyLoaded = false;
     private String salesCode;
     private String repId;
 
@@ -104,35 +106,27 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
         });
 
         if(!isAlreadyLoaded) {
-            isAlreadyLoaded = true;
-            String sessionId = gVar.getSessionKey();
-
             Bundle bundle = this.getArguments();
             String clusterId = bundle.getString("cluster_id");
             String address = bundle.getString("address");
 
-            Map<Object, Object> paramMap = new HashMap<Object, Object>();
-            paramMap.put("session_id", sessionId);
 
             UrlParam urlParamChannels = new UrlParam();
             urlParamChannels.setUrl(AppConstant.GET_CHANNELS_API_URL);
-            urlParamChannels.setParamMap(paramMap);
+            urlParamChannels.setResultClass(Channels[].class);
             urlParamChannels.setResultKey(RESULT_KEY_KNOW_US);
 
             UrlParam urlParamDwelling = new UrlParam();
             urlParamDwelling.setUrl(AppConstant.GET_DWELLING_TYPE_API_URL);
-            urlParamDwelling.setParamMap(paramMap);
+            urlParamDwelling.setResultClass(Map.class);
             urlParamDwelling.setResultKey(RESULT_KEY_DWELLING_TYPE);
 
             UrlParam urlParamAddressPrefix = new UrlParam();
             urlParamAddressPrefix.setUrl(AppConstant.GET_ADDRESS_PREFIX_API_URL);
-            urlParamAddressPrefix.setParamMap(paramMap);
+            urlParamAddressPrefix.setResultClass(AddressPrefix[].class);
             urlParamAddressPrefix.setResultKey(RESULT_KEY_ADDRESS_PREFIX);
 
-            ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(getContext(), "salesFormData", AsyncUiDisplayType.NONE);
-            asop.setListener(this);
-            asop.execute(urlParamChannels,urlParamDwelling,urlParamAddressPrefix);
-
+            doApiCallAsyncTask(SALES_DATA_TASK_NAME,AsyncUiDisplayType.NONE,urlParamChannels,urlParamDwelling,urlParamAddressPrefix);
             spinnerKnowUs.runProgress();
             btnConfirm.setEnabled(false);
 
@@ -149,18 +143,17 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
         btnConfirm.setEnabled(false);
 
         Map<Object, Object> paramMap = new HashMap<Object, Object>();
-        paramMap.put("session_id", sessionId);
         paramMap.put("rep_id",repId);
 
         UrlParam urlParam = new UrlParam();
         urlParam.setUrl(AppConstant.GET_DEALER_API_URL);
         urlParam.setParamMap(paramMap);
+        urlParam.setResultClass(Dealer[].class);
         urlParam.setResultKey(RESULT_KEY_DEALER);
 
-        ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(getContext(), "dealerData", AsyncUiDisplayType.DIALOG);
-        asop.setDialogMsg("Load Sales Agent...");
-        asop.setListener(this);
-        asop.execute(urlParam);
+        setAsyncDialogMessage("Load Sales Agent...");
+        doApiCallAsyncTask(DEALER_TASK_NAME,urlParam,AsyncUiDisplayType.DIALOG);
+
     }
 
     @Override
@@ -303,52 +296,36 @@ public class FragmentSales extends Fragment implements View.OnClickListener, Asy
         bundle.putSerializable("homepassDataBilling",billingAddress);
         bundle.putString("repId",repId);
 
-        Fragment fragment = new FragmentCustomerProfile();
-
-        fragment.setArguments(bundle);
-
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        ft.setCustomAnimations(R.anim.left_from_right,R.anim.right_from_left, R.anim.left_from_right,R.anim.right_from_left);
-        ft.replace(R.id.content_frame, fragment,fragment.getClass().getName());
-        ft.addToBackStack(fragment.getClass().getName());
-        ft.commit();
-
-        DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        openFragmentExistingBundle(bundle,new FragmentCustomerProfile());
     }
 
 
     @Override
-    public void onAsyncTaskComplete(Object result, String taskName) {
+    public void onAsyncTaskApiSuccess(Map<String,MainResponse> resultMap, String taskName) {
         GlobalVariables gVar = GlobalVariables.getInstance();
-        Map<String,MainModel> resultMap = (Map<String,MainModel>) result;
-        if("salesFormData".equals(taskName)) {
-            MainModel<Channels> model = resultMap.get(RESULT_KEY_KNOW_US);
+        if(SALES_DATA_TASK_NAME.equals(taskName)) {
+            MainResponse<Channels> model = resultMap.get(RESULT_KEY_KNOW_US);
             if(model != null) {
-                model = StringUtil.convertJsonNodeIntoObject(model, Channels[].class);
                 channelsList = model.getListObject();
                 populateKnowUsSpinner(channelsList);
             }
 
-            MainModel<Map> modelDwelling = resultMap.get(RESULT_KEY_DWELLING_TYPE);
+            MainResponse<Map> modelDwelling = resultMap.get(RESULT_KEY_DWELLING_TYPE);
             if(modelDwelling != null) {
-                modelDwelling = StringUtil.convertJsonNodeIntoObject(modelDwelling, Map.class);
                 dwellingTypeMap = modelDwelling.getObject();
             }
 
-            MainModel<AddressPrefix> modelAddressPrefix = resultMap.get(RESULT_KEY_ADDRESS_PREFIX);
+            MainResponse<AddressPrefix> modelAddressPrefix = resultMap.get(RESULT_KEY_ADDRESS_PREFIX);
             if(modelAddressPrefix != null) {
-                modelAddressPrefix = StringUtil.convertJsonNodeIntoObject(modelAddressPrefix, AddressPrefix[].class);
                 addressPrefixList = modelAddressPrefix.getListObject();
             }
 
 
-        } else if("dealerData".equals(taskName)) {
+        } else if(DEALER_TASK_NAME.equals(taskName)) {
             repId = "";
-            MainModel<Dealer> model = resultMap.get(RESULT_KEY_DEALER);
+            MainResponse<Dealer> model = resultMap.get(RESULT_KEY_DEALER);
             btnConfirm.setEnabled(true);
             if(model != null) {
-                model = StringUtil.convertJsonNodeIntoObject(model, Dealer[].class);
                 List<Dealer> dealerList = model.getListObject();
                 if(dealerList.size() > 0) {
                     editTextSalesName.setInputValue(dealerList.get(0).getCompanyName());

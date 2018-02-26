@@ -29,6 +29,7 @@ public class ActivityMain extends AppCompatActivity
     public static TextView txtUser;
 
     public static FrameLayout loadingFrame;
+    public static TextView loadingTextView;
     public static ImageView loadingRocket;
 
     @Override
@@ -62,6 +63,7 @@ public class ActivityMain extends AppCompatActivity
 
         this.loadingFrame = (FrameLayout) findViewById(R.id.content_main_loading_screen);
         this.loadingRocket = (ImageView) findViewById(R.id.content_main_progressbar_icon);
+        this.loadingTextView = (TextView) findViewById(R.id.content_main_progressbar_text);
 
 
         // Call main fragment

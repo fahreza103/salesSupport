@@ -1,4 +1,4 @@
-package id.co.myrepublic.salessupport.model;
+package id.co.myrepublic.salessupport.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -12,12 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Main Model for all response from API
+ * Main Response for all response from API
  */
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class MainModel<T> implements Serializable {
+public class MainResponse<T> implements Serializable {
 
     private static final long serialVersionUID = 4560135639324912675L;
 

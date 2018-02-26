@@ -1,4 +1,4 @@
-package id.co.myrepublic.salessupport.model;
+package id.co.myrepublic.salessupport.response;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 

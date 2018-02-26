@@ -1,15 +1,24 @@
 package id.co.myrepublic.salessupport.support;
 
 import android.content.Context;
+import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Map;
 
+import id.co.myrepublic.salessupport.R;
 import id.co.myrepublic.salessupport.widget.AbstractWidget;
+import id.co.myrepublic.salessupport.widget.CheckboxParam;
+import id.co.myrepublic.salessupport.widget.Checkboxes;
+import id.co.myrepublic.salessupport.widget.CustomEditText;
+import id.co.myrepublic.salessupport.widget.CustomSpinner;
 
 /**
  * Used to extract values for input form
@@ -68,4 +77,61 @@ public class FormExtractor {
         }
         return resultMap;
     }
+
+    /**
+     * Put value into form based on id
+     * @param viewGroup
+     * @return HashMap with key from id component and it's value
+     */
+    public static void putValues(Map<String,Object> values, ViewGroup viewGroup) {
+        for (Map.Entry<String, Object> entry : values.entrySet()) {
+            int id = getId(entry.getKey(), R.id.class);
+            if(id>0) {
+                View v = viewGroup.findViewById(id);
+                if(v instanceof AbstractWidget) {
+                    setFormValue(v,entry.getValue());
+                }
+            } else {
+                Log.w("Resource ID","ID not found with name "+entry.getKey());
+            }
+        }
+    }
+
+    private static void setFormValue(View v, Object value) {
+        AbstractWidget abstractWidget = (AbstractWidget) v;
+        if(abstractWidget instanceof CustomEditText) {
+            ((CustomEditText) abstractWidget).setInputValue(value+"");
+        } else if(abstractWidget instanceof CustomSpinner) {
+            CustomSpinner customSpinner = (CustomSpinner) abstractWidget;
+            if(customSpinner.getAdapter() != null) {
+                int index = customSpinner.getAdapter().getPosition(value);
+                customSpinner.setSelectedIndex(index);
+            }
+        } else if(abstractWidget instanceof Checkboxes) {
+            Checkboxes checkboxes = (Checkboxes) v;
+            Map<String,CheckboxParam> checkboxMap = (Map<String,CheckboxParam> ) value;
+            for (Map.Entry<String, CheckboxParam> entry : checkboxMap.entrySet()) {
+                CheckboxParam checkBoxParam = entry.getValue();
+                checkboxes.setCheckEnabled(checkBoxParam.getChecked(),entry.getKey());
+            }
+
+        }
+    }
+
+    /**
+     * Get int ID by String resourceName
+     * @param resourceName
+     * @param c
+     * @return
+     */
+    private static int getId(String resourceName, Class<?> c) {
+        try {
+            Field idField = c.getDeclaredField(resourceName);
+            return idField.getInt(idField);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
 }

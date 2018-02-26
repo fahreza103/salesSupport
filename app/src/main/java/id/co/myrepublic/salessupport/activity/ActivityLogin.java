@@ -27,8 +27,8 @@ import id.co.myrepublic.salessupport.R;
 import id.co.myrepublic.salessupport.constant.AppConstant;
 import id.co.myrepublic.salessupport.constant.AsyncUiDisplayType;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
-import id.co.myrepublic.salessupport.model.MainModel;
-import id.co.myrepublic.salessupport.model.UserRep;
+import id.co.myrepublic.salessupport.response.MainResponse;
+import id.co.myrepublic.salessupport.response.UserRep;
 import id.co.myrepublic.salessupport.support.AbstractAsyncOperation;
 import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
@@ -43,6 +43,10 @@ import id.co.myrepublic.salessupport.util.UrlParam;
  */
 
 public class ActivityLogin extends AppCompatActivity implements AsyncTaskListener, View.OnClickListener {
+
+    private static final String CHECK_SESSION_TASK_NAME = "checkSession";
+    private static final String GET_USER_INFO_TASK_NAME = "getUserInfo";
+    private static final String CHECK_PERMISSION_TASK_NAME = "checkPermission";
 
     private ProgressBar mProgressBar;
     private ProgressBar centerProgressBar;
@@ -110,6 +114,7 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
                 Log.i("INFO","URL Request : "+url);
                 // Success Login , redirect to https://boss-st.myrepublic.co.id/system
                 if(url.contains("system")) {
+                    browser.setVisibility(View.GONE);
                     String cookies = CookieManager.getInstance().getCookie(url);
                     Log.i("INFO", "All the cookies in a string:" + cookies);
 
@@ -167,7 +172,7 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
         urlParam.setUrl(AppConstant.CHECK_PERMISSION);
         urlParam.setParamMap(paramMap);
 
-        ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(ActivityLogin.this,"checkPermission", AsyncUiDisplayType.SCREEN);
+        ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(ActivityLogin.this,CHECK_PERMISSION_TASK_NAME, AsyncUiDisplayType.SCREEN);
         asop.setInLoginActivity(true);
         asop.setListener(ActivityLogin.this);
         asop.execute(urlParam);
@@ -177,10 +182,10 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
     @Override
     public void onAsyncTaskComplete(Object result, String taskName) {
         GlobalVariables gVar = GlobalVariables.getInstance();
-        Map<String,MainModel> resultMap = (Map<String,MainModel>) result;
-        if("checkPermission".equals(taskName)) {
-            boolean isPermitted = true;
-            MainModel<Map<Object,Object>> model = ((Map<String, MainModel>) result).get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
+        Map<String,MainResponse> resultMap = (Map<String,MainResponse>) result;
+        if(CHECK_PERMISSION_TASK_NAME.equals(taskName)) {
+            boolean isPermitted = false;
+            MainResponse<Map<Object,Object>> model = ((Map<String, MainResponse>) result).get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
             if(model != null) {
                 model = StringUtil.convertJsonNodeIntoObject(model, Map.class);
                 Map<Object,Object> mapResponse = model.getObject();
@@ -205,7 +210,7 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
                 urlParam.setUrl(AppConstant.GET_USER_REP_API_URL);
                 urlParam.setParamMap(paramMap);
 
-                ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(this,"getUserInfo",AsyncUiDisplayType.SCREEN);
+                ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(this,GET_USER_INFO_TASK_NAME,AsyncUiDisplayType.SCREEN);
                 asop.setListener(ActivityLogin.this);
                 asop.setInLoginActivity(true);
                 asop.execute(urlParam);
@@ -213,8 +218,8 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
                 showErrorWebView(401,"Unauthorized",getString(R.string.activity_login_failed_permission));
             }
 
-        } else if("getUserInfo".equals(taskName)) {
-            MainModel<UserRep> model = ((Map<String, MainModel>) result).get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
+        } else if(GET_USER_INFO_TASK_NAME.equals(taskName)) {
+            MainResponse<UserRep> model = ((Map<String, MainResponse>) result).get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
             if(model != null) {
                 model = StringUtil.convertJsonNodeIntoObject(model,UserRep[].class);
                 List<UserRep> userRepList = model.getListObject();
@@ -231,12 +236,12 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
                 finish();
             }
 
-        } else if("checkSession".equals(taskName)) {
+        } else if(CHECK_SESSION_TASK_NAME.equals(taskName)) {
             centerProgressBar.setVisibility(View.GONE);
             centerTextView.setVisibility(View.GONE);
             centerProgressLogo.setVisibility(View.GONE);
 
-            MainModel model = ((Map<String, MainModel>) result).get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
+            MainResponse model = ((Map<String, MainResponse>) result).get(AbstractAsyncOperation.DEFAULT_RESULT_KEY);
             if (model != null) {
                 // Success, session valid go to main, otherwise show login form, to authenticate
                 if (model.getSuccess()) {
@@ -288,7 +293,7 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
             centerTextView.setVisibility(View.VISIBLE);
             centerProgressLogo.setVisibility(View.VISIBLE);
             browser.setVisibility(View.GONE);
-            ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(this,"checkSession",AsyncUiDisplayType.NONE);
+            ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(this,CHECK_SESSION_TASK_NAME,AsyncUiDisplayType.NONE);
             asop.setListener(this);
             asop.setInLoginActivity(true);
             asop.execute(UrlParam.createParamCheckSession(sessionId));
@@ -299,6 +304,7 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
     }
 
     private void showErrorWebView(int errorCode,String title, String description) {
+        browser.setVisibility(View.VISIBLE);
         errorFailConnectLayout.setVisibility(View.VISIBLE);
         txtErrorTitle.setText(title);
         txtErrorCode.setText(getString(R.string.activity_login_failed_code)+" : "+errorCode);

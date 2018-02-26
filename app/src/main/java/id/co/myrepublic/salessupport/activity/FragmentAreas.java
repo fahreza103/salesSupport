@@ -21,16 +21,18 @@ import java.util.List;
 import id.co.myrepublic.salessupport.R;
 import id.co.myrepublic.salessupport.adapter.CommonRowAdapter;
 import id.co.myrepublic.salessupport.listener.DialogListener;
-import id.co.myrepublic.salessupport.model.Area;
+import id.co.myrepublic.salessupport.response.Area;
 import id.co.myrepublic.salessupport.support.DialogBuilder;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
 
 
 /**
- * Created by myrepublicid on 26/9/17.
+ * Areas / City fragment, contains list and search about city
+ *
+ * @author Fahreza Tamara
  */
 
-public class FragmentAreas extends Fragment implements View.OnClickListener, DialogListener {
+public class FragmentAreas extends AbstractFragment implements View.OnClickListener, DialogListener {
 
     private static View view;
     private ListView listViewCity;
@@ -89,26 +91,12 @@ public class FragmentAreas extends Fragment implements View.OnClickListener, Dia
                     dataModel = dataModels.get(position);
                 }
 
-//                Snackbar.make(view, dataModel.getCityName()+"\n"+dataModel.getArpu()+"\n"+dataModel.getActiveSubs(), Snackbar.LENGTH_LONG)
-//                        .setAction("No action", null).show();
-
-                Fragment fragment = new FragmentClusterData();
-
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("area",dataModel);
                 bundle.putString("areaName", dataModel.getAreaName());
                 bundle.putString("areaId", dataModel.getAreaId());
                 bundle.putString("areaCode", dataModel.getAreaCode());
-                fragment.setArguments(bundle);
-
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                ft.setCustomAnimations(R.anim.left_from_right,R.anim.right_from_left, R.anim.left_from_right,R.anim.right_from_left);
-                ft.replace(R.id.content_frame, fragment,fragment.getClass().getName());
-                ft.addToBackStack(fragment.getClass().getName());
-                ft.commit();
-
-                DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
-                drawer.closeDrawer(GravityCompat.START);
+                openFragmentExistingBundle(bundle,new FragmentClusterData());
             }
         });
     }

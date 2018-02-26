@@ -142,6 +142,9 @@ public class CustomSpinner extends AbstractWidget {
 
     }
 
+    public ArrayAdapter getAdapter() {
+        return adapter;
+    }
 
     /**
      *  This is to save the current state of this component after going into the next fragment / activity

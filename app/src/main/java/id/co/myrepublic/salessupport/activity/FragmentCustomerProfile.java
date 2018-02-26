@@ -22,7 +22,8 @@ import id.co.myrepublic.salessupport.adapter.CommonRowAdapter;
 import id.co.myrepublic.salessupport.constant.AppConstant;
 import id.co.myrepublic.salessupport.constant.AsyncUiDisplayType;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
-import id.co.myrepublic.salessupport.model.MainModel;
+import id.co.myrepublic.salessupport.response.Homepass;
+import id.co.myrepublic.salessupport.response.MainResponse;
 import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
 import id.co.myrepublic.salessupport.support.FormExtractor;
 import id.co.myrepublic.salessupport.support.Validator;
@@ -31,9 +32,9 @@ import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.UrlParam;
 import id.co.myrepublic.salessupport.widget.CustomSpinner;
 
-public class FragmentCustomerProfile extends Fragment implements View.OnClickListener, AsyncTaskListener {
+public class FragmentCustomerProfile extends AbstractFragment implements View.OnClickListener, AsyncTaskListener {
 
-    private static final String ASYNC_SPINNER_ITEMS = "spinnerItems";
+    private static final String CUSTOMER_DATA_TASK_NAME = "customerData";
     private static final String SALUTATION_RESULT_KEY = "salutation";
     private static final String NATIONALITY_RESULT_KEY = "nationality";
     private static final String GENDER_RESULT_KEY = "gender";
@@ -43,9 +44,6 @@ public class FragmentCustomerProfile extends Fragment implements View.OnClickLis
     private CustomSpinner spinnerNationality;
     private CustomSpinner spinnerGender;
     private LinearLayout scrollContentLayout;
-
-
-    private Boolean isAlreadyLoaded = false;
 
     private List<String> salutationList = new ArrayList<String>();
     private List<String> nationalityList = new ArrayList<String>();
@@ -73,34 +71,24 @@ public class FragmentCustomerProfile extends Fragment implements View.OnClickLis
         spinnerNationality = (CustomSpinner) getActivity().findViewById(R.id.customer_spinner_nationality);
 
         if(!isAlreadyLoaded) {
-            isAlreadyLoaded = true;
             btnConfirm.setEnabled(false);
-            GlobalVariables gVar = GlobalVariables.getInstance();
-            String sessionId = gVar.getSessionKey();
-
-
-            Map<Object, Object> paramMap = new HashMap<Object, Object>();
-            paramMap.put("session_id", sessionId);
 
             UrlParam urlParamSalutation = new UrlParam();
             urlParamSalutation.setUrl(AppConstant.GET_SALUTATION_API_URL);
-            urlParamSalutation.setParamMap(paramMap);
+            urlParamSalutation.setResultClass(String[].class);
             urlParamSalutation.setResultKey(SALUTATION_RESULT_KEY);
 
             UrlParam urlParamNationality = new UrlParam();
             urlParamNationality.setUrl(AppConstant.GET_CUSTOMER_NATIONALITIES_API_URL);
-            urlParamNationality.setParamMap(paramMap);
+            urlParamNationality.setResultClass(String[].class);
             urlParamNationality.setResultKey(NATIONALITY_RESULT_KEY);
 
             UrlParam urlParamGender = new UrlParam();
             urlParamGender.setUrl(AppConstant.GET_GENDER_API_URL);
-            urlParamGender.setParamMap(paramMap);
+            urlParamGender.setResultClass(Map.class);
             urlParamGender.setResultKey(GENDER_RESULT_KEY);
 
-            ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(getContext(), ASYNC_SPINNER_ITEMS, AsyncUiDisplayType.NONE);
-            asop.setListener(this);
-            asop.execute(urlParamSalutation,urlParamNationality,urlParamGender);
-
+            doApiCallAsyncTask(CUSTOMER_DATA_TASK_NAME,AsyncUiDisplayType.NONE,urlParamSalutation,urlParamNationality,urlParamGender);
             spinnerNationality.runProgress();
             spinnerGender.runProgress();
             spinnerSalutation.runProgress();
@@ -127,43 +115,30 @@ public class FragmentCustomerProfile extends Fragment implements View.OnClickLis
             } else {
                 fragment = new FragmentContactPerson();
             }
-            fragment.setArguments(bundle);
-
-            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-            ft.setCustomAnimations(R.anim.left_from_right,R.anim.right_from_left, R.anim.left_from_right,R.anim.right_from_left);
-            ft.replace(R.id.content_frame, fragment, fragment.getClass().getName());
-            ft.addToBackStack(fragment.getClass().getName());
-            ft.commit();
-
-            DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
-            drawer.closeDrawer(GravityCompat.START);
+            openFragmentExistingBundle(bundle,fragment);
         }
     }
 
     @Override
-    public void onAsyncTaskComplete(Object result, String taskName) {
+    public void onAsyncTaskApiSuccess(Map<String,MainResponse> resultMap, String taskName) {
         int success = 0;
-        Map<String,MainModel> resultMap = (Map<String,MainModel>) result;
-        if(ASYNC_SPINNER_ITEMS.equals(taskName)) {
-            MainModel<String> salutationModel = resultMap.get(SALUTATION_RESULT_KEY);
+        if(CUSTOMER_DATA_TASK_NAME.equals(taskName)) {
+            MainResponse<String> salutationModel = resultMap.get(SALUTATION_RESULT_KEY);
             if(salutationModel != null) {
-                salutationModel = StringUtil.convertJsonNodeIntoObject(salutationModel, String[].class);
                 salutationList = salutationModel.getListObject();
                 populateSpinner(spinnerSalutation,salutationList);
                 success++;
             }
 
-            MainModel<String> nationalityModel = resultMap.get(NATIONALITY_RESULT_KEY);
+            MainResponse<String> nationalityModel = resultMap.get(NATIONALITY_RESULT_KEY);
             if(nationalityModel != null) {
-                nationalityModel = StringUtil.convertJsonNodeIntoObject(nationalityModel, String[].class);
                 nationalityList = nationalityModel.getListObject();
                 populateSpinner(spinnerNationality,nationalityList);
                 success++;
             }
 
-            MainModel<Map> genderModel = resultMap.get(GENDER_RESULT_KEY);
+            MainResponse<Map> genderModel = resultMap.get(GENDER_RESULT_KEY);
             if(genderModel != null) {
-                genderModel = StringUtil.convertJsonNodeIntoObject(genderModel, Map.class);
                 genderMap = genderModel.getObject();
                 populateSpinner(spinnerGender,genderMap);
                 success++;

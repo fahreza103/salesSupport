@@ -26,7 +26,7 @@ import id.co.myrepublic.salessupport.widget.CustomEditText;
  * Contact person fragment
  */
 
-public class FragmentContactPerson extends Fragment implements View.OnClickListener, TabHost.OnTabChangeListener {
+public class FragmentContactPerson extends AbstractFragment implements View.OnClickListener, TabHost.OnTabChangeListener {
 
     private Button btnConfirm;
     private Button btnAuthorizedPersonCopy;
@@ -114,17 +114,7 @@ public class FragmentContactPerson extends Fragment implements View.OnClickListe
                     bundle.putSerializable("authorizedOfficerData",formAuthorizedValues);
                     bundle.putSerializable("technicalContactData",formTechnicalContactValues);
 
-                    Fragment fragment = new FragmentCustomerUpload();
-                    fragment.setArguments(bundle);
-
-                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    ft.setCustomAnimations(R.anim.left_from_right,R.anim.right_from_left, R.anim.left_from_right,R.anim.right_from_left);
-                    ft.replace(R.id.content_frame, fragment, fragment.getClass().getName());
-                    ft.addToBackStack(fragment.getClass().getName());
-                    ft.commit();
-
-                    DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
-                    drawer.closeDrawer(GravityCompat.START);
+                    openFragmentExistingBundle(bundle,new FragmentCustomerUpload());
                 }
                 break;
             case R.id.authorized_officer_btn_copy :

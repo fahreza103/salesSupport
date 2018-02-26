@@ -13,7 +13,6 @@ import cz.msebera.android.httpclient.entity.mime.MultipartEntityBuilder;
 import cz.msebera.android.httpclient.entity.mime.content.FileBody;
 import cz.msebera.android.httpclient.entity.mime.content.StringBody;
 import cz.msebera.android.httpclient.impl.client.HttpClientBuilder;
-import cz.msebera.android.httpclient.params.HttpParams;
 import cz.msebera.android.httpclient.util.EntityUtils;
 import id.co.myrepublic.salessupport.listener.ProgressListener;
 
@@ -23,7 +22,7 @@ import id.co.myrepublic.salessupport.listener.ProgressListener;
  * @author www.codejava.net
  *
  */
-public class MultipartUtility {
+public class HttpClientUtil {
 
     private ProgressListener progressListener;
     private MultipartEntityBuilder entityBuilder;
@@ -37,7 +36,7 @@ public class MultipartUtility {
      * @param requestURL
      * @throws IOException
      */
-    public MultipartUtility(String requestURL, String cookieStr,int timeout)
+    public HttpClientUtil(String requestURL, String cookieStr, int timeout)
             throws IOException {
         this.url = requestURL;
         this.cookieStr = cookieStr;
@@ -46,12 +45,21 @@ public class MultipartUtility {
     }
 
     /**
-     * Adds a form field to the request
+     * Adds a form field to the request (Multipart form data)
+     * @param name field name
+     * @param value field value
+     */
+    public void addFormFieldMultipart(String name, String value) {
+        entityBuilder.addPart(name, new StringBody(value, ContentType.MULTIPART_FORM_DATA));
+    }
+
+    /**
+     * Adds a form field to the request (Form URL Encoded)
      * @param name field name
      * @param value field value
      */
     public void addFormField(String name, String value) {
-        entityBuilder.addPart(name, new StringBody(value, ContentType.MULTIPART_FORM_DATA));
+        entityBuilder.addPart(name, new StringBody(value, ContentType.APPLICATION_FORM_URLENCODED));
     }
 
     /**

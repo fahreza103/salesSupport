@@ -15,12 +15,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import id.co.myrepublic.salessupport.model.MainModel;
+import id.co.myrepublic.salessupport.response.MainResponse;
 
 /**
  * Util class for String operations
@@ -59,14 +58,14 @@ public class StringUtil {
      * @param jsonString, must be json format string
      * @param clazz, if response is array, please defined the class with array type, example Cluster[].class, this clazz can be null
      *               resulting unconverted JsonNode so you can convert this later using convertJsonNodeIntoObject
-     * @return java object MainModel
+     * @return java object MainResponse
      */
-    public static MainModel convertStringToMainModel(String jsonString, Class<?> clazz) {
+    public static MainResponse convertStringToMainModel(String jsonString, Class<?> clazz) {
         if (jsonString == null) return null;
         try {
             ObjectMapper mapper = new ObjectMapper();
             TypeFactory t = TypeFactory.defaultInstance();
-            MainModel model = mapper.readValue(jsonString,MainModel.class);
+            MainResponse model = mapper.readValue(jsonString,MainResponse.class);
             model = convertJsonNodeIntoObject(model,clazz);
 
             System.out.print(model);
@@ -82,7 +81,7 @@ public class StringUtil {
      * @param model, if jsonNode inside this object has value, convert into specified object
      * @param clazz, if response is array, please defined the class with array type, example Cluster[].class
      */
-    public static MainModel convertJsonNodeIntoObject(MainModel model , Class<?> clazz) {
+    public static MainResponse convertJsonNodeIntoObject(MainResponse model , Class<?> clazz) {
         JsonNode jsonNode = model.getResponse();
         if(jsonNode != null && clazz != null) {
             ObjectMapper mapper = new ObjectMapper();

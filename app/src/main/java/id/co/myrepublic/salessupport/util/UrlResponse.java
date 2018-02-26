@@ -15,6 +15,7 @@ public class UrlResponse {
 
     private String resultKey;
     private String resultValue;
+    private Class<?> resultClass;
     private int resultCode;
     private String errorMessage;
 
@@ -48,5 +49,13 @@ public class UrlResponse {
 
     public void setResultKey(String resultKey) {
         this.resultKey = resultKey;
+    }
+
+    public Class<?> getResultClass() {
+        return resultClass;
+    }
+
+    public void setResultClass(Class<?> resultClass) {
+        this.resultClass = resultClass;
     }
 }

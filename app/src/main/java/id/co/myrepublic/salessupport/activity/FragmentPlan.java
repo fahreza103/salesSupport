@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,10 +26,10 @@ import id.co.myrepublic.salessupport.adapter.CommonRowAdapter;
 import id.co.myrepublic.salessupport.constant.AppConstant;
 import id.co.myrepublic.salessupport.constant.AsyncUiDisplayType;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
-import id.co.myrepublic.salessupport.model.Catalog;
-import id.co.myrepublic.salessupport.model.CatalogItem;
-import id.co.myrepublic.salessupport.model.Homepass;
-import id.co.myrepublic.salessupport.model.MainModel;
+import id.co.myrepublic.salessupport.response.Catalog;
+import id.co.myrepublic.salessupport.response.CatalogItem;
+import id.co.myrepublic.salessupport.response.Homepass;
+import id.co.myrepublic.salessupport.response.MainResponse;
 import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
 import id.co.myrepublic.salessupport.support.FormExtractor;
 import id.co.myrepublic.salessupport.support.Validator;
@@ -35,12 +37,15 @@ import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.UrlParam;
 import id.co.myrepublic.salessupport.widget.AbstractWidget;
+import id.co.myrepublic.salessupport.widget.CheckboxParam;
 import id.co.myrepublic.salessupport.widget.Checkboxes;
 import id.co.myrepublic.salessupport.widget.CustomSpinner;
 
 
-public class FragmentPlan extends Fragment implements View.OnClickListener, AsyncTaskListener, AdapterView.OnItemSelectedListener {
+public class FragmentPlan extends AbstractFragment implements View.OnClickListener, AsyncTaskListener, AdapterView.OnItemSelectedListener {
 
+    private static final String PLAN_DATA_TASK_NAME = "catalog_";
+    private static final String PLAN_VALIDATION_TASK_NAME = "validation";
     private static final String TAG_MAIN_BUNDLE = "101";
     private static final String TAG_TV_BUNDLE = "102";
     private static final String TAG_TV_ADDON_BUNDLE = "103";
@@ -50,9 +55,9 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
     private static final String TAG_STB_BUNDLE = "107";
     private static final String TAG_HARDWARE_BUNDLE = "108";
     private static final String RESULT_KEY_CATALOG = "fetchCatalog";
+    private static final String RESULT_KEY_VALIDATION =  "orderValidation";
     private Button btnConfirm;
     private LinearLayout scrollContentLayout;
-    private Boolean isAlreadyLoaded = false;
     private CustomSpinner spinnerInternet;
     private CustomSpinner spinnerTv;
     private CustomSpinner spinnerStb;
@@ -61,6 +66,8 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
     private CustomSpinner spinnerHardware;
     private Checkboxes  checkBoxesAlaCarte;
     private Checkboxes  checkBoxesInternetAddon;
+    private TextView textViewError;
+    private ScrollView scrollView;
     private Catalog catalog = new Catalog();
     private int planLoaded = 0;
 
@@ -93,21 +100,23 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
         spinnerHardware = (CustomSpinner) getActivity().findViewById(R.id.plan_spinner_hardware);
         checkBoxesAlaCarte = (Checkboxes) getActivity().findViewById(R.id.plan_checkboxes_alacarte);
         checkBoxesInternetAddon = (Checkboxes) getActivity().findViewById(R.id.plan_checkboxes_internet_addon);
+        scrollView = (ScrollView) getActivity().findViewById(R.id.plan_scroll_view);
+        textViewError = (TextView) getActivity().findViewById(R.id.plan_textview_error);
 
         spinnerInternet.setOnItemSelectedListener(this);
         spinnerTv.setOnItemSelectedListener(this);
 
 
         if(!isAlreadyLoaded) {
-            isAlreadyLoaded = true;
+            loadPlan(TAG_ONT_BUNDLE);
             loadPlan(TAG_MAIN_BUNDLE);
             loadPlan(TAG_TV_BUNDLE);
+            loadPlan(TAG_STB_BUNDLE);
             loadPlan(TAG_TV_ADDON_BUNDLE);
-            loadPlan(TAG_ONT_BUNDLE);
             loadPlan(TAG_HARDWARE_BUNDLE);
             loadPlan(TAG_INTERNET_ADDON);
             loadPlan(TAG_PROMO_BUNDLE);
-            loadPlan(TAG_STB_BUNDLE);
+
 
 
             spinnerHardware.runProgress();
@@ -139,7 +148,6 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
 
     private void loadPlan(String tagType) {
         GlobalVariables gVar = GlobalVariables.getInstance();
-        String sessionId = gVar.getSessionKey();
 
         Bundle bundle = this.getArguments();
         String customerClass = bundle.getString("customerClassification");
@@ -147,7 +155,6 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
         Homepass homepassDataService = (Homepass) bundle.getSerializable("homepassDataService");
 
         Map<Object, Object> paramMap = new HashMap<Object, Object>();
-        paramMap.put("session_id", sessionId);
         paramMap.put("homepassdetailid",homepassDataService.getHomepassDetailId());
         //paramMap.put("customer_type",customerClass);
         paramMap.put("customer_type",customerClass);
@@ -157,11 +164,10 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
         UrlParam urlParam = new UrlParam();
         urlParam.setUrl(AppConstant.GET_ORDER_CATALOG_API_URL);
         urlParam.setParamMap(paramMap);
+        urlParam.setResultClass(Catalog.class);
         urlParam.setResultKey(RESULT_KEY_CATALOG);
 
-        ApiConnectorAsyncOperation asop = new ApiConnectorAsyncOperation(getContext(), "catalog_"+tagType, AsyncUiDisplayType.NONE);
-        asop.setListener(this);
-        asop.execute(urlParam);
+        doApiCallAsyncTask(PLAN_DATA_TASK_NAME+tagType,urlParam,AsyncUiDisplayType.NONE);
     }
 
     private void checkSelectedItem() {
@@ -199,32 +205,118 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
         HashMap<String,Object> planData = FormExtractor.extractValues(getContext(),scrollContentLayout,true);
         boolean valid = (boolean) planData.get(Validator.VALIDATION_KEY_RESULT);
         if(valid) {
+            // Validate from API
             Bundle bundle = this.getArguments();
-            bundle.putSerializable("planData", planData);
-
-            Fragment fragment = new FragmentVerification();
-            fragment.setArguments(bundle);
-
-            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.content_frame, fragment, fragment.getClass().getName());
-            ft.setCustomAnimations(R.anim.left_from_right,R.anim.right_from_left, R.anim.left_from_right,R.anim.right_from_left);
-            ft.addToBackStack(fragment.getClass().getName());
-            ft.commit();
-
-            DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
-            drawer.closeDrawer(GravityCompat.START);
+            bundle.putString("planRemarks",""+planData.get("plan_editText_remarks"));
+            validateApi(planData);
         }
+    }
+
+    private void validateApi(HashMap<String, Object> planData) {
+        Bundle bundle = this.getArguments();
+        GlobalVariables gVar = GlobalVariables.getInstance();
+        String sessionId = gVar.getSessionKey();
+        ArrayList<String> planList = new ArrayList<String>();
+
+        textViewError.setVisibility(View.GONE);
+        // Collect plan ID
+        if(planData.get("plan_spinner_internet_package") != null) {
+            CatalogItem item = (CatalogItem) planData.get("plan_spinner_internet_package");
+            if(!StringUtil.isEmpty(item.getId())) {
+                planList.add(item.getId());
+            }
+        }
+
+        if(planData.get("plan_spinner_tv_package") != null) {
+            CatalogItem item = (CatalogItem) planData.get("plan_spinner_tv_package");
+            if(!StringUtil.isEmpty(item.getId())) {
+                planList.add(item.getId());
+            }
+        }
+
+        if(planData.get("plan_spinner_stb_package") != null) {
+            CatalogItem item = (CatalogItem) planData.get("plan_spinner_stb_package");
+            if(!StringUtil.isEmpty(item.getId())) {
+                planList.add(item.getId());
+            }
+        }
+
+        if(planData.get("plan_spinner_promotion") != null) {
+            CatalogItem item = (CatalogItem) planData.get("plan_spinner_promotion");
+            if(!StringUtil.isEmpty(item.getId())) {
+                planList.add(item.getId());
+            }
+        }
+
+        if(planData.get("plan_spinner_ont_package") != null) {
+            CatalogItem item = (CatalogItem) planData.get("plan_spinner_ont_package");
+            if(!StringUtil.isEmpty(item.getId())) {
+                planList.add(item.getId());
+            }
+        }
+
+        if(planData.get("plan_spinner_hardware") != null) {
+            CatalogItem item = (CatalogItem) planData.get("plan_spinner_hardware");
+            if(!StringUtil.isEmpty(item.getId())) {
+                planList.add(item.getId());
+            }
+        }
+
+        if(planData.get("plan_checkboxes_alacarte") != null) {
+            Map<String,CheckboxParam> alaCarteMap = (Map<String,CheckboxParam>) planData.get("plan_checkboxes_alacarte");
+            for (Map.Entry<String, CheckboxParam> entry : alaCarteMap.entrySet()) {
+                CheckboxParam checkboxParam = entry.getValue();
+                if(checkboxParam != null) {
+                    if(checkboxParam.getChecked()) {
+                        CatalogItem item = new CatalogItem();
+                        if(!StringUtil.isEmpty(item.getId())) {
+                            planList.add(item.getId());
+                        }
+                    }
+                }
+            }
+        }
+
+        if(planData.get("plan_checkboxes_internet_addon") != null) {
+            Map<String,CheckboxParam> serviceMap = (Map<String,CheckboxParam>) planData.get("plan_checkboxes_internet_addon");
+            for (Map.Entry<String, CheckboxParam> entry : serviceMap.entrySet()) {
+                CheckboxParam checkboxParam = entry.getValue();
+                if(checkboxParam != null) {
+                    if(checkboxParam.getChecked()) {
+                        CatalogItem item = new CatalogItem();
+                        if(!StringUtil.isEmpty(item.getId())) {
+                            planList.add(item.getId());
+                        }
+                    }
+                }
+            }
+        }
+        bundle.putStringArrayList("planData",planList);
+
+        // Send request to API
+        Map<Object,Object> paramMap = new HashMap<Object,Object>();
+        paramMap.put("session_id", sessionId);
+        for(int i=0; i<planList.size();i++) {
+            paramMap.put("items["+ i +"]",planList.get(i));
+        }
+
+        UrlParam urlParam = new UrlParam();
+        urlParam.setUrl(AppConstant.VALIDATE_ORDER_API_URL);
+        urlParam.setParamMap(paramMap);
+        urlParam.setResultKey(RESULT_KEY_VALIDATION);
+
+        setAsyncDialogMessage("Validating Order");
+        doApiCallAsyncTask(PLAN_VALIDATION_TASK_NAME,urlParam,AsyncUiDisplayType.DIALOG);
+
     }
 
 
     @Override
-    public void onAsyncTaskComplete(Object result, String taskName) {
-        Map<String,MainModel> resultMap = (Map<String,MainModel>) result;
-        if(taskName.contains("catalog")) {
-            MainModel<Catalog> model = resultMap.get(RESULT_KEY_CATALOG);
+    public void onAsyncTaskApiSuccess(Map<String,MainResponse> resultMap, String taskName) {
+        if(taskName.contains(PLAN_DATA_TASK_NAME)) {
+            MainResponse<Catalog> model = resultMap.get(RESULT_KEY_CATALOG);
             if(model!=null) {
                 String tagId = taskName.split("_")[1];
-                model = StringUtil.convertJsonNodeIntoObject(model, Catalog.class);
                 Catalog catalogItem = model.getObject();
                 List<CatalogItem> catalogItemList = catalogItem.getData();
 
@@ -263,14 +355,30 @@ public class FragmentPlan extends Fragment implements View.OnClickListener, Asyn
                 }
 
             }
+
+            if(planLoaded >= 8) {
+                checkSelectedItem();
+                btnConfirm.setEnabled(true);
+            }
+        } else if(PLAN_VALIDATION_TASK_NAME.equals(taskName)) {
+            MainResponse model = resultMap.get(RESULT_KEY_VALIDATION);
+            if(model != null) {
+                if(model.getSuccess()) {
+                    Bundle bundle = this.getArguments();
+                    openFragmentExistingBundle(bundle,new FragmentVerification());
+                } else {
+                    scrollView.fullScroll(ScrollView.FOCUS_UP);
+                    textViewError.requestFocus();
+                    textViewError.setVisibility(View.VISIBLE);
+                    textViewError.setText(model.getError());
+                }
+            }
         }
 
-        if(planLoaded >= 8) {
-            checkSelectedItem();
-            btnConfirm.setEnabled(true);
-        }
+
+
 //        if("planFormData".equals(taskName)) {
-//            MainModel<Catalog> model = resultMap.get(RESULT_KEY_CATALOG);
+//            MainResponse<Catalog> model = resultMap.get(RESULT_KEY_CATALOG);
 //            if(model != null) {
 //                model = StringUtil.convertJsonNodeIntoObject(model, Catalog.class);
 //                catalog = model.getObject();
