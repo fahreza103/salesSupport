@@ -175,12 +175,9 @@ public class FragmentVerification extends AbstractFragment implements AsyncTaskL
 
     private void sendThanksSms(String mobileNumber, Order order) {
         if(order != null) {
-            GlobalVariables gVar = GlobalVariables.getInstance();
-            String sessionId = gVar.getSessionKey();
-
             Map<Object,Object> paramMap = new HashMap<Object,Object>();
-            paramMap.put("session_id", sessionId);
-            //paramMap.put("session_id", "1344df94-adc9-46a8-975b-6ae71f79af9b");
+
+            //paramMap.put("session_id", "857c0711-4efa-4689-926e-4d67b7da2ff5");
             paramMap.put("mobile_number",mobileNumber);
             paramMap.put("subscription_id",order.getSubscriptionId());
 
@@ -202,7 +199,7 @@ public class FragmentVerification extends AbstractFragment implements AsyncTaskL
         btnConfirm.setEnabled(false);
 
         Map<Object,Object> paramMap = new HashMap<Object,Object>();
-        //paramMap.put("session_id", "1344df94-adc9-46a8-975b-6ae71f79af9b");
+        //paramMap.put("session_id", "857c0711-4efa-4689-926e-4d67b7da2ff5");
         paramMap.put("mobile_number",mobileNumber);
 
         UrlParam urlParam = new UrlParam();

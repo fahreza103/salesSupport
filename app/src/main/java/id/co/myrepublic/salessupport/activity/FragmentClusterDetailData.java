@@ -5,11 +5,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,13 +26,11 @@ import id.co.myrepublic.salessupport.R;
 import id.co.myrepublic.salessupport.adapter.CommonRowAdapter;
 import id.co.myrepublic.salessupport.constant.AppConstant;
 import id.co.myrepublic.salessupport.constant.AsyncUiDisplayType;
-import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
 import id.co.myrepublic.salessupport.listener.DialogListener;
 import id.co.myrepublic.salessupport.response.CommonItem;
 import id.co.myrepublic.salessupport.response.MainResponse;
 import id.co.myrepublic.salessupport.response.ClusterDetail;
 import id.co.myrepublic.salessupport.support.AbstractAsyncOperation;
-import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
 import id.co.myrepublic.salessupport.support.DialogBuilder;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
 import id.co.myrepublic.salessupport.util.StringUtil;
@@ -105,7 +98,6 @@ public class FragmentClusterDetailData extends AbstractFragment implements  View
 
         listViewClusterDetail =(ListView)getActivity().findViewById(R.id.listClusterDetail);
 
-        String caller = getCallerFragment();
         if(!isAlreadyLoaded) {
             toggleViewFloatingButton(View.GONE);
             doApiCallAsyncTask(CLUSTER_DETAIL_TASK_NAME,urlParam,AsyncUiDisplayType.SCREEN);
@@ -116,12 +108,6 @@ public class FragmentClusterDetailData extends AbstractFragment implements  View
 
 
 
-    }
-
-    private String getCallerFragment(){
-        FragmentManager fm = getFragmentManager();
-        int count = getFragmentManager().getBackStackEntryCount();
-        return fm.getBackStackEntryAt(count-1).getName();
     }
 
 
@@ -135,7 +121,7 @@ public class FragmentClusterDetailData extends AbstractFragment implements  View
                 // check permission
                 Boolean isPermitted = false;
                 GlobalVariables gVar = GlobalVariables.getInstance();
-                MainResponse<Map<Object,Object>> modelPermission = (MainResponse<Map<Object,Object>>) StringUtil.convertStringToMainModel(gVar.getString(AppConstant.COOKIE_PERMISSION,""),Map.class);
+                MainResponse<Map<Object,Object>> modelPermission = (MainResponse<Map<Object,Object>>) StringUtil.convertStringToMainResponse(gVar.getString(AppConstant.COOKIE_PERMISSION,""),Map.class);
                 if(modelPermission.getObject() != null) {
                     for (Map.Entry<Object, Object> entry :modelPermission.getObject().entrySet()) {
                         String value = entry.getValue() == null ? "-" : ""+ entry.getValue();

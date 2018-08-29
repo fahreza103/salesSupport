@@ -142,7 +142,7 @@ public abstract class AbstractAsyncOperation extends AsyncTask<Object, Integer, 
         // Convert result into MainResponse
         for(UrlResponse urlResponse : urlResponseList) {
             // if result class defined, directly convert into object, otherwise null
-            MainResponse model = StringUtil.convertStringToMainModel(urlResponse.getResultValue(),urlResponse.getResultClass());
+            MainResponse model = StringUtil.convertStringToMainResponse(urlResponse.getResultValue(),urlResponse.getResultClass());
             if(model != null) {
                 // if resultKey has same value for each response, add the postfix number into the key, so the map will store the response in different key (not replacing)
                 // it can happen when resultKey not defined so all response will using defaultKey, or you purposely set the resultKey with same value

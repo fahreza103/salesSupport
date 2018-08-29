@@ -120,12 +120,6 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
 
                     // Extract Cookie
                     cookieMap = StringUtil.extractCookie(cookies);
-                    // Put to Session
-                    GlobalVariables sm = GlobalVariables.getInstance();
-                    sm.putString(AppConstant.COOKIE_FULL_STRING,cookies);
-                    sm.putString(AppConstant.COOKIE_SESSION_KEY,cookieMap.get(AppConstant.COOKIE_SESSION_KEY));
-                    sm.putString(AppConstant.COOKIE_USERID_KEY,cookieMap.get(AppConstant.COOKIE_USERID_KEY));
-                    sm.putString(AppConstant.COOKIE_USERTYPE_KEY,cookieMap.get(AppConstant.COOKIE_USERTYPE_KEY));
 
                     // Check Permission
                     checkPermission();
@@ -201,6 +195,12 @@ public class ActivityLogin extends AppCompatActivity implements AsyncTaskListene
             }
 
             if (isPermitted) {
+                // Put to Session
+                GlobalVariables sm = GlobalVariables.getInstance();
+                sm.putString(AppConstant.COOKIE_SESSION_KEY,cookieMap.get(AppConstant.COOKIE_SESSION_KEY));
+                sm.putString(AppConstant.COOKIE_USERID_KEY,cookieMap.get(AppConstant.COOKIE_USERID_KEY));
+                sm.putString(AppConstant.COOKIE_USERTYPE_KEY,cookieMap.get(AppConstant.COOKIE_USERTYPE_KEY));
+
                 // Check User info
                 Map<Object,Object> paramMap = new HashMap<Object,Object>();
                 paramMap.put("session_id",cookieMap.get(AppConstant.COOKIE_SESSION_KEY));

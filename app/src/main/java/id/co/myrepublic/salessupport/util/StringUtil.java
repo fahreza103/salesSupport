@@ -54,19 +54,40 @@ public class StringUtil {
     }
 
     /**
-     * using jackson, convert json string into java object
+     * using jackson, convert json string into MainResponse object
      * @param jsonString, must be json format string
      * @param clazz, if response is array, please defined the class with array type, example Cluster[].class, this clazz can be null
      *               resulting unconverted JsonNode so you can convert this later using convertJsonNodeIntoObject
      * @return java object MainResponse
      */
-    public static MainResponse convertStringToMainModel(String jsonString, Class<?> clazz) {
+    public static MainResponse convertStringToMainResponse(String jsonString, Class<?> clazz) {
         if (jsonString == null) return null;
         try {
             ObjectMapper mapper = new ObjectMapper();
             TypeFactory t = TypeFactory.defaultInstance();
             MainResponse model = mapper.readValue(jsonString,MainResponse.class);
             model = convertJsonNodeIntoObject(model,clazz);
+
+            System.out.print(model);
+            return model;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Convert string into java object
+     * @param jsonString
+     * @param clazz
+     * @return
+     */
+    public static Object convertStringToObject(String jsonString, Class<?> clazz) {
+        if (jsonString == null) return null;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            TypeFactory t = TypeFactory.defaultInstance();
+            Object model = mapper.readValue(jsonString,clazz);
 
             System.out.print(model);
             return model;

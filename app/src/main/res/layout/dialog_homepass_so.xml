@@ -45,6 +45,7 @@
     <TabHost
         android:id="@+id/homepass_dialog_tabhost"
         android:layout_width="match_parent"
+        android:layout_weight="0.5"
         android:layout_height="wrap_content">
 
         <LinearLayout
@@ -76,47 +77,52 @@
                         app:labelText="@string/dialog_homepass_customer"
                         app:validator="required" />
 
-                    <LinearLayout
-                        android:id="@+id/dialogitem_layout_company"
+                    <ScrollView
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:visibility="gone"
-                        android:orientation="vertical">
+                        android:layout_height="match_parent">
 
-                        <id.co.myrepublic.salessupport.widget.CustomEditText
-                            android:id="@+id/dialogitem_edittext_company_name"
+                        <LinearLayout
+                            android:id="@+id/dialogitem_layout_company"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            app:inputType="text"
-                            app:validator="required"
-                            app:labelText="@string/dialog_homepass_company_name" />
+                            android:layout_height="match_parent"
+                            android:visibility="visible"
+                            android:orientation="vertical">
 
-                        <id.co.myrepublic.salessupport.widget.CustomEditText
-                            android:id="@+id/dialogitem_edittext_npwp"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            app:inputType="text"
-                            app:validator="required"
-                            app:labelText="@string/dialog_homepass_npwp" />
+                            <id.co.myrepublic.salessupport.widget.CustomEditText
+                                android:id="@+id/dialogitem_edittext_company_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                app:inputType="text"
+                                app:validator="required"
+                                app:labelText="@string/dialog_homepass_company_name" />
 
-                        <id.co.myrepublic.salessupport.widget.CustomSpinner
-                            android:id="@+id/dialogitem_spinner_business_type"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="15dp"
-                            app:labelText="@string/dialog_homepass_business_type"
-                             />
+                            <id.co.myrepublic.salessupport.widget.CustomEditText
+                                android:id="@+id/dialogitem_edittext_npwp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                app:inputType="text"
+                                app:validator="required"
+                                app:labelText="@string/dialog_homepass_npwp" />
 
-                        <id.co.myrepublic.salessupport.widget.CustomSpinner
-                            android:id="@+id/dialogitem_spinner_business_size"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="15dp"
-                            app:labelText="@string/dialog_homepass_business_size"/>
+                            <id.co.myrepublic.salessupport.widget.CustomSpinner
+                                android:id="@+id/dialogitem_spinner_business_type"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="15dp"
+                                app:labelText="@string/dialog_homepass_business_type"
+                                 />
 
-                    </LinearLayout>
+                            <id.co.myrepublic.salessupport.widget.CustomSpinner
+                                android:id="@+id/dialogitem_spinner_business_size"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="15dp"
+                                app:labelText="@string/dialog_homepass_business_size"/>
+
+                        </LinearLayout>
+                    </ScrollView>
 
                 </LinearLayout>
 

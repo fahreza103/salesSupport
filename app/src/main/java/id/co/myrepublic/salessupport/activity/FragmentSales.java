@@ -62,7 +62,6 @@ public class FragmentSales extends AbstractFragment implements View.OnClickListe
     private CustomEditText editTextSalesName;
     private CustomSpinner spinnerKnowUs;
 
-    private HashMap<String,Object> formValues = new HashMap<String,Object>();
     private Map<String,Object> dwellingTypeMap = new HashMap<String,Object>();
     private List<AddressPrefix> addressPrefixList = new ArrayList<AddressPrefix>();
     private List<Channels> channelsList = new ArrayList<Channels>();
@@ -81,6 +80,9 @@ public class FragmentSales extends AbstractFragment implements View.OnClickListe
         super.onViewCreated(view, savedInstanceState);
         //you can set the title for your toolbar here for different fragments different titles
         getActivity().setTitle(getActivity().getString(R.string.fragment_view_salesorder));
+
+
+        //this.formKey = SALES_DATA_TASK_NAME;
 
         GlobalVariables gVar = GlobalVariables.getInstance();
 
@@ -158,8 +160,8 @@ public class FragmentSales extends AbstractFragment implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        formValues = FormExtractor.extractValues(getContext(),scrollContentLayout,true);
-        boolean result = (boolean) formValues.get(Validator.VALIDATION_KEY_RESULT);
+        this.formData = FormExtractor.extractValues(getContext(),scrollContentLayout,true);
+        boolean result = (boolean) formData.get(Validator.VALIDATION_KEY_RESULT);
         if(result)
             showAddressDialog();
     }
@@ -290,7 +292,7 @@ public class FragmentSales extends AbstractFragment implements View.OnClickListe
 
     private void nextFragment(String address, Homepass billingAddress, boolean sameAddress) {
         Bundle bundle = this.getArguments();
-        bundle.putSerializable("salesData",formValues);
+        bundle.putSerializable("salesData",formData);
         bundle.putString("BillingAddress",address);
         bundle.putBoolean("identicalAddress",sameAddress);
         bundle.putSerializable("homepassDataBilling",billingAddress);
@@ -320,6 +322,10 @@ public class FragmentSales extends AbstractFragment implements View.OnClickListe
                 addressPrefixList = modelAddressPrefix.getListObject();
             }
 
+            // load session
+            if(getSessionDataForm() != null) {
+                FormExtractor.putValues(formData,scrollContentLayout);
+            }
 
         } else if(DEALER_TASK_NAME.equals(taskName)) {
             repId = "";

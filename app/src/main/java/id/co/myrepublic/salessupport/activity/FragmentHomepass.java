@@ -58,7 +58,6 @@ public class FragmentHomepass extends AbstractFragment implements AsyncTaskListe
     private TabHost host;
     private List<Homepass> homePassList = new ArrayList<Homepass>();
     private RelativeLayout footerLayout;
-    private ApiConnectorAsyncOperation asop;
 
     private Map<Object,Object> customerClassMap;
     private List<String> companyTypeList = new ArrayList<String>();
@@ -92,7 +91,6 @@ public class FragmentHomepass extends AbstractFragment implements AsyncTaskListe
             String address = bundle.getString("address");
 
             Map<Object, Object> paramMap = new HashMap<Object, Object>();
-            paramMap.put("session_id", sessionId);
             paramMap.put("cluster_id", clusterId);
             paramMap.put("address", address);
 
@@ -307,14 +305,5 @@ public class FragmentHomepass extends AbstractFragment implements AsyncTaskListe
                 }
             }
         });
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if(asop != null && !asop.isCancelled()) {
-            asop.cancel(true);
-            ActivityMain.loadingFrame.setVisibility(View.GONE);
-        }
     }
 }

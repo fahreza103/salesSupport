@@ -13,11 +13,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import id.co.myrepublic.salessupport.R;
+import id.co.myrepublic.salessupport.constant.AppConstant;
 import id.co.myrepublic.salessupport.constant.AsyncUiDisplayType;
 import id.co.myrepublic.salessupport.listener.AsyncTaskListener;
 import id.co.myrepublic.salessupport.response.MainResponse;
 import id.co.myrepublic.salessupport.support.ApiConnectorAsyncOperation;
 import id.co.myrepublic.salessupport.util.GlobalVariables;
+import id.co.myrepublic.salessupport.util.StringUtil;
 import id.co.myrepublic.salessupport.util.UrlParam;
 
 /**
@@ -32,6 +34,7 @@ public abstract class AbstractFragment extends Fragment implements AsyncTaskList
     protected TextView asyncProgressTextView;
     protected ApiConnectorAsyncOperation asop;
     protected boolean isAlreadyLoaded;
+    protected String formKey;
     protected HashMap<String,Object> formData;
 
 
@@ -141,6 +144,36 @@ public abstract class AbstractFragment extends Fragment implements AsyncTaskList
             asop.cancel(true);
             ActivityMain.loadingFrame.setVisibility(View.GONE);
         }
+
+        // save into session
+        GlobalVariables gVar = GlobalVariables.getInstance();
+        if(formData != null && !StringUtil.isEmpty(formKey)) {
+            Map<String,Object> sessionFormData = (Map<String, Object>) StringUtil.convertStringToObject(gVar.getString(AppConstant.SESSION_ORDER_DATA_KEY,""),Map.class);
+            if(sessionFormData == null) {
+                sessionFormData = new HashMap<String,Object>();
+            }
+            sessionFormData.put(formKey,formData);
+            // put back to string and save
+            String dataStr = StringUtil.convertObjectToString(sessionFormData);
+            gVar.putString(AppConstant.SESSION_ORDER_DATA_KEY,dataStr);
+
+
+        }
+    }
+
+    protected HashMap<String,Object> getSessionDataForm() {
+        GlobalVariables gVar = GlobalVariables.getInstance();
+        if(!StringUtil.isEmpty(this.formKey)) {
+            String formDataStr = gVar.getString(AppConstant.SESSION_ORDER_DATA_KEY,"");
+            HashMap<String, Object> sessionOrderMap =  (HashMap<String, Object>) StringUtil.convertStringToObject(formDataStr,Map.class);
+            HashMap<String, Object> formDataMap = null;
+            if(sessionOrderMap != null) {
+                formDataMap = (HashMap<String, Object>) sessionOrderMap.get(this.formKey);
+                this.formData = formDataMap;
+            }
+            return formDataMap;
+        }
+        return null;
     }
 
     public String getAsyncDialogMessage() {

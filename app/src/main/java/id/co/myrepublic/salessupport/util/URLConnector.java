@@ -2,21 +2,12 @@ package id.co.myrepublic.salessupport.util;
 
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.output.ByteArrayOutputStream;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.GZIPOutputStream;
 
 import id.co.myrepublic.salessupport.listener.ProgressListener;
 import id.co.myrepublic.salessupport.response.MainResponse;
@@ -228,7 +219,7 @@ public class URLConnector {
 
 //        UrlResponse response = URLConnector.doConnect(URL, paramMap);
         UrlResponse response = URLConnector.doConnect(URL,paramMap,"");
-        MainResponse<Order> model = StringUtil.convertStringToMainModel(response.getResultValue(),Order.class);
+        MainResponse<Order> model = StringUtil.convertStringToMainResponse(response.getResultValue(),Order.class);
         Order order =model.getObject();
 
     }
